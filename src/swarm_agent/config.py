@@ -11,8 +11,7 @@ from typing import Any
 import yaml
 
 from .geometry import GeoPoint
-
-MAX_DRONE_ID = 63  # heartbeat member bitmask is 64 bits (bit 0 unused)
+from .heartbeat import MAX_ID as MAX_DRONE_ID  # PX4 MAV_SYS_ID range is 1..250
 
 
 @dataclass(frozen=True)

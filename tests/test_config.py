@@ -39,7 +39,7 @@ def test_default_config_loads_with_section5_values():
     (lambda d: d["swarm"].update(num_drones=2.5), "expected an integer"),
     (lambda d: d["mission"].update(goal_enu_m=[1.0]), "list of 2"),
     (lambda d: d.update(swarm=[1, 2]), "expected a mapping"),
-    (lambda d: d["swarm"].update(num_drones=64), "drone IDs"),
+    (lambda d: d["swarm"].update(num_drones=251), "drone IDs"),
     (lambda d: d["battery"].update(retire_alt_offset_m=25.0), "above geofence"),
     (lambda d: d["formation"].update(orphan_alt_offset_m=3.0), "altitude layers"),
     (lambda d: d["formation"].update(transit_alt_offset_m=-22.0), "too close to the ground"),

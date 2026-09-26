@@ -5,8 +5,8 @@ import math
 
 import pytest
 
-from swarm_agent.heartbeat import (SIZE, Flag, Heartbeat, Phase, Role, decode, encode, mask_to_members,
-                                   members_to_mask)
+from swarm_agent.heartbeat import (HEADER_SIZE, MAX_ID, Flag, Heartbeat, Phase, Role, decode, encode,
+                                   encoded_size, mask_to_members, members_to_mask)
 
 
 def sample(**kw) -> Heartbeat:
@@ -18,9 +18,13 @@ def sample(**kw) -> Heartbeat:
     return Heartbeat(**base)
 
 
-def test_size_is_small():
-    assert SIZE == 50
-    assert len(encode(sample())) == SIZE
+def test_size_is_small_and_grows_only_with_the_highest_id():
+    assert HEADER_SIZE == 43
+    assert len(encode(sample())) == encoded_size(10) == 45
+    big = sample(members=members_to_mask(range(1, 101)))
+    assert len(encode(big)) == encoded_size(100) == 56
+    assert decode(encode(big)).members == big.members
+    assert encoded_size(MAX_ID) == 75
 
 
 def test_round_trip_within_quantisation():
@@ -47,6 +51,8 @@ def test_rejects_bad_input():
     data = bytearray(encode(sample()))
     with pytest.raises(ValueError):
         decode(bytes(data[:-1]))
+    with pytest.raises(ValueError):
+        decode(bytes(data) + b"\x00")
     data[0] = 0x00
     with pytest.raises(ValueError):
         decode(bytes(data))
@@ -57,5 +63,8 @@ def test_members_mask():
     assert mask_to_members(0) == frozenset()
     with pytest.raises(ValueError):
         members_to_mask([0])
+    assert mask_to_members(members_to_mask([64, 250])) == frozenset({64, 250})
     with pytest.raises(ValueError):
-        members_to_mask([64])
+        members_to_mask([MAX_ID + 1])
+    with pytest.raises(ValueError):
+        encode(sample(members=1 << (MAX_ID + 1)))
