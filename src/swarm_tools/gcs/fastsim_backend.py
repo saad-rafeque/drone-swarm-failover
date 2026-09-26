@@ -353,6 +353,13 @@ class FastSimBackend:
                     return {"ok": False, "msg": "unknown obstacles or avoidance setting"}
                 if self.loading:
                     return {"ok": False, "msg": self.loading}
+                if p["obstacles"] == "osm":
+                    ge, gn, _ = EnuFrame(GeoPoint(p["home"][0], p["home"][1], 0.0)).to_enu(
+                        GeoPoint(p["target"][0], p["target"][1], 0.0))
+                    if math.hypot(ge, gn) > MAX_OBSTACLE_ROUTE_M:   # check before any download
+                        return {"ok": False, "msg": f"obstacle maps are available for routes up to "
+                                                    f"{MAX_OBSTACLE_ROUTE_M / 1000:.0f} km (this one is "
+                                                    f"{math.hypot(ge, gn) / 1000:.1f} km)"}
                 if p["obstacles"] == "osm" and not osm.cache_path(*self._bbox(p)).exists():
                     self.loading = "Downloading buildings and trees from OpenStreetMap (can take a few minutes)"
                     threading.Thread(target=self._fetch_then_start, args=(p,), daemon=True).start()
