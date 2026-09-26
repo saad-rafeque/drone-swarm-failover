@@ -122,11 +122,13 @@ def clamp_norm(a: Vec3, max_norm: float) -> Vec3:
     return scale(a, max_norm / n)
 
 
-def clamp_xy_z(a: Vec3, max_xy: float, max_z: float) -> Vec3:
-    """Limit horizontal speed to max_xy (direction preserved) and |vertical| to max_z."""
+def clamp_xy_z(a: Vec3, max_xy: float, max_up: float, max_down: float | None = None) -> Vec3:
+    """Limit horizontal speed to max_xy (direction preserved), ascent to max_up and descent to
+    max_down (defaults to max_up)."""
     h = math.hypot(a[0], a[1])
     k = max_xy / h if h > max_xy else 1.0
-    return (a[0] * k, a[1] * k, max(-max_z, min(max_z, a[2])))
+    down = max_up if max_down is None else max_down
+    return (a[0] * k, a[1] * k, max(-down, min(max_up, a[2])))
 
 
 def heading_of(dx: float, dy: float) -> float:

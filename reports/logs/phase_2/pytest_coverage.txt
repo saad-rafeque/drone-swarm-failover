@@ -1,0 +1,34 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /home/saad-rafique/Documents/drone swarm
+configfile: pyproject.toml
+testpaths: tests
+plugins: colcon-core-0.21.3, cov-4.1.0
+collected 91 items
+
+tests/test_agent_core.py ..............                                  [ 15%]
+tests/test_config.py .................                                   [ 34%]
+tests/test_election.py .........................                         [ 61%]
+tests/test_formation.py ..............                                   [ 76%]
+tests/test_geometry.py ..........                                        [ 87%]
+tests/test_heartbeat.py .....                                            [ 93%]
+tests/test_safety.py ......                                              [100%]
+
+---------- coverage: platform linux, python 3.12.3-final-0 -----------
+Name                            Stmts   Miss  Cover   Missing
+-------------------------------------------------------------
+src/swarm_agent/__init__.py         0      0   100%
+src/swarm_agent/agent_core.py     247      1    99%   62
+src/swarm_agent/config.py         168      1    99%   126
+src/swarm_agent/election.py       167      2    99%   118-119
+src/swarm_agent/formation.py       57      0   100%
+src/swarm_agent/geometry.py        80      0   100%
+src/swarm_agent/heartbeat.py       66      0   100%
+src/swarm_agent/safety.py          43      0   100%
+src/swarm_tools/__init__.py         0      0   100%
+src/swarm_tools/puresim.py        174      4    98%   45, 61-62, 212
+-------------------------------------------------------------
+TOTAL                            1002      8    99%
+
+
+============================= 91 passed in 15.80s ==============================

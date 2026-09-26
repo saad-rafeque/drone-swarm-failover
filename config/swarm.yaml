@@ -23,8 +23,9 @@ mission:
   takeoff_timeout_s: 60.0  # ... or after this long in TAKEOFF
   startup_listen_s: 3.0    # listen for peers before the first election
   startup_timeout_s: 30.0  # master takes off without missing drones after this long
-  climb_rate_mps: 2.0      # takeoff / altitude-change speed limit
-  land_speed_mps: 1.0      # descent speed while landing (pure sim; PX4 uses its own LAND mode)
+  climb_rate_mps: 2.0      # ascent speed limit (PX4 MPC_Z_VEL_MAX_UP default 3.0)
+  descent_rate_mps: 1.5    # descent speed limit (= PX4 MPC_Z_VEL_MAX_DN default 1.5)
+  land_speed_mps: 0.8      # descent while landing (pure sim only; PX4 AUTO.LAND uses its own)
 
 formation:
   shape: V
@@ -32,8 +33,12 @@ formation:
   v_half_angle_deg: 45.0   # angle between each arm and the master's reverse heading
   pos_gain: 0.6            # P-gain on position error [1/s]
   max_correction_mps: 3.0  # saturation of the P-term
-  max_speed_mps: 8.0       # saturation of the total horizontal command
+  max_speed_mps: 10.0      # saturation of the total horizontal command (PX4 MPC_XY_VEL_MAX 12)
   orphan_alt_offset_m: 8.0 # drones the master cannot hear fly this much above cruise alt
+  transit_threshold_m: 12.0   # slot further than this (horizontally): fly to it on the transit layer
+  transit_exit_m: 4.0         # back to the formation layer once this close to the slot
+  transit_alt_offset_m: -6.0  # transit layer relative to the master's altitude (>= min separation)
+  transit_max_correction_mps: 7.0  # P-term saturation on the transit layer (ground speed <= PX4 12 m/s)
 
 heartbeat:
   rate_hz: 5.0             # §5

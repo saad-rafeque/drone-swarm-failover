@@ -40,6 +40,7 @@ class MissionCfg:
     startup_listen_s: float
     startup_timeout_s: float
     climb_rate_mps: float
+    descent_rate_mps: float
     land_speed_mps: float
 
 
@@ -52,6 +53,10 @@ class FormationCfg:
     max_correction_mps: float
     max_speed_mps: float
     orphan_alt_offset_m: float
+    transit_threshold_m: float
+    transit_exit_m: float
+    transit_alt_offset_m: float
+    transit_max_correction_mps: float
 
 
 @dataclass(frozen=True)
@@ -176,6 +181,13 @@ def validate(cfg: Config) -> None:
     ):
         if alt > ceiling:
             raise ConfigError(f"{label} {alt} m is above geofence ceiling minus margin ({ceiling} m)")
+    layers = sorted([0.0, f.orphan_alt_offset_m, f.transit_alt_offset_m, cfg.battery.retire_alt_offset_m])
+    if any(b - a < s.min_separation_m for a, b in zip(layers, layers[1:])):
+        raise ConfigError(f"altitude layers {layers} (relative to cruise) must be >= min separation apart")
+    if m.cruise_alt_m + f.transit_alt_offset_m < 2.0 * s.min_separation_m:
+        raise ConfigError("transit layer too close to the ground")
+    if not f.transit_exit_m < f.transit_threshold_m:
+        raise ConfigError("transit_exit_m must be below transit_threshold_m")
     if math.hypot(*m.goal_enu_m) > s.geofence_radius_m - s.geofence_margin_m:
         raise ConfigError("goal lies outside the geofence")
     if f.spacing_m <= s.min_separation_m:

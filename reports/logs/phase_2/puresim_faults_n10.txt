@@ -1,0 +1,5 @@
+F1: handover median 1.6355 worst 1.749 (20/20) | rms<2m median 4.545 worst 4.68 (20/20) | min sep 9.35 (seed 0 pair (2, 4)) | goal 20/20
+F2: handover median 1.6355 worst 1.749 (20/20) | rms<2m median 4.545 worst 4.68 (20/20) | min sep 8.23 (seed 0 pair (1, 9)) | goal 20/20
+F3: handover median 0.166 worst 0.199 (20/20) | rms<2m median 3.14 worst 3.23 (20/20) | min sep 9.35 (seed 0 pair (2, 4)) | goal 20/20 | retiree home dist max 2.3
+F4: handover median 0.066 worst 0.099 (20/20) | rms<2m median 1.12 worst 1.15 (20/20) | min sep 7.46 (seed 1 pair (8, 10)) | goal 20/20
+F5: handover median 0.175 worst 0.25 (20/20) | rms<2m median 9.925 worst 13.75 (20/20) | min sep 6.23 (seed 10 pair (3, 9)) | goal 20/20

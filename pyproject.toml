@@ -1,0 +1,14 @@
+[project]
+name = "swarm-failover"
+version = "0.2.0"
+description = "Simulated PX4 quadrotor swarm with leader election / failover (MAVROS, ROS 2 Jazzy)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["src/swarm_agent", "src/swarm_tools"]
+omit = ["src/swarm_tools/sim_launch.py", "src/swarm_tools/mavros_link.py"]

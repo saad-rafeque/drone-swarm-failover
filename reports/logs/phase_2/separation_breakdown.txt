@@ -1,0 +1,11 @@
+runs with min separation < 5 m: 143 / 1000 (14.3 %)
+runs WITHOUT partition/link_drops: 362, of which < 5 m: 0
+runs WITH partition or link_drops: 638, of which < 5 m: 143
+single-fault runs: 214, of which < 5 m: 6
+  single kill_master          runs  30  min sep < 5 m: 0
+  single kill_random          runs  40  min sep < 5 m: 0
+  single link_drops           runs  28  min sep < 5 m: 1
+  single low_battery_master   runs  50  min sep < 5 m: 0
+  single master_link_lost     runs  33  min sep < 5 m: 0
+  single partition            runs  33  min sep < 5 m: 5
+worst 5: [(587, 0.02, ['kill_random', 'link_drops', 'low_battery_master'], 0.195, 0.0), (301, 0.14, ['link_drops', 'low_battery_master', 'master_link_lost', 'partition'], 0.163, 0.3), (985, 0.19, ['link_drops', 'master_link_lost', 'partition'], 0.11, 0.05), (734, 0.23, ['kill_master', 'partition'], 0.278, 0.15), (775, 0.3, ['kill_master', 'partition'], 0.264, 0.0)]
