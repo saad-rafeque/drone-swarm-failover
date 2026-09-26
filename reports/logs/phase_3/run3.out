@@ -1,0 +1,45 @@
+Exception in thread Thread-2 (spin):
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 359, in spin
+    self._spin_once_impl()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 907, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 877, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 778, in _wait_for_ready_callbacks
+    waitable.add_to_wait_set(wait_set)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/event_handler.py", line 124, in add_to_wait_set
+    with self.__event:
+rclpy._rclpy_pybind11.InvalidHandle: cannot use Destroyable because destruction was requested
+{
+ "time_to_goal_s": 220.3,
+ "formation_rms_cruise_m": {
+  "mean": 0.557,
+  "p95": 1.021,
+  "max": 1.664,
+  "samples": 2203,
+  "t_of_max_s": 32.2
+ },
+ "min_separation_m": 7.8,
+ "min_separation_pair": [
+  1,
+  2
+ ],
+ "goal_reached_all": true,
+ "max_simultaneous_masters": 1,
+ "master_changes": [
+  [
+   5.5,
+   1,
+   1
+  ]
+ ]
+}
+ 
+{"result": "TIMEOUT", "mission_wall_s": 600.2, "t_sim_ready_s": 14.0}

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Phase 4: 10 trials per fault (F1..F5) at N=10, interleaved by round so partial results cover
+# every fault. Trial folders: reports/logs/phase_4/<fault>_t<round>. Existing completed trials
+# (run_summary.json with "COMPLETED") are skipped, so the batch can be resumed.
+# Usage: scripts/phase4_runs.sh [first_round] [last_round] [out_subdir]
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT" || exit 1
+FIRST="${1:-1}"; LAST="${2:-10}"; SUB="${3:-phase_4}"; N="${N:-10}"
+mkdir -p "reports/logs/$SUB"
+for r in $(seq "$FIRST" "$LAST"); do
+  for f in F1 F2 F3 F4 F5; do
+    d="reports/logs/$SUB/${f}_t${r}"
+    if grep -q '"result": "COMPLETED"' "$d/run_summary.json" 2>/dev/null; then
+      echo "=== $f round $r already done"; continue
+    fi
+    echo "=== $f round $r start $(date --iso-8601=seconds)"
+    scripts/ros_env.sh python3 scripts/run_mission.py --n "$N" --run-dir "$d" --fault "$f" --fault-seed "$r" \
+      > "$d.out" 2>&1
+    echo "=== $f round $r exit $? $(date --iso-8601=seconds)"
+  done
+done
+echo "=== all done $(date --iso-8601=seconds)"

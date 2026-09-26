@@ -16,6 +16,7 @@ origin:
 mission:
   cruise_alt_m: 30.0       # §5, AGL
   cruise_speed_mps: 5.0    # §5
+  cruise_accel_mps2: 0.5   # master ramps its cruise speed up at this rate (followers keep up)
   goal_enu_m: [0.0, 1000.0]  # §5 ~1 km [east, north] from origin; known to every drone before takeoff
   goal_radius_m: 3.0       # master is "at goal" inside this horizontal radius
   hover_at_goal_s: 10.0    # §5, then all drones land
@@ -31,7 +32,7 @@ formation:
   shape: V
   spacing_m: 10.0          # §5, between neighbours along each arm
   v_half_angle_deg: 45.0   # angle between each arm and the master's reverse heading
-  pos_gain: 0.6            # P-gain on position error [1/s]
+  pos_gain: 1.0            # P-gain on position error [1/s] (0.6 left ~0.7 m slow drift in PX4 runs)
   max_correction_mps: 3.0  # saturation of the P-term
   max_speed_mps: 10.0      # saturation of the total horizontal command (PX4 MPC_XY_VEL_MAX 12)
   orphan_alt_offset_m: 8.0 # drones the master cannot hear fly this much above cruise alt
@@ -45,6 +46,7 @@ heartbeat:
   master_timeout_s: 1.5    # §5, master declared dead after this long without its heartbeat
   peer_timeout_s: 1.5      # any other drone considered gone after this long
   handover_timeout_s: 1.0  # retiring master tries the next successor after this long
+  fcu_timeout_s: 0.5       # own autopilot data older than this: drone is dead, stop heartbeating
 
 battery:
   handover_pct: 30.0       # §5, master hands over voluntarily, leaves formation, returns home
@@ -60,11 +62,28 @@ safety:
   geofence_margin_m: 3.0     # start pushing back this far inside the fence
 
 setpoints:
-  rate_hz: 20.0            # §5 velocity setpoints (PX4 offboard 2 Hz minimum: verify in docs, Phase 3)
+  rate_hz: 20.0            # §5 velocity setpoints (PX4 offboard: >= 2 Hz proof of life, docs.px4.io)
+
+# MAVLink stream rates each agent requests from its autopilot at startup (MAV_CMD_SET_MESSAGE_INTERVAL via
+# mavros/set_message_interval). PX4's onboard link defaults stream ~400 msg/s per drone (ATTITUDE 100 Hz,
+# GLOBAL_POSITION_INT 50 Hz, ...); the agent only needs positions, and 10 drones saturated the CPU.
+autopilot_streams_hz:
+  GLOBAL_POSITION_INT: 20.0
+  LOCAL_POSITION_NED: 20.0
+  ATTITUDE: 2.0
+  ATTITUDE_QUATERNION: 1.0
+  HIGHRES_IMU: 1.0
+  ODOMETRY: 1.0
+  ALTITUDE: 1.0
 
 link_emulator:
   latency_ms: 0.0
+  jitter_ms: 0.0           # uniform extra delay 0..jitter
   loss_pct: 0.0
+  seed: 1
+
+logging:
+  rate_hz: 10.0            # agent_state publication rate (logger/metrics only)
 
 sim:
   px4_dir: ~/PX4-Autopilot

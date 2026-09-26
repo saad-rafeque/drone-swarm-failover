@@ -30,6 +30,8 @@ CLIMB_FIRST_MARGIN_M = 5.0  # a late joiner this far below cruise altitude climb
 KP_ALT = 1.0                # altitude P-gain [1/s]
 KP_HOLD = 0.5               # horizontal hold P-gain [1/s]
 HOLD_MAX_MPS = 2.0
+KP_CROSS_TRACK = 0.3        # master's cross-track correction toward its leg line [1/s]
+CROSS_TRACK_MAX_MPS = 1.0
 TRANSIT_ENTER_DELAY_S = 0.5  # slot error must exceed the threshold this long (filters glitches)
 LAYER_TOL_M = 1.5           # "on the layer" tolerance
 LAYER_CHANGE_MAX_CORRECTION_MPS = 1.0  # horizontal P-term limit until vertically clear of the formation layer
@@ -69,7 +71,8 @@ class AgentCore:
         self.home = home
         hb = cfg.heartbeat
         self.election = Election(my_id, hb.master_timeout_s, hb.peer_timeout_s, hb.handover_timeout_s,
-                                 cfg.mission.startup_listen_s, now)
+                                 cfg.mission.startup_listen_s, now, frozenset(cfg.drone_ids),
+                                 cfg.mission.startup_timeout_s)
         m = cfg.mission
         self.goal: Vec3 = (m.goal_enu_m[0], m.goal_enu_m[1], m.cruise_alt_m)
         self.phase = Phase.IDLE
@@ -88,6 +91,9 @@ class AgentCore:
         self._was_master = False
         self.retire_stage = ""
         self._retire_vel: Vec3 = ZERO
+        self._speed_cmd = 0.0   # master's ramped cruise speed
+        self._speed_t = now
+        self._leg_start: tuple[float, float] | None = None  # master's straight leg to the goal
         self.last_cmd: Command | None = None
 
     # ------------------------------------------------------------------ public API
@@ -106,6 +112,9 @@ class AgentCore:
         if e.role == Role.MASTER:
             if not self._was_master:
                 self.phase_since = now  # takeover: restart the current phase's timer
+                self._speed_cmd = norm_xy(own.vel)  # continue from the current speed, then ramp
+                self._speed_t = now
+                self._leg_start = None  # new leg from wherever this drone is
             self._master_phase(own, now)
         elif e.role == Role.FOLLOWER:
             info = e.master_info(now)
@@ -142,10 +151,12 @@ class AgentCore:
                     now - self.phase_since >= m.takeoff_timeout_s:
                 self._set_phase(Phase.CRUISE, now)
         elif self.phase == Phase.CRUISE:
-            d = norm_xy(to_goal)
-            if d > 2.0 * m.goal_radius_m:
+            if self._leg_start is None:
+                # Straight leg from here to the goal; its bearing is the formation heading for the
+                # whole leg (re-aiming at the goal from a wandering position rotates the V).
+                self._leg_start = (own.pos[0], own.pos[1])
                 self.heading = heading_of(to_goal[0], to_goal[1])
-            if d <= m.goal_radius_m:
+            if norm_xy(to_goal) <= m.goal_radius_m:
                 self._set_phase(Phase.HOLD, now)
         elif self.phase == Phase.HOLD:
             if now - self.phase_since >= m.hover_at_goal_s:
@@ -169,9 +180,11 @@ class AgentCore:
         elif e.role == Role.MASTER:
             target = self.goal
             if self.phase == Phase.CRUISE:
-                v, reason = self._cruise_to_goal(own.pos), "cruise"
+                v, reason = self._cruise_to_goal(own.pos, now), "cruise"
             else:
                 v, reason = self._goto(own.pos, self.goal, HOLD_MAX_MPS), "hold"
+            if self.phase != Phase.CRUISE:
+                self._speed_cmd, self._speed_t = 0.0, now
         elif not self._joined and own.pos[2] < m.cruise_alt_m - CLIMB_FIRST_MARGIN_M:
             target = (own.pos[0], own.pos[1], m.cruise_alt_m)
             v, reason = self._goto(own.pos, target, HOLD_MAX_MPS), "climb_to_join"
@@ -193,13 +206,20 @@ class AgentCore:
         return clamp_xy_z((KP_HOLD * d[0], KP_HOLD * d[1], KP_ALT * d[2]), max_xy, m.climb_rate_mps,
                           m.descent_rate_mps)
 
-    def _cruise_to_goal(self, pos: Vec3) -> Vec3:
+    def _cruise_to_goal(self, pos: Vec3, now: float) -> Vec3:
+        """Follow the straight leg to the goal: along-track at cruise speed (speed-ups ramped at
+        cruise_accel_mps2, so followers who see the master's velocity only at the heartbeat rate
+        keep up) plus a saturated cross-track correction back onto the leg line."""
         m = self.cfg.mission
         d = sub(self.goal, pos)
-        dxy = norm_xy(d)
-        speed = min(m.cruise_speed_mps, KP_HOLD * dxy)
-        vx, vy = (d[0] / dxy * speed, d[1] / dxy * speed) if dxy > 1e-6 else (0.0, 0.0)
-        return (vx, vy, self._vz(d[2]))
+        ux, uy = math.cos(self.heading), math.sin(self.heading)   # leg direction
+        along = d[0] * ux + d[1] * uy                               # remaining distance along the leg
+        cross = -d[0] * uy + d[1] * ux                              # + = the leg line is to my left
+        dt = min(max(now - self._speed_t, 0.0), 0.5)
+        speed = max(0.0, min(m.cruise_speed_mps, KP_HOLD * along, self._speed_cmd + m.cruise_accel_mps2 * dt))
+        self._speed_cmd, self._speed_t = speed, now
+        vc = max(-CROSS_TRACK_MAX_MPS, min(CROSS_TRACK_MAX_MPS, KP_CROSS_TRACK * cross))
+        return (ux * speed - uy * vc, uy * speed + ux * vc, self._vz(d[2]))
 
     def _formation(self, own: OwnState, mhb: Heartbeat, now: float) -> tuple[Vec3, Vec3, str]:
         f, m = self.cfg.formation, self.cfg.mission

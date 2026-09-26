@@ -25,6 +25,8 @@ class Dynamics:
     tau_s: float = 0.35        # velocity response time constant
     max_acc_xy: float = 4.0    # m/s^2
     max_acc_z: float = 3.0
+    dist_sigma_mps: float = 0.0  # horizontal velocity-tracking disturbance (Gauss-Markov) std
+    dist_tau_s: float = 3.0      # its correlation time
 
 
 @dataclass
@@ -35,14 +37,21 @@ class SimDrone:
     battery_pct: float = 100.0
     alive: bool = True
     landed: bool = True
+    dist: tuple[float, float] = (0.0, 0.0)
 
-    def integrate(self, cmd: Command | None, dt: float, dyn: Dynamics, land_speed: float) -> None:
+    def integrate(self, cmd: Command | None, dt: float, dyn: Dynamics, land_speed: float,
+                  rng: random.Random | None = None) -> None:
         if cmd is None or (cmd.mode == FlightMode.GROUND and self.landed):
             self.vel = ZERO
             return
         target = (0.0, 0.0, -land_speed) if cmd.mode == FlightMode.LAND else cmd.vel
         if cmd.mode == FlightMode.GROUND:
             target = (0.0, 0.0, -land_speed)
+        if dyn.dist_sigma_mps > 0.0 and rng is not None and not self.landed and cmd.mode != FlightMode.LAND:
+            a = math.exp(-dt / dyn.dist_tau_s)
+            k = dyn.dist_sigma_mps * math.sqrt(1.0 - a * a)
+            self.dist = (a * self.dist[0] + k * rng.gauss(0.0, 1.0), a * self.dist[1] + k * rng.gauss(0.0, 1.0))
+            target = (target[0] + self.dist[0], target[1] + self.dist[1], target[2])
         ax = (target[0] - self.vel[0]) / dyn.tau_s
         ay = (target[1] - self.vel[1]) / dyn.tau_s
         az = (target[2] - self.vel[2]) / dyn.tau_s
@@ -116,7 +125,7 @@ class StepStats:
 
 class PureSim:
     def __init__(self, cfg: Config, *, seed: int = 0, latency_s: float = 0.0, jitter_s: float = 0.0,
-                 loss: float = 0.0, dt: float = 0.05, boot_spread_s: float = 0.5,
+                 loss: float = 0.0, dt: float = 0.05, boot_spread_s: float = 5.0,
                  drain_pct_per_s: float = 0.0, dynamics: Dynamics | None = None) -> None:
         self.cfg = cfg
         self.rng = random.Random(seed)
@@ -207,7 +216,7 @@ class PureSim:
         land_speed = self.cfg.mission.land_speed_mps
         for i in alive:
             d = self.drones[i]
-            d.integrate(self.cmds.get(i), self.dt, self.dyn, land_speed)
+            d.integrate(self.cmds.get(i), self.dt, self.dyn, land_speed, self.rng)
             if not d.landed and self.drain:
                 d.battery_pct = max(0.0, d.battery_pct - self.drain * self.dt)
         pos = self.airborne_positions()

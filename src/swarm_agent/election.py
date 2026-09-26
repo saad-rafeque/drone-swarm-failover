@@ -16,7 +16,9 @@ Rules (docs/SPECIFICATION.md §5/§6) and the design choices that complete them 
     `handover_to` and keeps leading; that drone claims at once (rule 1 gives it a higher term),
     the old master hears it, steps down (rule 2) and retires. If nobody takes over within
     handover_timeout_s the next candidate is named.
- 7. Startup: nobody claims before startup_listen_s, so drones first learn who else is alive.
+ 7. Startup: nobody claims before startup_listen_s. Until any master has ever been heard, a drone
+    also waits until it hears every expected drone (or startup_timeout_s passes): agent processes
+    start seconds apart, and otherwise the first one up would win instead of the lowest ID.
 Peer and master liveness use the LOCAL receive time; timestamps in heartbeats are only used for
 extrapolating positions.
 """
@@ -47,12 +49,15 @@ def _better(term_a: int, id_a: int, term_b: int, id_b: int) -> bool:
 
 class Election:
     def __init__(self, my_id: int, master_timeout_s: float, peer_timeout_s: float,
-                 handover_timeout_s: float, startup_listen_s: float, now: float) -> None:
+                 handover_timeout_s: float, startup_listen_s: float, now: float,
+                 expected_ids: frozenset[int] | None = None, startup_timeout_s: float = 0.0) -> None:
         self.my_id = my_id
         self.master_timeout = master_timeout_s
         self.peer_timeout = peer_timeout_s
         self.handover_timeout = handover_timeout_s
         self.startup_listen = startup_listen_s
+        self.expected_ids = frozenset(expected_ids or ()) - {my_id}
+        self.startup_timeout = startup_timeout_s
         self.boot_time = now
         self.role = Role.FOLLOWER
         self.term = 0              # my term if master, else the term of the master I follow
@@ -180,6 +185,10 @@ class Election:
     def _may_claim(self, now: float) -> bool:
         if not self.eligible or self.retiring or now - self.boot_time < self.startup_listen:
             return False
+        if self.max_term_seen == 0 and now - self.boot_time < self.startup_timeout:
+            heard = {p.hb.drone_id for p in self.alive_peers(now)}
+            if not self.expected_ids <= heard:
+                return False   # first election: wait until the whole expected fleet is heard
         for p in self.alive_peers(now):
             hb = p.hb
             if hb.role != Role.FOLLOWER:

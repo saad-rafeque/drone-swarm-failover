@@ -1,0 +1,106 @@
+{
+  "n": 3,
+  "ids": [
+    1,
+    2,
+    3
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n3b",
+  "fault": "",
+  "loss_pct": null,
+  "latency_ms": null,
+  "jitter_ms": null,
+  "available_mb_before": 3655,
+  "t_sim_ready_s": 5.4,
+  "result": "COMPLETED",
+  "mission_wall_s": 286.8,
+  "killed": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 30.7,
+    "mavros": 262.8
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 29.6,
+      "max": 78.6,
+      "min": 25.2
+    },
+    "cpu_px4_pct_core": {
+      "mean": 24.0,
+      "max": 28.4,
+      "min": 21.4
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 21.0,
+      "max": 36.8,
+      "min": 17.6
+    },
+    "cpu_agents_pct_core": {
+      "mean": 25.8,
+      "max": 34.9,
+      "min": 23.4
+    },
+    "cpu_tools_pct_core": {
+      "mean": 15.8,
+      "max": 19.4,
+      "min": 12.7
+    },
+    "rss_agents_mb": {
+      "mean": 277.1,
+      "max": 277.2,
+      "min": 276.9
+    },
+    "mem_available_mb": {
+      "mean": 3207.5,
+      "max": 3325,
+      "min": 1999
+    },
+    "load1": {
+      "mean": 2.0,
+      "max": 2.5,
+      "min": 1.5
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 50.4,
+      "max": 92.3,
+      "min": 30.6
+    },
+    "cpu_px4_pct_core": {
+      "mean": 25.4,
+      "max": 26.8,
+      "min": 24.4
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 28.5,
+      "max": 43.0,
+      "min": 20.1
+    },
+    "cpu_agents_pct_core": {
+      "mean": 53.6,
+      "max": 204.7,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 24.3,
+      "max": 63.1,
+      "min": 9.6
+    },
+    "rss_agents_mb": {
+      "mean": 241.1,
+      "max": 276.2,
+      "min": 134.1
+    },
+    "mem_available_mb": {
+      "mean": 3262.0,
+      "max": 3351,
+      "min": 3221
+    },
+    "load1": {
+      "mean": 2.2,
+      "max": 2.2,
+      "min": 2.1
+    }
+  }
+}

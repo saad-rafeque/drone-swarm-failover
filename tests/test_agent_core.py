@@ -136,9 +136,10 @@ def test_master_waits_for_missing_drone_until_startup_timeout(cfg):
     sim = PureSim(cfg.with_num_drones(3), seed=5)
     sim.kill(3)                       # never boots
     sim.run_until(cfg.mission.startup_timeout_s - 1.0)
-    assert sim.agents[1].phase == Phase.IDLE
-    sim.run_until(cfg.mission.startup_timeout_s + 1.0)
-    assert sim.agents[1].phase == Phase.TAKEOFF
+    assert sim.agents[1].phase == Phase.IDLE and sim.masters() == []
+    # first election and takeoff both wait for the startup timeout after drone 1's own boot (<= 5 s)
+    sim.run_until(cfg.mission.startup_timeout_s + sim.boot[1] + 1.0)
+    assert sim.masters() == [1] and sim.agents[1].phase == Phase.TAKEOFF
 
 
 def test_heartbeat_rate_and_immediate_send_on_role_change(cfg):

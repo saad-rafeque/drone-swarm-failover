@@ -1,0 +1,113 @@
+{
+  "n": 10,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n10c",
+  "fault": "",
+  "loss_pct": null,
+  "latency_ms": null,
+  "jitter_ms": null,
+  "available_mb_before": 4704,
+  "t_sim_ready_s": 13.7,
+  "result": "COMPLETED",
+  "mission_wall_s": 310.2,
+  "killed": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 102.5,
+    "mavros": 1015.5
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 67.6,
+      "max": 94.1,
+      "min": 58.9
+    },
+    "cpu_px4_pct_core": {
+      "mean": 68.1,
+      "max": 75.8,
+      "min": 62.4
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 63.2,
+      "max": 90.8,
+      "min": 51.1
+    },
+    "cpu_agents_pct_core": {
+      "mean": 90.9,
+      "max": 98.7,
+      "min": 83.3
+    },
+    "cpu_tools_pct_core": {
+      "mean": 23.1,
+      "max": 27.0,
+      "min": 20.3
+    },
+    "rss_agents_mb": {
+      "mean": 1027.1,
+      "max": 1027.3,
+      "min": 1026.2
+    },
+    "mem_available_mb": {
+      "mean": 3451.4,
+      "max": 3529,
+      "min": 3289
+    },
+    "load1": {
+      "mean": 20.9,
+      "max": 32.5,
+      "min": 7.3
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 98.4,
+      "max": 100.0,
+      "min": 84.1
+    },
+    "cpu_px4_pct_core": {
+      "mean": 66.8,
+      "max": 71.4,
+      "min": 62.9
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 152.4,
+      "max": 291.7,
+      "min": 64.7
+    },
+    "cpu_agents_pct_core": {
+      "mean": 129.4,
+      "max": 273.9,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 25.4,
+      "max": 48.2,
+      "min": 2.7
+    },
+    "rss_agents_mb": {
+      "mean": 614.8,
+      "max": 1025.8,
+      "min": 0.0
+    },
+    "mem_available_mb": {
+      "mean": 3571.6,
+      "max": 4066,
+      "min": 3313
+    },
+    "load1": {
+      "mean": 4.8,
+      "max": 10.0,
+      "min": 0.9
+    }
+  }
+}

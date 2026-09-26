@@ -1,0 +1,128 @@
+{
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/run3",
+  "drones": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "samples": 59304,
+  "duration_s": 594.7,
+  "phase_start_s": {
+    "TAKEOFF": 5.5,
+    "CRUISE": 26.4,
+    "HOLD": 246.7,
+    "LAND": 256.7
+  },
+  "master_changes": [
+    [
+      5.5,
+      1,
+      1
+    ]
+  ],
+  "max_simultaneous_masters": 1,
+  "time_to_goal_s": 220.3,
+  "formation_rms_cruise_m": {
+    "mean": 0.557,
+    "p95": 1.021,
+    "max": 1.664,
+    "samples": 2203,
+    "t_of_max_s": 32.2
+  },
+  "min_separation_m": 7.8,
+  "min_separation_pair": [
+    1,
+    2
+  ],
+  "min_separation_t_s": 249.6,
+  "final": {
+    "3": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 9.3,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "4": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 20.0,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "1": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 1.7,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "10": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 49.1,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "7": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 28.3,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "5": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 19.6,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "6": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 30.2,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "2": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 9.7,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "9": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 38.9,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    },
+    "8": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 38.9,
+      "ok": true,
+      "last_t_s": 594.7,
+      "reporting_at_end": true
+    }
+  },
+  "goal_reached_all": true
+}

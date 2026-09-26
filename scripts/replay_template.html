@@ -1,0 +1,368 @@
+<title>Swarm Failover Replay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #eef2f5; --panel: #ffffff; --panel-2: #f5f8fa; --ink: #15222c; --ink-2: #4b5b67; --ink-3: #7b8a95;
+  --line: #d7dfe5; --grid: #e2e8ed; --grid-strong: #cfd8df; --master: #2a78d6; --follower: #6e7f8c;
+  --slot: #9aabb8; --alert: #cf3f35; --ok: #1b8a5a; --transit: #178a82; --orphan: #7d58c9;
+  --focus: #2a78d6;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #0d141a; --panel: #131d25; --panel-2: #172430; --ink: #e2e9ee; --ink-2: #a3b3bf; --ink-3: #718390;
+    --line: #26343f; --grid: #18242d; --grid-strong: #22313c; --master: #4a92ea; --follower: #93a6b4;
+    --slot: #4a5f6e; --alert: #ef6a5f; --ok: #3fbf86; --transit: #37b3a8; --orphan: #a88ae6; --focus: #6aa8f0;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0d141a; --panel: #131d25; --panel-2: #172430; --ink: #e2e9ee; --ink-2: #a3b3bf; --ink-3: #718390;
+  --line: #26343f; --grid: #18242d; --grid-strong: #22313c; --master: #4a92ea; --follower: #93a6b4;
+  --slot: #4a5f6e; --alert: #ef6a5f; --ok: #3fbf86; --transit: #37b3a8; --orphan: #a88ae6; --focus: #6aa8f0;
+}
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+.app { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 28px; display: grid; gap: 14px; }
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+.top h1 { font-family: var(--display); font-weight: 600; font-size: 30px; letter-spacing: 0.01em; margin: 0; line-height: 1.05; text-wrap: balance; }
+.sub { margin: 4px 0 0; color: var(--ink-2); max-width: 70ch; font-size: 14px; }
+.tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
+.tabs button { font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: 0.04em; text-transform: uppercase;
+  border: 0; background: transparent; color: var(--ink-2); padding: 7px 16px; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--master); color: #fff; }
+.tabs button + button { border-left: 1px solid var(--line); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px; }
+@media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.scope { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; }
+.scope-head { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; justify-content: space-between; padding: 10px 14px;
+  border-bottom: 1px solid var(--line); }
+.label { font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.ring { width: 11px; height: 11px; border-radius: 50%; display: inline-block; border: 1.5px dashed var(--slot); }
+#scope { width: 100%; aspect-ratio: 16 / 10; max-width: 100%; display: block; background: var(--panel-2); }
+.route { padding: 10px 14px 4px; display: grid; gap: 4px; }
+.track { position: relative; height: 8px; border-radius: 4px; background: var(--grid-strong); }
+.track .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--master); opacity: 0.35; }
+.track .pin { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--master);
+  border: 2px solid var(--panel); }
+.ticks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 10px 14px 14px; }
+.play { font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--ink); color: var(--panel); border: 0; border-radius: 6px; padding: 7px 14px; min-width: 84px; cursor: pointer; }
+.speed { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.speed button { font-family: var(--mono); font-size: 12.5px; border: 0; background: var(--panel); color: var(--ink-2); padding: 6px 10px; cursor: pointer; }
+.speed button[aria-pressed="true"] { background: var(--panel-2); color: var(--ink); font-weight: 500; box-shadow: inset 0 -2px 0 var(--master); }
+.speed button + button { border-left: 1px solid var(--line); }
+#scrub { flex: 1 1 220px; min-width: 0; accent-color: var(--master); }
+.clock { font-family: var(--mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.panel { display: grid; gap: 14px; align-content: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.readout { display: grid; gap: 2px; min-width: 0; }
+.readout .v { font-family: var(--mono); font-size: 20px; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.readout .v small { font-size: 12px; color: var(--ink-3); }
+.readout.wide { grid-column: 1 / -1; }
+.chip { display: inline-block; font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 1px 7px; border-radius: 999px; margin-left: 6px; vertical-align: 3px; border: 1px solid currentColor; }
+.chip.ok { color: var(--ok); } .chip.bad { color: var(--alert); } .chip.idle { color: var(--ink-3); }
+#alt { width: 100%; height: 150px; display: block; }
+.log ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; max-height: 240px; overflow-y: auto; }
+.log li { display: grid; grid-template-columns: 58px 1fr; gap: 8px; font-size: 13.5px; }
+.log li .t { font-family: var(--mono); font-size: 12px; color: var(--ink-3); padding-top: 1px; font-variant-numeric: tabular-nums; }
+.log li.fault .m { color: var(--alert); font-weight: 500; }
+.log li.master .m { color: var(--master); font-weight: 500; }
+.log li.future { display: none; }
+.note { color: var(--ink-2); font-size: 13px; max-width: 95ch; }
+.note b { color: var(--ink); font-weight: 500; }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div>
+      <h1>Swarm Failover Replay</h1>
+      <p class="sub" id="subtitle">Loading replay&hellip;</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Scenario">
+      <button role="tab" id="tab0" aria-selected="true">PX4 flight</button>
+      <button role="tab" id="tab1" aria-selected="false">Failover demo</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="scope" aria-label="Formation view">
+      <div class="scope-head">
+        <span class="label">Top-down, following the swarm &middot; grid 10 m</span>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--master)"></i>Master</span>
+          <span><i class="dot" style="background:var(--follower)"></i>Follower</span>
+          <span><i class="dot" style="border:2px solid var(--transit)"></i>Transit layer &minus;6 m</span>
+          <span><i class="dot" style="border:2px solid var(--orphan)"></i>Orphan layer +8 m</span>
+          <span><i class="ring"></i>Assigned slot</span>
+        </div>
+      </div>
+      <canvas id="scope" role="img" aria-label="Drones seen from above, centred on the formation"></canvas>
+      <div class="route">
+        <span class="label">Route: home &rarr; goal, 1 km north</span>
+        <div class="track"><div class="fill" id="fill"></div><div class="pin" id="pin"></div></div>
+        <div class="ticks"><span>0 m</span><span>250</span><span>500</span><span>750</span><span>1000 m goal</span></div>
+      </div>
+      <div class="controls">
+        <button class="play" id="play" type="button">Pause</button>
+        <div class="speed" role="group" aria-label="Playback speed">
+          <button type="button" data-speed="1" aria-pressed="false">1&times;</button>
+          <button type="button" data-speed="4" aria-pressed="true">4&times;</button>
+          <button type="button" data-speed="12" aria-pressed="false">12&times;</button>
+        </div>
+        <input id="scrub" type="range" min="0" max="100" value="0" step="1" aria-label="Replay position">
+        <span class="clock" id="clock">0.0 s</span>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="card readouts" aria-live="off">
+        <div class="readout"><span class="label">Phase</span><span class="v" id="phase">&mdash;</span></div>
+        <div class="readout"><span class="label">Alive</span><span class="v" id="alive">&mdash;</span></div>
+        <div class="readout wide"><span class="label">Master</span><span class="v" id="master">&mdash;</span></div>
+        <div class="readout wide"><span class="label">Formation error (RMS)</span><span class="v" id="rms">&mdash;</span></div>
+        <div class="readout wide"><span class="label">Closest pair</span><span class="v" id="sep">&mdash;</span></div>
+      </div>
+      <div class="card">
+        <span class="label">Altitude above ground</span>
+        <canvas id="alt" aria-label="Altitude of each drone"></canvas>
+      </div>
+      <div class="card log">
+        <span class="label">Events</span>
+        <ol id="events"></ol>
+      </div>
+    </aside>
+  </div>
+
+  <p class="note" id="note"><b>How to read it.</b> Each drone's faint disc has a 2.5 m radius, so two discs only overlap if
+  a pair is closer than the 5 m minimum separation. Limits: formation error under 2 m during cruise, separation at least 5 m.</p>
+</div>
+
+<script type="application/json" id="replay-data">/*__REPLAY_DATA__*/</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("replay-data").textContent);
+  const PHASES = { I: "Idle", T: "Takeoff", C: "Cruise", H: "Hold at goal", L: "Landing" };
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const scope = document.getElementById("scope"), sctx = scope.getContext("2d");
+  const altc = document.getElementById("alt"), actx = altc.getContext("2d");
+  const $ = (id) => document.getElementById(id);
+  let si = 0, sc = DATA.scenarios[0], t = 0, playing = !reduce, speed = 4, cam = null, last = null, colors = {};
+
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    for (const k of ["panel-2", "ink", "ink-2", "ink-3", "grid", "grid-strong", "master", "follower", "slot", "alert", "transit", "orphan", "line"])
+      colors[k] = cs.getPropertyValue("--" + k).trim();
+  }
+  readColors();
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readColors(); draw(); });
+  new MutationObserver(() => { readColors(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  function fitCanvas(c) {
+    const r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
+    if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+    return { w: r.width, h: r.height, dpr };
+  }
+
+  function frameAt(time) { return Math.min(sc.frames - 1, Math.max(0, time / sc.dt)); }
+  function posAt(id, time) {
+    const f = frameAt(time), i0 = Math.floor(f), i1 = Math.min(sc.frames - 1, i0 + 1), a = f - i0;
+    const e = sc.e[id], n = sc.n[id], u = sc.u[id];
+    if (e[i0] == null) return null;
+    if (e[i1] == null) return [e[i0] / 10, n[i0] / 10, u[i0] / 10];
+    return [(e[i0] + (e[i1] - e[i0]) * a) / 10, (n[i0] + (n[i1] - n[i0]) * a) / 10, (u[i0] + (u[i1] - u[i0]) * a) / 10];
+  }
+  function lastSeen(id, time) {
+    let f = Math.floor(frameAt(time));
+    const e = sc.e[id];
+    for (let k = f; k >= 0 && k > f - 40; k--) if (e[k] != null) return [e[k] / 10, sc.n[id][k] / 10, k * sc.dt];
+    return null;
+  }
+
+  function draw() {
+    const { w, h, dpr } = fitCanvas(scope);
+    const f = Math.floor(frameAt(t)), roles = sc.role[f];
+    const pts = {};
+    sc.ids.forEach((id, k) => { const p = posAt(id, t); if (p) pts[id] = { p, r: roles[k] }; });
+    const air = Object.values(pts).filter((d) => d.p[2] > 0.5);
+    const focus = air.length ? air : Object.values(pts);
+    let tx = 0, ty = 0;
+    focus.forEach((d) => { tx += d.p[0]; ty += d.p[1]; });
+    if (focus.length) { tx /= focus.length; ty /= focus.length; ty -= 12; }
+    if (!cam || Math.abs(cam[1] - ty) > 200) cam = [tx, ty]; else { cam[0] += (tx - cam[0]) * 0.12; cam[1] += (ty - cam[1]) * 0.12; }
+    const ppm = Math.min(w / 120, h / 75);
+    const X = (e) => (w / 2 + (e - cam[0]) * ppm) * dpr, Y = (n) => (h / 2 - (n - cam[1]) * ppm) * dpr;
+    const ctx = sctx;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = colors["panel-2"]; ctx.fillRect(0, 0, scope.width, scope.height);
+    // grid: 10 m squares (the formation spacing), 50 m lines stronger
+    const e0 = cam[0] - w / 2 / ppm, e1 = cam[0] + w / 2 / ppm, n0 = cam[1] - h / 2 / ppm, n1 = cam[1] + h / 2 / ppm;
+    for (let e = Math.floor(e0 / 10) * 10; e <= e1; e += 10) {
+      ctx.strokeStyle = e % 50 === 0 ? colors["grid-strong"] : colors.grid; ctx.lineWidth = dpr;
+      ctx.beginPath(); ctx.moveTo(X(e), 0); ctx.lineTo(X(e), h * dpr); ctx.stroke();
+    }
+    for (let n = Math.floor(n0 / 10) * 10; n <= n1; n += 10) {
+      ctx.strokeStyle = n % 50 === 0 ? colors["grid-strong"] : colors.grid; ctx.lineWidth = dpr;
+      ctx.beginPath(); ctx.moveTo(0, Y(n)); ctx.lineTo(w * dpr, Y(n)); ctx.stroke();
+    }
+    ctx.font = `${11 * dpr}px ${getComputedStyle(document.body).getPropertyValue("--mono") || "monospace"}`;
+    ctx.fillStyle = colors["ink-3"];
+    for (let n = Math.ceil(n0 / 50) * 50; n <= n1; n += 50) ctx.fillText(`N ${n} m`, 6 * dpr, Y(n) - 4 * dpr);
+    // goal
+    const [gx, gy] = sc.goal;
+    if (gy > n0 - 20 && gy < n1 + 20) {
+      ctx.strokeStyle = colors.ink; ctx.lineWidth = 2 * dpr; const s = 6 * dpr;
+      ctx.beginPath(); ctx.moveTo(X(gx) - s, Y(gy) - s); ctx.lineTo(X(gx) + s, Y(gy) + s); ctx.moveTo(X(gx) + s, Y(gy) - s); ctx.lineTo(X(gx) - s, Y(gy) + s); ctx.stroke();
+      ctx.fillStyle = colors.ink; ctx.fillText("GOAL", X(gx) + 10 * dpr, Y(gy) + 4 * dpr);
+    }
+    // assigned slots
+    ctx.setLineDash([3 * dpr, 3 * dpr]); ctx.strokeStyle = colors.slot; ctx.lineWidth = 1.3 * dpr;
+    sc.ids.forEach((id) => {
+      const se = sc.se[id][f], sn = sc.sn[id][f];
+      if (se == null || !pts[id]) return;
+      ctx.beginPath(); ctx.arc(X(se / 10), Y(sn / 10), Math.max(5, 1.2 * ppm) * dpr, 0, Math.PI * 2); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    // trails (last 10 s)
+    sc.ids.forEach((id) => {
+      if (!pts[id]) return;
+      ctx.strokeStyle = colors.line; ctx.lineWidth = 1.5 * dpr; ctx.beginPath();
+      let started = false;
+      for (let k = Math.max(0, f - 40); k <= f; k += 2) {
+        const e = sc.e[id][k]; if (e == null) { started = false; continue; }
+        const x = X(e / 10), y = Y(sc.n[id][k] / 10);
+        if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    });
+    // lost drones: red cross where last seen, for 20 s
+    sc.ids.forEach((id, k) => {
+      if (roles[k] !== "X") return;
+      const ls = lastSeen(id, t); if (!ls || t - ls[2] > 20) return;
+      const x = X(ls[0]), y = Y(ls[1]), s = 6 * dpr;
+      ctx.strokeStyle = colors.alert; ctx.lineWidth = 2.2 * dpr;
+      ctx.beginPath(); ctx.moveTo(x - s, y - s); ctx.lineTo(x + s, y + s); ctx.moveTo(x + s, y - s); ctx.lineTo(x - s, y + s); ctx.stroke();
+      ctx.fillStyle = colors.alert; ctx.fillText(`${id} lost`, x + 9 * dpr, y - 7 * dpr);
+    });
+    // drones: 2.5 m halo (half the 5 m minimum separation) + body
+    Object.entries(pts).forEach(([id, d]) => {
+      const x = X(d.p[0]), y = Y(d.p[1]);
+      const col = d.r === "M" ? colors.master : d.r === "T" ? colors.transit : d.r === "O" ? colors.orphan : d.r === "R" ? colors["ink-3"] : colors.follower;
+      ctx.globalAlpha = 0.14; ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(x, y, 2.5 * ppm * dpr, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(x, y, 5.5 * dpr, 0, Math.PI * 2);
+      if (d.r === "T" || d.r === "O" || d.r === "R") { ctx.lineWidth = 2.4 * dpr; ctx.strokeStyle = col; ctx.fillStyle = colors["panel-2"]; ctx.fill(); ctx.stroke(); }
+      else { ctx.fillStyle = col; ctx.fill(); }
+      if (d.r === "M") { ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = col; ctx.beginPath(); ctx.arc(x, y, 9 * dpr, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.fillStyle = colors.ink; ctx.fillText(id, x + 10 * dpr, y + 4 * dpr);
+    });
+    drawAlt(pts);
+    updatePanel(f, pts);
+  }
+
+  function drawAlt(pts) {
+    const { w, h, dpr } = fitCanvas(altc), ctx = actx;
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, altc.width, altc.height);
+    const top = 10, bottom = h - 18, left = 26, right = w - 6, maxA = sc.fence_alt;
+    const Yv = (a) => (bottom - (a / maxA) * (bottom - top)) * dpr;
+    ctx.font = `${10.5 * dpr}px monospace`; ctx.fillStyle = colors["ink-3"]; ctx.strokeStyle = colors.grid; ctx.lineWidth = dpr;
+    [[0, "0"], [sc.cruise_alt, `${sc.cruise_alt}`], [maxA, `${maxA}`]].forEach(([a, lab]) => {
+      ctx.beginPath(); ctx.moveTo(left * dpr, Yv(a)); ctx.lineTo(right * dpr, Yv(a)); ctx.stroke();
+      ctx.fillText(lab, 2 * dpr, Yv(a) + 4 * dpr);
+    });
+    ctx.fillText("fence", (right - 30) * dpr, Yv(maxA) + 11 * dpr);
+    const n = sc.ids.length, slot = (right - left) / n, bw = Math.min(14, slot * 0.6);
+    sc.ids.forEach((id, k) => {
+      const cx = left + slot * (k + 0.5), d = pts[id];
+      ctx.fillStyle = colors["ink-2"]; ctx.fillText(String(id), (cx - 4) * dpr, (h - 4) * dpr);
+      if (!d) return;
+      const col = d.r === "M" ? colors.master : d.r === "T" ? colors.transit : d.r === "O" ? colors.orphan : colors.follower;
+      ctx.fillStyle = col;
+      const y = Yv(Math.min(maxA, Math.max(0, d.p[2])));
+      ctx.fillRect((cx - bw / 2) * dpr, y, bw * dpr, Yv(0) - y);
+    });
+  }
+
+  function updatePanel(f, pts) {
+    const ph = sc.phase[f], m = sc.master[f];
+    $("phase").textContent = PHASES[ph] || "\u2014";
+    const alive = sc.role[f].split("").filter((c) => c !== "X").length;
+    $("alive").innerHTML = `${alive}<small> / ${sc.ids.length}</small>`;
+    $("master").innerHTML = m ? `Drone ${m} <small>\u00b7 term ${sc.term[f]}</small>` : `none <small>\u00b7 electing, followers hover</small>`;
+    const r = sc.rms[f];
+    $("rms").innerHTML = r >= 0 ? `${(r / 100).toFixed(2)} m<span class="chip ${r < 200 ? "ok" : "bad"}">${r < 200 ? "under 2 m" : "over 2 m"}</span>`
+                                : `\u2014<span class="chip idle">cruise only</span>`;
+    const air = Object.entries(pts).filter(([, d]) => d.p[2] > 1.0);
+    let best = Infinity, pair = null;
+    for (let i = 0; i < air.length; i++) for (let j = i + 1; j < air.length; j++) {
+      const a = air[i][1].p, b = air[j][1].p, dd = Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+      if (dd < best) { best = dd; pair = [air[i][0], air[j][0]]; }
+    }
+    $("sep").innerHTML = pair ? `${best.toFixed(1)} m <small>(${pair[0]}\u2013${pair[1]})</small><span class="chip ${best >= 5 ? "ok" : "bad"}">${best >= 5 ? "\u2265 5 m" : "under 5 m"}</span>`
+                              : `\u2014<span class="chip idle">on ground</span>`;
+    const north = m && pts[m] ? pts[m].p[1] : null;
+    if (north != null) { const pct = Math.max(0, Math.min(100, (north / sc.goal[1]) * 100)); $("pin").style.left = pct + "%"; $("fill").style.width = pct + "%"; }
+    $("clock").textContent = `${t.toFixed(1)} s / ${((sc.frames - 1) * sc.dt).toFixed(0)} s`;
+    $("scrub").value = String(Math.round(frameAt(t)));
+    document.querySelectorAll("#events li").forEach((li) => li.classList.toggle("future", Number(li.dataset.t) > t));
+  }
+
+  function loadScenario(k) {
+    si = k; sc = DATA.scenarios[k]; cam = null;
+    t = sc.start_frame * sc.dt;
+    $("subtitle").textContent = sc.subtitle;
+    $("scrub").max = String(sc.frames - 1);
+    ["tab0", "tab1"].forEach((id, j) => $(id).setAttribute("aria-selected", String(j === k)));
+    const ol = $("events"); ol.innerHTML = "";
+    sc.events.slice().reverse().forEach(([et, kind, text]) => {
+      const li = document.createElement("li"); li.className = kind; li.dataset.t = et;
+      li.innerHTML = `<span class="t">${et.toFixed(1)} s</span><span class="m"></span>`;
+      li.querySelector(".m").textContent = text; ol.appendChild(li);
+    });
+    draw();
+  }
+
+  $("tab0").addEventListener("click", () => loadScenario(0));
+  $("tab1").addEventListener("click", () => loadScenario(1));
+  $("tab1").textContent = DATA.scenarios[1].name;
+  const setPlaying = (p) => { playing = p; $("play").textContent = p ? "Pause" : "Play"; last = null; };
+  $("play").addEventListener("click", () => setPlaying(!playing));
+  document.querySelectorAll(".speed button").forEach((b) => b.addEventListener("click", () => {
+    speed = Number(b.dataset.speed);
+    document.querySelectorAll(".speed button").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+  }));
+  $("scrub").addEventListener("input", (ev) => { t = Number(ev.target.value) * sc.dt; cam = null; draw(); });
+  document.addEventListener("keydown", (ev) => { if (ev.code === "Space" && ev.target.tagName !== "BUTTON") { ev.preventDefault(); setPlaying(!playing); } });
+  new ResizeObserver(() => draw()).observe(scope);
+
+  function tick(now) {
+    if (playing) {
+      if (last != null) {
+        t += ((now - last) / 1000) * speed;
+        const end = (sc.frames - 1) * sc.dt;
+        if (t >= end) { t = end; setPlaying(false); }
+      }
+      last = now;
+      draw();
+    }
+    requestAnimationFrame(tick);
+  }
+  setPlaying(playing);
+  loadScenario(0);
+  requestAnimationFrame(tick);
+})();
+</script>

@@ -1,0 +1,113 @@
+{
+  "n": 10,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n10e",
+  "fault": "",
+  "loss_pct": null,
+  "latency_ms": null,
+  "jitter_ms": null,
+  "available_mb_before": 4647,
+  "t_sim_ready_s": 14.0,
+  "result": "COMPLETED",
+  "mission_wall_s": 303.5,
+  "killed": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 102.4,
+    "mavros": 1021.8
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 67.8,
+      "max": 95.7,
+      "min": 63.0
+    },
+    "cpu_px4_pct_core": {
+      "mean": 69.9,
+      "max": 75.6,
+      "min": 64.3
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 54.7,
+      "max": 94.0,
+      "min": 45.9
+    },
+    "cpu_agents_pct_core": {
+      "mean": 91.7,
+      "max": 110.5,
+      "min": 84.2
+    },
+    "cpu_tools_pct_core": {
+      "mean": 24.3,
+      "max": 27.6,
+      "min": 21.0
+    },
+    "rss_agents_mb": {
+      "mean": 1027.5,
+      "max": 1027.9,
+      "min": 1026.7
+    },
+    "mem_available_mb": {
+      "mean": 3518.4,
+      "max": 3546,
+      "min": 3410
+    },
+    "load1": {
+      "mean": 18.0,
+      "max": 24.1,
+      "min": 12.6
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 98.4,
+      "max": 100.0,
+      "min": 88.6
+    },
+    "cpu_px4_pct_core": {
+      "mean": 66.1,
+      "max": 70.4,
+      "min": 60.1
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 127.9,
+      "max": 161.8,
+      "min": 63.5
+    },
+    "cpu_agents_pct_core": {
+      "mean": 133.2,
+      "max": 219.1,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 30.9,
+      "max": 42.0,
+      "min": 20.4
+    },
+    "rss_agents_mb": {
+      "mean": 676.1,
+      "max": 1024.8,
+      "min": 165.5
+    },
+    "mem_available_mb": {
+      "mean": 3607.8,
+      "max": 3896,
+      "min": 3490
+    },
+    "load1": {
+      "mean": 8.4,
+      "max": 18.5,
+      "min": 5.1
+    }
+  }
+}

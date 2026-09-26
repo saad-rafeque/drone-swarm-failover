@@ -1,0 +1,65 @@
+{
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n3b",
+  "drones": [
+    1,
+    2,
+    3
+  ],
+  "samples": 8548,
+  "duration_s": 286.1,
+  "phase_start_s": {
+    "TAKEOFF": 3.6,
+    "CRUISE": 23.6,
+    "HOLD": 238.0,
+    "LAND": 248.0
+  },
+  "master_changes": [
+    [
+      3.6,
+      1,
+      1
+    ]
+  ],
+  "max_simultaneous_masters": 1,
+  "time_to_goal_s": 214.4,
+  "formation_rms_cruise_m": {
+    "mean": 0.724,
+    "p95": 1.529,
+    "max": 1.826,
+    "samples": 2144,
+    "t_of_max_s": 39.2
+  },
+  "min_separation_m": 8.215,
+  "min_separation_pair": [
+    1,
+    3
+  ],
+  "min_separation_t_s": 238.9,
+  "final": {
+    "1": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 1.4,
+      "ok": true,
+      "last_t_s": 286.0,
+      "reporting_at_end": true
+    },
+    "3": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 9.0,
+      "ok": true,
+      "last_t_s": 286.1,
+      "reporting_at_end": true
+    },
+    "2": {
+      "landed": true,
+      "retired": false,
+      "dist_to_target_m": 8.7,
+      "ok": true,
+      "last_t_s": 286.0,
+      "reporting_at_end": true
+    }
+  },
+  "goal_reached_all": true
+}

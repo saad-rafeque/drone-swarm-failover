@@ -1,0 +1,18 @@
+[INFO] [launch]: All log files can be found below /home/saad-rafique/.ros/log/2026-09-26-12-07-41-106102-Ubuntu-IdeaPad-82993
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [link_emulator-1]: process started with pid [82996]
+[INFO] [swarm_logger-2]: process started with pid [82997]
+[INFO] [swarm_agent_1-3]: process started with pid [82998]
+[INFO] [swarm_agent_2-4]: process started with pid [82999]
+[INFO] [swarm_agent_3-5]: process started with pid [83000]
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [swarm_agent_3-5]: sending signal 'SIGINT' to process[swarm_agent_3-5]
+[INFO] [swarm_agent_2-4]: sending signal 'SIGINT' to process[swarm_agent_2-4]
+[INFO] [swarm_agent_1-3]: sending signal 'SIGINT' to process[swarm_agent_1-3]
+[INFO] [swarm_logger-2]: sending signal 'SIGINT' to process[swarm_logger-2]
+[INFO] [link_emulator-1]: sending signal 'SIGINT' to process[link_emulator-1]
+[ERROR] [swarm_agent_3-5]: process has died [pid 83000, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 3 --num-drones 3'].
+[ERROR] [swarm_agent_2-4]: process has died [pid 82999, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 2 --num-drones 3'].
+[ERROR] [swarm_logger-2]: process has died [pid 82997, exit code -2, cmd '/usr/bin/python3 -m swarm_tools.logger_node --num-drones 3 --run-dir /home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n3'].
+[ERROR] [swarm_agent_1-3]: process has died [pid 82998, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 1 --num-drones 3'].
+[ERROR] [link_emulator-1]: process has died [pid 82996, exit code -2, cmd '/usr/bin/python3 -m swarm_tools.link_emulator --num-drones 3 --run-dir /home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n3'].

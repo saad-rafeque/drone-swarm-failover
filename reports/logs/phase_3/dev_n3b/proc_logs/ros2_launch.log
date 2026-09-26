@@ -1,0 +1,29 @@
+[INFO] [launch]: All log files can be found below /home/saad-rafique/.ros/log/2026-09-26-12-15-45-657920-Ubuntu-IdeaPad-84973
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [link_emulator-1]: process started with pid [84976]
+[INFO] [swarm_logger-2]: process started with pid [84977]
+[INFO] [swarm_agent_1-3]: process started with pid [84978]
+[INFO] [swarm_agent_2-4]: process started with pid [84979]
+[INFO] [swarm_agent_3-5]: process started with pid [84980]
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [swarm_agent_3-5]: sending signal 'SIGINT' to process[swarm_agent_3-5]
+[INFO] [swarm_agent_2-4]: sending signal 'SIGINT' to process[swarm_agent_2-4]
+[INFO] [swarm_agent_1-3]: sending signal 'SIGINT' to process[swarm_agent_1-3]
+[INFO] [swarm_logger-2]: sending signal 'SIGINT' to process[swarm_logger-2]
+[INFO] [link_emulator-1]: sending signal 'SIGINT' to process[link_emulator-1]
+[swarm_agent_3-5] Traceback (most recent call last):
+[swarm_agent_3-5]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_3-5]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_3-5]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 228, in <module>
+[swarm_agent_3-5]     sys.exit(main())
+[swarm_agent_3-5]              ^^^^^^
+[swarm_agent_3-5]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 221, in main
+[swarm_agent_3-5]     node.destroy_node()
+[swarm_agent_3-5]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[swarm_agent_3-5]     self.__node.destroy_when_not_in_use()
+[swarm_agent_3-5] KeyboardInterrupt
+[ERROR] [swarm_logger-2]: process has died [pid 84977, exit code -2, cmd '/usr/bin/python3 -m swarm_tools.logger_node --num-drones 3 --run-dir /home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n3b'].
+[ERROR] [swarm_agent_2-4]: process has died [pid 84979, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 2 --num-drones 3'].
+[ERROR] [swarm_agent_1-3]: process has died [pid 84978, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 1 --num-drones 3'].
+[ERROR] [link_emulator-1]: process has died [pid 84976, exit code -2, cmd '/usr/bin/python3 -m swarm_tools.link_emulator --num-drones 3 --run-dir /home/saad-rafique/Documents/drone swarm/reports/logs/phase_3/dev_n3b'].
+[ERROR] [swarm_agent_3-5]: process has died [pid 84980, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 3 --num-drones 3'].

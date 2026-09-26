@@ -32,6 +32,7 @@ class OriginCfg:
 class MissionCfg:
     cruise_alt_m: float
     cruise_speed_mps: float
+    cruise_accel_mps2: float
     goal_enu_m: tuple[float, float]
     goal_radius_m: float
     hover_at_goal_s: float
@@ -65,6 +66,7 @@ class HeartbeatCfg:
     master_timeout_s: float
     peer_timeout_s: float
     handover_timeout_s: float
+    fcu_timeout_s: float
 
 
 @dataclass(frozen=True)
@@ -92,7 +94,14 @@ class SetpointCfg:
 @dataclass(frozen=True)
 class LinkCfg:
     latency_ms: float
+    jitter_ms: float
     loss_pct: float
+    seed: int
+
+
+@dataclass(frozen=True)
+class LoggingCfg:
+    rate_hz: float
 
 
 @dataclass(frozen=True)
@@ -114,7 +123,9 @@ class Config:
     battery: BatteryCfg
     safety: SafetyCfg
     setpoints: SetpointCfg
+    autopilot_streams_hz: dict[str, float]
     link_emulator: LinkCfg
+    logging: LoggingCfg
     sim: SimCfg
 
     @property
@@ -150,6 +161,10 @@ def _build(cls: type, data: Any, where: str) -> Any:
         value = data[name]
         if dataclasses.is_dataclass(hint):
             kwargs[name] = _build(hint, value, f"{where}.{name}")
+        elif typing.get_origin(hint) is dict:
+            if not isinstance(value, dict):
+                raise ConfigError(f"{where}.{name}: expected a mapping")
+            kwargs[name] = {str(k): float(v) for k, v in value.items()}
         elif typing.get_origin(hint) is tuple:
             args = typing.get_args(hint)
             if not isinstance(value, (list, tuple)) or len(value) != len(args):

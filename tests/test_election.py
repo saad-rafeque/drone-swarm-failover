@@ -257,3 +257,27 @@ def test_latency_does_not_break_convergence():
     took = bus.run_until(lambda: bus.masters() == [2] and all(
         bus.elections[i].master_id == 2 for i in (3, 4)), timeout=5.0)
     assert took < 3.0
+
+
+def test_first_election_waits_for_whole_fleet_so_lowest_id_wins():
+    """Agents boot seconds apart (PX4 runs showed this): drone 1 last must still become master."""
+    bus = make_bus([1, 2, 3], boot={1: 4.0, 2: 0.0, 3: 0.0})
+    for e in bus.elections.values():
+        e.expected_ids, e.startup_timeout = frozenset({1, 2, 3}) - {e.my_id}, 30.0
+    bus.dead.add(1)
+    bus.run(4.0)                       # 2 and 3 are up, 1 is not: nobody claims yet
+    assert bus.masters() == []
+    bus.dead.discard(1)
+    bus.run(4.0)
+    assert bus.masters() == [1]
+
+
+def test_first_election_proceeds_after_startup_timeout_without_missing_drone():
+    bus = make_bus([1, 2, 3])
+    for e in bus.elections.values():
+        e.expected_ids, e.startup_timeout = frozenset({1, 2, 3}) - {e.my_id}, 10.0
+    bus.dead.add(1)                    # drone 1 never starts
+    bus.run(9.0)
+    assert bus.masters() == []
+    bus.run(2.0)
+    assert bus.masters() == [2]
