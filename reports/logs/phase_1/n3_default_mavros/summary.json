@@ -1,0 +1,124 @@
+{
+  "n": 3,
+  "ids": [
+    1,
+    2,
+    3
+  ],
+  "available_mb_before": 3183,
+  "px4_work_dir": "/tmp/swarm_sim/20260926-105815",
+  "criteria": {
+    "all_armed_took_off_to_10m": true,
+    "hover_30s": true,
+    "all_landed_disarmed": true,
+    "no_process_crash": true,
+    "distinct_spawn_positions": true
+  },
+  "t_all_connected_s": 2.5,
+  "spawn": {
+    "1": {
+      "intended_en": [
+        0.0,
+        0.0
+      ],
+      "measured_en": [
+        -0.01,
+        0.12
+      ],
+      "error_m": 0.12
+    },
+    "2": {
+      "intended_en": [
+        -7.07,
+        -7.07
+      ],
+      "measured_en": [
+        -7.03,
+        -7.1
+      ],
+      "error_m": 0.05
+    },
+    "3": {
+      "intended_en": [
+        7.07,
+        -7.07
+      ],
+      "measured_en": [
+        7.08,
+        -7.12
+      ],
+      "error_m": 0.05
+    }
+  },
+  "spawn_max_error_m": 0.12,
+  "spawn_min_pair_distance_m": 10.07,
+  "t_arm_to_all_at_alt_s": 13.8,
+  "armed_at_s": {
+    "1": 9.5,
+    "2": 9.6,
+    "3": 10.5
+  },
+  "hover_actual_s": 30.0,
+  "hover_alt_range_m": {
+    "1": [
+      9.809,
+      10.176
+    ],
+    "2": [
+      9.778,
+      10.129
+    ],
+    "3": [
+      9.723,
+      10.062
+    ]
+  },
+  "hover_min_pair_distance_m": 9.11,
+  "t_land_to_all_disarmed_s": 23.1,
+  "landed_state_final": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+  },
+  "processes_dead_before_stop": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 30.8,
+    "mavros": 482.9,
+    "total": 513.7,
+    "per_drone": 171.2
+  },
+  "min_available_mb": 2867,
+  "cpu_hover": {
+    "cpu_system_pct": {
+      "mean": 44.1,
+      "max": 46.7
+    },
+    "cpu_px4_pct_core": {
+      "mean": 25.0,
+      "max": 27.0
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 84.7,
+      "max": 92.9
+    },
+    "cpu_harness_pct_core": {
+      "mean": 37.4,
+      "max": 39.9
+    },
+    "load1": {
+      "mean": 4.2,
+      "max": 4.7
+    }
+  },
+  "cpu_whole_run": {
+    "cpu_system_pct": {
+      "mean": 50.6,
+      "max": 99.8
+    },
+    "load1": {
+      "mean": 3.5,
+      "max": 4.7
+    }
+  },
+  "result": "PASS"
+}

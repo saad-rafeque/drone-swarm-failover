@@ -7,7 +7,8 @@ Verified sources (see reports/PHASE_0.md / PHASE_1.md):
   * Home: PX4_HOME_LAT/LON/ALT -> SIH_LOC_LAT0/LON0/H0 (px4-rc.sihsim).
   * Offboard MAVLink link of instance n: PX4 listens on UDP 14580+n and sends to 14540+n
     (px4-rc.mavlink); MAV_SYS_ID = n+1 (rcS).
-  * MAVROS: mavros_node with px4_pluginlists.yaml + px4_config.yaml (mavros px4.launch).
+  * MAVROS: mavros_node with px4_config.yaml as in mavros px4.launch, but our own lean plugin
+    list (config/mavros_pluginlists.yaml) instead of px4_pluginlists.yaml.
 """
 from __future__ import annotations
 
@@ -109,8 +110,9 @@ class SimLauncher:
     repo path has one); a fresh timestamped dir per run, so nothing is ever deleted there.
     Process logs go to log_dir inside the repo."""
     cfg: Config
-    homes: dict[int, GeoPoint]
+    homes: dict[int, GeoPoint | None]   # None: leave PX4's default home (diagnostics only)
     log_dir: Path = field(default_factory=lambda: REPO_ROOT / ".sim")
+    pluginlists: Path = field(default_factory=lambda: REPO_ROOT / "config" / "mavros_pluginlists.yaml")
     procs: dict[int, DroneProcs] = field(default_factory=dict)
     work_dir: Path = field(init=False)
 
@@ -130,12 +132,12 @@ class SimLauncher:
         workdir.mkdir(parents=True)
         home = self.homes[drone_id]
         env = dict(os.environ)
-        env.update(
-            PX4_SIM_MODEL=self.cfg.sim.model,
-            PX4_HOME_LAT=f"{home.lat_deg:.9f}",
-            PX4_HOME_LON=f"{home.lon_deg:.9f}",
-            PX4_HOME_ALT=f"{home.alt_m:.3f}",
-        )
+        env["PX4_SIM_MODEL"] = self.cfg.sim.model
+        for key in ("PX4_HOME_LAT", "PX4_HOME_LON", "PX4_HOME_ALT"):
+            env.pop(key, None)
+        if home is not None:
+            env.update(PX4_HOME_LAT=f"{home.lat_deg:.9f}", PX4_HOME_LON=f"{home.lon_deg:.9f}",
+                       PX4_HOME_ALT=f"{home.alt_m:.3f}")
         log = open(self.log_dir / f"px4_{drone_id}.log", "w", encoding="utf-8")
         proc = subprocess.Popen(
             [str(build / "bin" / "px4"), "-i", str(instance_of(self.cfg, drone_id)), "-d", str(build / "etc")],
@@ -151,7 +153,10 @@ class SimLauncher:
         args = [
             str(MAVROS_NODE), "--ros-args",
             "-r", f"__ns:={namespace_of(drone_id)}",
-            "--params-file", str(MAVROS_SHARE / "px4_pluginlists.yaml"),
+            # Keep TF and parameter-event traffic inside this drone's namespace, so N instances
+            # don't all process each other's events (O(N^2) CPU, see config/mavros_pluginlists.yaml).
+            "-r", "/tf:=tf", "-r", "/tf_static:=tf_static", "-r", "/parameter_events:=parameter_events",
+            "--params-file", str(self.pluginlists),
             "--params-file", str(MAVROS_SHARE / "px4_config.yaml"),
             "-p", f"fcu_url:={url}",
             "-p", f"tgt_system:={sysid_of(self.cfg, drone_id)}",

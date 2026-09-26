@@ -1,0 +1,160 @@
+{
+  "n": 5,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "available_mb_before": 3902,
+  "px4_work_dir": "/tmp/swarm_sim/20260926-111057",
+  "criteria": {
+    "all_armed_took_off_to_10m": true,
+    "hover_30s": true,
+    "all_landed_disarmed": true,
+    "no_process_crash": true,
+    "distinct_spawn_positions": true
+  },
+  "t_all_connected_s": 2.4,
+  "spawn": {
+    "1": {
+      "intended_en": [
+        0.0,
+        0.0
+      ],
+      "measured_en": [
+        0.02,
+        0.1
+      ],
+      "error_m": 0.1
+    },
+    "2": {
+      "intended_en": [
+        -7.07,
+        -7.07
+      ],
+      "measured_en": [
+        -7.07,
+        -7.08
+      ],
+      "error_m": 0.01
+    },
+    "3": {
+      "intended_en": [
+        7.07,
+        -7.07
+      ],
+      "measured_en": [
+        7.07,
+        -7.08
+      ],
+      "error_m": 0.01
+    },
+    "4": {
+      "intended_en": [
+        -14.14,
+        -14.14
+      ],
+      "measured_en": [
+        -14.16,
+        -14.32
+      ],
+      "error_m": 0.18
+    },
+    "5": {
+      "intended_en": [
+        14.14,
+        -14.14
+      ],
+      "measured_en": [
+        14.13,
+        -14.33
+      ],
+      "error_m": 0.19
+    }
+  },
+  "spawn_max_error_m": 0.19,
+  "spawn_min_pair_distance_m": 10.06,
+  "t_arm_to_all_at_alt_s": 13.3,
+  "armed_at_s": {
+    "1": 11.5,
+    "2": 11.5,
+    "3": 11.5,
+    "4": 11.5,
+    "5": 12.5
+  },
+  "hover_actual_s": 30.0,
+  "hover_alt_range_m": {
+    "1": [
+      9.839,
+      10.092
+    ],
+    "2": [
+      9.752,
+      10.105
+    ],
+    "3": [
+      9.9,
+      10.118
+    ],
+    "4": [
+      9.904,
+      10.124
+    ],
+    "5": [
+      9.701,
+      10.16
+    ]
+  },
+  "hover_min_pair_distance_m": 9.0,
+  "t_land_to_all_disarmed_s": 23.5,
+  "landed_state_final": {
+    "1": 1,
+    "2": 1,
+    "3": 1,
+    "4": 1,
+    "5": 1
+  },
+  "processes_dead_before_stop": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 51.4,
+    "mavros": 445.0,
+    "total": 496.4,
+    "per_drone": 99.3
+  },
+  "min_available_mb": 3516,
+  "cpu_hover": {
+    "cpu_system_pct": {
+      "mean": 41.2,
+      "max": 45.7
+    },
+    "cpu_px4_pct_core": {
+      "mean": 38.9,
+      "max": 41.8
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 44.6,
+      "max": 49.6
+    },
+    "cpu_harness_pct_core": {
+      "mean": 52.1,
+      "max": 56.2
+    },
+    "load1": {
+      "mean": 4.1,
+      "max": 4.6
+    }
+  },
+  "cpu_whole_run": {
+    "cpu_system_pct": {
+      "mean": 42.3,
+      "max": 83.5
+    },
+    "load1": {
+      "mean": 3.8,
+      "max": 4.6
+    }
+  },
+  "result": "PASS"
+}

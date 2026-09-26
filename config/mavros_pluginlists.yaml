@@ -1,0 +1,20 @@
+# MAVROS plugin selection for swarm agents (used instead of mavros/launch/px4_pluginlists.yaml).
+# Only the plugins an agent needs are loaded. With the default ~25 plugins each MAVROS instance
+# runs ~27 ROS nodes whose /parameter_events traffic reaches every other instance, and per-instance
+# CPU grew from 17.8 % (N=1) to 65.7 % of a core (N=5) while idle (reports/PHASE_1.md).
+#   sys_status        mavros/state, extended_state, battery, set_mode
+#   sys_time          time sync with the FCU
+#   command           cmd/arming, cmd/command
+#   local_position    local_position/pose, velocity_local
+#   global_position   global_position/global, rel_alt
+#   setpoint_velocity setpoint_velocity/cmd_vel
+/**:
+  ros__parameters:
+    plugin_denylist: ["*"]
+    plugin_allowlist:
+      - sys_status
+      - sys_time
+      - command
+      - local_position
+      - global_position
+      - setpoint_velocity

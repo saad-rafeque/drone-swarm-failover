@@ -1,0 +1,771 @@
+[INFO] [1790402447.463018046] [uav4.mavros_node]: Starting mavros_node container
+[INFO] [1790402447.463355929] [uav4.mavros_node]: FCU URL: udp://:14543@127.0.0.1:14583
+[INFO] [1790402447.463769968] [uav4.mavros_node]: GCS URL: 
+[INFO] [1790402447.463783843] [uav4.mavros_node]: UAS Prefix: /uas4
+[INFO] [1790402447.463789784] [uav4.mavros_node]: Starting mavros router node
+[INFO] [1790402447.499405027] [uav4.mavros_router]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790402447.499483804] [uav4.mavros_router]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790402447.499496277] [uav4.mavros_router]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790402447.499503872] [uav4.mavros_router]: MAVROS Router started
+[INFO] [1790402447.500036293] [uav4.mavros_node]: Starting mavros uas node
+[INFO] [1790402447.622084823] [uav4.mavros_router]: Requested to add endpoint: type: 0, url: udp://:14543@127.0.0.1:14583
+[INFO] [1790402447.622229640] [uav4.mavros_router]: Endpoint link[1000] created
+[INFO] [1790402447.622550087] [uav4.mavros_router]: link[1000] opened successfully
+[INFO] [1790402447.622578981] [uav4.mavros_router]: Requested to add endpoint: type: 2, url: /uas4
+[INFO] [1790402447.622594328] [uav4.mavros_router]: Endpoint link[1001] created
+[INFO] [1790402447.626352043] [uav4.mavros_router]: link[1001] opened successfully
+[INFO] [1790402447.632163021] [uav4.mavros_router]: link[1000] detected remote address 4.1
+[WARN] [1790402447.633721535] [uav4.mavros]: plugin_denylist pattern 'image_pub' does not match any declared plugin
+[WARN] [1790402447.633776677] [uav4.mavros]: plugin_denylist pattern 'vibration' does not match any declared plugin
+[WARN] [1790402447.633785397] [uav4.mavros]: plugin_denylist pattern 'distance_sensor' does not match any declared plugin
+[WARN] [1790402447.633792613] [uav4.mavros]: plugin_denylist pattern 'rangefinder' does not match any declared plugin
+[WARN] [1790402447.633799460] [uav4.mavros]: plugin_denylist pattern 'wheel_odometry' does not match any declared plugin
+[INFO] [1790402447.635386008] [uav4.mavros]: UAS Executor started, threads: 4
+[INFO] [1790402447.706662623] [uav4.mavros]: Plugin actuator_control created
+[INFO] [1790402447.706906836] [uav4.mavros]: Plugin actuator_control initialized
+[INFO] [1790402447.775930063] [uav4.mavros]: Plugin altitude created
+[INFO] [1790402447.776003604] [uav4.mavros]: Plugin altitude initialized
+[INFO] [1790402447.994678789] [uav4.mavros]: Plugin command created
+[INFO] [1790402447.994737655] [uav4.mavros]: Plugin command initialized
+[INFO] [1790402448.039031299] [uav4.mavros]: Plugin ftp created
+[INFO] [1790402448.039098558] [uav4.mavros]: Plugin ftp initialized
+[INFO] [1790402448.084687337] [uav4.mavros]: Plugin geofence created
+[INFO] [1790402448.084751924] [uav4.mavros]: Plugin geofence initialized
+[INFO] [1790402448.192135443] [uav4.mavros]: Plugin global_position created
+[INFO] [1790402448.192213722] [uav4.mavros]: Plugin global_position initialized
+[INFO] [1790402448.313405739] [uav4.mavros]: Plugin home_position created
+[INFO] [1790402448.313465117] [uav4.mavros]: Plugin home_position initialized
+[INFO] [1790402448.471721730] [uav4.mavros]: Plugin imu created
+[INFO] [1790402448.471793089] [uav4.mavros]: Plugin imu initialized
+[INFO] [1790402448.592079691] [uav4.mavros]: Plugin local_position created
+[INFO] [1790402448.592172460] [uav4.mavros]: Plugin local_position initialized
+[INFO] [1790402448.785508740] [uav4.mavros]: Plugin manual_control created
+[INFO] [1790402448.785572055] [uav4.mavros]: Plugin manual_control initialized
+[INFO] [1790402448.945049072] [uav4.mavros]: Plugin nav_controller_output created
+[INFO] [1790402448.945117870] [uav4.mavros]: Plugin nav_controller_output initialized
+[INFO] [1790402449.049742890] [uav4.mavros]: Plugin param created
+[INFO] [1790402449.049981329] [uav4.mavros]: Plugin param initialized
+[INFO] [1790402449.220026820] [uav4.mavros]: Plugin rallypoint created
+[INFO] [1790402449.220250761] [uav4.mavros]: Plugin rallypoint initialized
+[INFO] [1790402449.437508766] [uav4.mavros]: Plugin rc_io created
+[INFO] [1790402449.437593700] [uav4.mavros]: Plugin rc_io initialized
+[INFO] [1790402449.607032361] [uav4.mavros]: Plugin setpoint_accel created
+[INFO] [1790402449.607107960] [uav4.mavros]: Plugin setpoint_accel initialized
+[INFO] [1790402449.678405608] [uav4.mavros]: Plugin setpoint_attitude created
+[INFO] [1790402449.678461235] [uav4.mavros]: Plugin setpoint_attitude initialized
+[INFO] [1790402449.823316381] [uav4.mavros]: Plugin setpoint_position created
+[INFO] [1790402449.823377640] [uav4.mavros]: Plugin setpoint_position initialized
+[INFO] [1790402449.904896948] [uav4.mavros]: Plugin setpoint_raw created
+[INFO] [1790402449.904954426] [uav4.mavros]: Plugin setpoint_raw initialized
+[INFO] [1790402450.096611274] [uav4.mavros]: Plugin setpoint_trajectory created
+[INFO] [1790402450.096705622] [uav4.mavros]: Plugin setpoint_trajectory initialized
+[INFO] [1790402450.377351552] [uav4.mavros]: Plugin setpoint_velocity created
+[INFO] [1790402450.377416322] [uav4.mavros]: Plugin setpoint_velocity initialized
+[INFO] [1790402451.005580328] [uav4.mavros]: Plugin sys_status created
+[INFO] [1790402451.006790068] [uav4.mavros]: Plugin sys_status initialized
+[INFO] [1790402451.241493621] [uav4.mavros.time]: TM: Timesync mode: MAVLINK
+[INFO] [1790402451.288824904] [uav4.mavros]: Plugin sys_time created
+[INFO] [1790402451.288952067] [uav4.mavros]: Plugin sys_time initialized
+[INFO] [1790402451.843984746] [uav4.mavros]: Plugin waypoint created
+[INFO] [1790402451.844089745] [uav4.mavros]: Plugin waypoint initialized
+[INFO] [1790402452.210602951] [uav4.mavros]: Plugin wind_estimation created
+[INFO] [1790402452.210679399] [uav4.mavros]: Plugin wind_estimation initialized
+[INFO] [1790402452.236440026] [uav4.mavros]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790402452.236493542] [uav4.mavros]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790402452.236500739] [uav4.mavros]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790402452.236508867] [uav4.mavros]: MAVROS UAS via /uas4 started. MY ID 4.191, TARGET ID 4.1
+[INFO] [1790402452.247082485] [uav4.mavros_router]: link[1001] detected remote address 4.191
+[INFO] [1790402452.247207045] [uav4.mavros.imu]: IMU: High resolution IMU detected!
+[INFO] [1790402452.249831007] [uav4.mavros.imu]: IMU: Attitude quaternion IMU detected!
+[INFO] [1790402452.362537676] [uav4.mavros]: CON: Got HEARTBEAT, connected. FCU: PX4 Autopilot
+[INFO] [1790402452.362649466] [uav4.mavros.mission]: WP: detected enable_partial_push: 0
+[INFO] [1790402452.362752012] [uav4.mavros.imu]: IMU: High resolution IMU detected!
+[INFO] [1790402452.363026625] [uav4.mavros.imu]: IMU: Attitude quaternion IMU detected!
+[WARN] [1790402452.465841191] [uav4.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402452.471698709] [uav4.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402452.471804386] [uav4.mavros.sys]: FCU: EVENT 453929 with args -255-255-255-255-7-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402452.471870629] [uav4.mavros.sys]: FCU: EVENT 6801787 with args -255-255-255-255-12-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402452.471920551] [uav4.mavros.sys]: FCU: UNK(8): EVENT 1914663 with args -0-10-13-2-56-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402453.394517353] [uav4.mavros.geofence]: GF: Using MISSION_ITEM_INT
+[INFO] [1790402453.394595907] [uav4.mavros.rallypoint]: RP: Using MISSION_ITEM_INT
+[INFO] [1790402453.394607395] [uav4.mavros.mission]: WP: Using MISSION_ITEM_INT
+[INFO] [1790402453.394617927] [uav4.mavros.sys]: VER: 4.1: Capabilities         0x000000000000e8ff
+[INFO] [1790402453.394641087] [uav4.mavros.sys]: VER: 4.1: Flight software:     011200c0 (fca3df865a000000)
+[INFO] [1790402453.394647882] [uav4.mavros.sys]: VER: 4.1: Middleware software: 011200c0 (fca3df865a000000)
+[INFO] [1790402453.394653824] [uav4.mavros.sys]: VER: 4.1: OS software:         070000ff (17040b9f87cb1791)
+[INFO] [1790402453.394659884] [uav4.mavros.sys]: VER: 4.1: Board hardware:      00000001
+[INFO] [1790402453.394920362] [uav4.mavros.sys]: VER: 4.1: VID/PID:             0000:0000
+[INFO] [1790402453.395530229] [uav4.mavros.sys]: VER: 4.1: UID:                 4954414c44494e52
+[WARN] [1790402453.398378052] [uav4.mavros.cmd]: CMD: Unexpected command 512, result 0
+[INFO] [1790402457.506481838] [uav4.mavros.sys]: FCU: EVENT 9489139 with args -4-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402459.340692725] [uav4.mavros.sys]: FCU: EVENT 4277609 with args -0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402466.943071485] [uav4.mavros.param]: PR: request param #103 timeout, retries left 2, and 635 params still missing
+[WARN] [1790402468.008761160] [uav4.mavros.param]: PR: request param #103 timeout, retries left 1, and 635 params still missing
+[INFO] [1790402468.467652277] [uav4.mavros.mission]: WP: mission received
+[INFO] [1790402468.512746797] [uav4.mavros.mission]: WP: seems GCS requesting mission
+[INFO] [1790402468.512964291] [uav4.mavros.mission]: WP: scheduling pull after GCS is done
+[INFO] [1790402468.592395891] [uav4.mavros.mission]: WP: seems GCS requesting mission
+[INFO] [1790402468.594783147] [uav4.mavros.mission]: WP: scheduling pull after GCS is done
+[INFO] [1790402468.611300921] [uav4.mavros.param]: PR: got an unsolicited param value idx=103, not resetting retries count 3
+[INFO] [1790402468.786017229] [uav4.mavros.mission]: WP: seems GCS requesting mission
+[INFO] [1790402468.786092429] [uav4.mavros.mission]: WP: scheduling pull after GCS is done
+[INFO] [1790402468.884076011] [uav4.mavros.param]: PR: got an unsolicited param value idx=104, not resetting retries count 3
+[INFO] [1790402468.945198661] [uav4.mavros.param]: PR: got an unsolicited param value idx=105, not resetting retries count 3
+[INFO] [1790402468.988072533] [uav4.mavros.param]: PR: got an unsolicited param value idx=107, not resetting retries count 3
+[INFO] [1790402469.016670276] [uav4.mavros.param]: PR: got an unsolicited param value idx=108, not resetting retries count 3
+[INFO] [1790402469.064562373] [uav4.mavros.param]: PR: got an unsolicited param value idx=109, not resetting retries count 3
+[INFO] [1790402469.120330570] [uav4.mavros.param]: PR: got an unsolicited param value idx=110, not resetting retries count 3
+[INFO] [1790402469.180815597] [uav4.mavros.param]: PR: got an unsolicited param value idx=111, not resetting retries count 3
+[INFO] [1790402469.248387493] [uav4.mavros.param]: PR: got an unsolicited param value idx=112, not resetting retries count 3
+[INFO] [1790402469.292288241] [uav4.mavros.param]: PR: got an unsolicited param value idx=113, not resetting retries count 3
+[INFO] [1790402469.335824522] [uav4.mavros.param]: PR: got an unsolicited param value idx=114, not resetting retries count 3
+[INFO] [1790402469.415244968] [uav4.mavros.param]: PR: got an unsolicited param value idx=115, not resetting retries count 3
+[INFO] [1790402469.481567040] [uav4.mavros.param]: PR: got an unsolicited param value idx=116, not resetting retries count 3
+[INFO] [1790402469.542717573] [uav4.mavros.param]: PR: got an unsolicited param value idx=117, not resetting retries count 3
+[INFO] [1790402469.581669192] [uav4.mavros.param]: PR: got an unsolicited param value idx=118, not resetting retries count 3
+[INFO] [1790402469.623039629] [uav4.mavros.param]: PR: got an unsolicited param value idx=119, not resetting retries count 3
+[INFO] [1790402469.639876520] [uav4.mavros.param]: PR: got an unsolicited param value idx=120, not resetting retries count 3
+[INFO] [1790402469.689997462] [uav4.mavros.param]: PR: got an unsolicited param value idx=121, not resetting retries count 3
+[INFO] [1790402469.741219305] [uav4.mavros.param]: PR: got an unsolicited param value idx=122, not resetting retries count 3
+[INFO] [1790402469.817027450] [uav4.mavros.param]: PR: got an unsolicited param value idx=123, not resetting retries count 3
+[INFO] [1790402469.886387179] [uav4.mavros.param]: PR: got an unsolicited param value idx=124, not resetting retries count 3
+[INFO] [1790402469.922843395] [uav4.mavros.param]: PR: got an unsolicited param value idx=125, not resetting retries count 3
+[INFO] [1790402469.981137673] [uav4.mavros.param]: PR: got an unsolicited param value idx=127, not resetting retries count 3
+[INFO] [1790402470.018510481] [uav4.mavros.param]: PR: got an unsolicited param value idx=128, not resetting retries count 3
+[INFO] [1790402470.064703973] [uav4.mavros.param]: PR: got an unsolicited param value idx=129, not resetting retries count 3
+[INFO] [1790402470.121221801] [uav4.mavros.param]: PR: got an unsolicited param value idx=130, not resetting retries count 3
+[INFO] [1790402470.146600909] [uav4.mavros.param]: PR: got an unsolicited param value idx=131, not resetting retries count 3
+[INFO] [1790402470.177135185] [uav4.mavros.param]: PR: got an unsolicited param value idx=132, not resetting retries count 3
+[INFO] [1790402470.220580740] [uav4.mavros.param]: PR: got an unsolicited param value idx=133, not resetting retries count 3
+[INFO] [1790402470.253090687] [uav4.mavros.param]: PR: got an unsolicited param value idx=134, not resetting retries count 3
+[INFO] [1790402470.299948912] [uav4.mavros.param]: PR: got an unsolicited param value idx=135, not resetting retries count 3
+[INFO] [1790402470.342960949] [uav4.mavros.param]: PR: got an unsolicited param value idx=136, not resetting retries count 3
+[INFO] [1790402470.368913234] [uav4.mavros.param]: PR: got an unsolicited param value idx=137, not resetting retries count 3
+[INFO] [1790402470.460914654] [uav4.mavros.param]: PR: got an unsolicited param value idx=138, not resetting retries count 3
+[INFO] [1790402470.523609831] [uav4.mavros.param]: PR: got an unsolicited param value idx=139, not resetting retries count 3
+[INFO] [1790402470.601643377] [uav4.mavros.param]: PR: got an unsolicited param value idx=140, not resetting retries count 3
+[INFO] [1790402470.712173483] [uav4.mavros.param]: PR: got an unsolicited param value idx=141, not resetting retries count 3
+[INFO] [1790402470.827685843] [uav4.mavros.param]: PR: got an unsolicited param value idx=142, not resetting retries count 3
+[INFO] [1790402470.945405233] [uav4.mavros.param]: PR: got an unsolicited param value idx=143, not resetting retries count 3
+[INFO] [1790402471.075390691] [uav4.mavros.param]: PR: got an unsolicited param value idx=144, not resetting retries count 3
+[INFO] [1790402471.124677333] [uav4.mavros.param]: PR: got an unsolicited param value idx=145, not resetting retries count 3
+[INFO] [1790402471.206451166] [uav4.mavros.param]: PR: got an unsolicited param value idx=146, not resetting retries count 3
+[INFO] [1790402471.246388965] [uav4.mavros.param]: PR: got an unsolicited param value idx=147, not resetting retries count 3
+[INFO] [1790402471.266640965] [uav4.mavros.param]: PR: got an unsolicited param value idx=148, not resetting retries count 3
+[INFO] [1790402471.304063743] [uav4.mavros.param]: PR: got an unsolicited param value idx=149, not resetting retries count 3
+[INFO] [1790402471.329824236] [uav4.mavros.param]: PR: got an unsolicited param value idx=150, not resetting retries count 3
+[INFO] [1790402471.365097755] [uav4.mavros.param]: PR: got an unsolicited param value idx=151, not resetting retries count 3
+[INFO] [1790402471.401329109] [uav4.mavros.param]: PR: got an unsolicited param value idx=152, not resetting retries count 3
+[INFO] [1790402471.418736378] [uav4.mavros.param]: PR: got an unsolicited param value idx=153, not resetting retries count 3
+[INFO] [1790402471.433806088] [uav4.mavros.param]: PR: got an unsolicited param value idx=154, not resetting retries count 3
+[INFO] [1790402471.451104543] [uav4.mavros.param]: PR: got an unsolicited param value idx=155, not resetting retries count 3
+[INFO] [1790402471.461166736] [uav4.mavros.param]: PR: got an unsolicited param value idx=156, not resetting retries count 3
+[INFO] [1790402471.503514425] [uav4.mavros.param]: PR: got an unsolicited param value idx=157, not resetting retries count 3
+[INFO] [1790402471.566416086] [uav4.mavros.param]: PR: got an unsolicited param value idx=159, not resetting retries count 3
+[INFO] [1790402471.577692987] [uav4.mavros.param]: PR: got an unsolicited param value idx=160, not resetting retries count 3
+[INFO] [1790402471.588377366] [uav4.mavros.param]: PR: got an unsolicited param value idx=161, not resetting retries count 3
+[INFO] [1790402471.616323509] [uav4.mavros.param]: PR: got an unsolicited param value idx=162, not resetting retries count 3
+[INFO] [1790402471.642850795] [uav4.mavros.param]: PR: got an unsolicited param value idx=163, not resetting retries count 3
+[INFO] [1790402471.676765610] [uav4.mavros.param]: PR: got an unsolicited param value idx=164, not resetting retries count 3
+[INFO] [1790402471.711251870] [uav4.mavros.param]: PR: got an unsolicited param value idx=165, not resetting retries count 3
+[INFO] [1790402471.717404496] [uav4.mavros.param]: PR: got an unsolicited param value idx=166, not resetting retries count 3
+[INFO] [1790402471.744879005] [uav4.mavros.param]: PR: got an unsolicited param value idx=167, not resetting retries count 3
+[INFO] [1790402471.805707297] [uav4.mavros.param]: PR: got an unsolicited param value idx=168, not resetting retries count 3
+[INFO] [1790402471.856192976] [uav4.mavros.param]: PR: got an unsolicited param value idx=169, not resetting retries count 3
+[INFO] [1790402471.912579449] [uav4.mavros.param]: PR: got an unsolicited param value idx=170, not resetting retries count 3
+[INFO] [1790402472.012595231] [uav4.mavros.param]: PR: got an unsolicited param value idx=171, not resetting retries count 3
+[INFO] [1790402472.062850038] [uav4.mavros.param]: PR: got an unsolicited param value idx=172, not resetting retries count 3
+[INFO] [1790402472.091429088] [uav4.mavros.param]: PR: got an unsolicited param value idx=173, not resetting retries count 3
+[INFO] [1790402472.115446070] [uav4.mavros.param]: PR: got an unsolicited param value idx=174, not resetting retries count 3
+[INFO] [1790402472.143137870] [uav4.mavros.param]: PR: got an unsolicited param value idx=175, not resetting retries count 3
+[INFO] [1790402472.182560791] [uav4.mavros.param]: PR: got an unsolicited param value idx=176, not resetting retries count 3
+[INFO] [1790402472.212616663] [uav4.mavros.param]: PR: got an unsolicited param value idx=177, not resetting retries count 3
+[INFO] [1790402472.243076338] [uav4.mavros.param]: PR: got an unsolicited param value idx=178, not resetting retries count 3
+[INFO] [1790402472.334827825] [uav4.mavros.param]: PR: got an unsolicited param value idx=179, not resetting retries count 3
+[INFO] [1790402472.392800452] [uav4.mavros.param]: PR: got an unsolicited param value idx=180, not resetting retries count 3
+[INFO] [1790402472.423875579] [uav4.mavros.param]: PR: got an unsolicited param value idx=181, not resetting retries count 3
+[INFO] [1790402472.455258037] [uav4.mavros.param]: PR: got an unsolicited param value idx=182, not resetting retries count 3
+[INFO] [1790402472.509565156] [uav4.mavros.param]: PR: got an unsolicited param value idx=183, not resetting retries count 3
+[INFO] [1790402472.518734002] [uav4.mavros.rallypoint]: RP: mission received
+[INFO] [1790402472.522174248] [uav4.mavros.param]: PR: got an unsolicited param value idx=184, not resetting retries count 3
+[INFO] [1790402472.528589531] [uav4.mavros.param]: PR: got an unsolicited param value idx=185, not resetting retries count 3
+[INFO] [1790402472.542335630] [uav4.mavros.param]: PR: got an unsolicited param value idx=186, not resetting retries count 3
+[INFO] [1790402472.569425268] [uav4.mavros.param]: PR: got an unsolicited param value idx=187, not resetting retries count 3
+[INFO] [1790402472.602306105] [uav4.mavros.param]: PR: got an unsolicited param value idx=188, not resetting retries count 3
+[INFO] [1790402472.619449494] [uav4.mavros.param]: PR: got an unsolicited param value idx=189, not resetting retries count 3
+[INFO] [1790402472.680973079] [uav4.mavros.param]: PR: got an unsolicited param value idx=190, not resetting retries count 3
+[INFO] [1790402472.721616624] [uav4.mavros.param]: PR: got an unsolicited param value idx=191, not resetting retries count 3
+[INFO] [1790402472.738171397] [uav4.mavros.param]: PR: got an unsolicited param value idx=192, not resetting retries count 3
+[INFO] [1790402472.759899422] [uav4.mavros.param]: PR: got an unsolicited param value idx=193, not resetting retries count 3
+[INFO] [1790402472.783783721] [uav4.mavros.param]: PR: got an unsolicited param value idx=195, not resetting retries count 3
+[INFO] [1790402472.811531591] [uav4.mavros.param]: PR: got an unsolicited param value idx=196, not resetting retries count 3
+[INFO] [1790402472.840582435] [uav4.mavros.param]: PR: got an unsolicited param value idx=197, not resetting retries count 3
+[INFO] [1790402472.882862514] [uav4.mavros.param]: PR: got an unsolicited param value idx=198, not resetting retries count 3
+[INFO] [1790402472.928460540] [uav4.mavros.param]: PR: got an unsolicited param value idx=200, not resetting retries count 3
+[INFO] [1790402472.989968777] [uav4.mavros.param]: PR: got an unsolicited param value idx=201, not resetting retries count 3
+[INFO] [1790402473.020421239] [uav4.mavros.param]: PR: got an unsolicited param value idx=202, not resetting retries count 3
+[INFO] [1790402473.047834866] [uav4.mavros.param]: PR: got an unsolicited param value idx=203, not resetting retries count 3
+[INFO] [1790402473.110190416] [uav4.mavros.param]: PR: got an unsolicited param value idx=204, not resetting retries count 3
+[INFO] [1790402473.161920439] [uav4.mavros.param]: PR: got an unsolicited param value idx=205, not resetting retries count 3
+[INFO] [1790402473.208087914] [uav4.mavros.param]: PR: got an unsolicited param value idx=206, not resetting retries count 3
+[INFO] [1790402473.225524801] [uav4.mavros.param]: PR: got an unsolicited param value idx=207, not resetting retries count 3
+[INFO] [1790402473.234884598] [uav4.mavros.param]: PR: got an unsolicited param value idx=208, not resetting retries count 3
+[INFO] [1790402473.276418284] [uav4.mavros.param]: PR: got an unsolicited param value idx=209, not resetting retries count 3
+[INFO] [1790402473.330368794] [uav4.mavros.param]: PR: got an unsolicited param value idx=210, not resetting retries count 3
+[INFO] [1790402473.409791114] [uav4.mavros.param]: PR: got an unsolicited param value idx=211, not resetting retries count 3
+[INFO] [1790402473.458836233] [uav4.mavros.param]: PR: got an unsolicited param value idx=212, not resetting retries count 3
+[INFO] [1790402473.499354878] [uav4.mavros.param]: PR: got an unsolicited param value idx=214, not resetting retries count 3
+[INFO] [1790402473.535341948] [uav4.mavros.param]: PR: got an unsolicited param value idx=215, not resetting retries count 3
+[INFO] [1790402473.612005314] [uav4.mavros.param]: PR: got an unsolicited param value idx=218, not resetting retries count 3
+[INFO] [1790402473.701563652] [uav4.mavros.param]: PR: got an unsolicited param value idx=223, not resetting retries count 3
+[INFO] [1790402473.767870452] [uav4.mavros.param]: PR: got an unsolicited param value idx=224, not resetting retries count 3
+[INFO] [1790402473.801961557] [uav4.mavros.param]: PR: got an unsolicited param value idx=225, not resetting retries count 3
+[INFO] [1790402473.849861552] [uav4.mavros.param]: PR: got an unsolicited param value idx=226, not resetting retries count 3
+[INFO] [1790402473.910803320] [uav4.mavros.mission]: WP: mission received
+[INFO] [1790402473.935309092] [uav4.mavros.param]: PR: got an unsolicited param value idx=227, not resetting retries count 3
+[INFO] [1790402473.992438508] [uav4.mavros.param]: PR: got an unsolicited param value idx=228, not resetting retries count 3
+[INFO] [1790402474.062404681] [uav4.mavros.param]: PR: got an unsolicited param value idx=229, not resetting retries count 3
+[INFO] [1790402474.188374088] [uav4.mavros.param]: PR: got an unsolicited param value idx=230, not resetting retries count 3
+[INFO] [1790402474.269632337] [uav4.mavros.param]: PR: got an unsolicited param value idx=231, not resetting retries count 3
+[INFO] [1790402474.351376422] [uav4.mavros.param]: PR: got an unsolicited param value idx=232, not resetting retries count 3
+[INFO] [1790402474.385852959] [uav4.mavros.param]: PR: got an unsolicited param value idx=236, not resetting retries count 3
+[INFO] [1790402474.405820336] [uav4.mavros.param]: PR: got an unsolicited param value idx=237, not resetting retries count 3
+[INFO] [1790402474.413353380] [uav4.mavros.param]: PR: got an unsolicited param value idx=240, not resetting retries count 3
+[INFO] [1790402474.427257731] [uav4.mavros.param]: PR: got an unsolicited param value idx=243, not resetting retries count 3
+[INFO] [1790402474.437511061] [uav4.mavros.param]: PR: got an unsolicited param value idx=244, not resetting retries count 3
+[INFO] [1790402474.465019165] [uav4.mavros.param]: PR: got an unsolicited param value idx=245, not resetting retries count 3
+[INFO] [1790402474.472744201] [uav4.mavros.param]: PR: got an unsolicited param value idx=246, not resetting retries count 3
+[INFO] [1790402474.477382400] [uav4.mavros.param]: PR: got an unsolicited param value idx=247, not resetting retries count 3
+[INFO] [1790402474.483081983] [uav4.mavros.param]: PR: got an unsolicited param value idx=248, not resetting retries count 3
+[INFO] [1790402474.488637720] [uav4.mavros.param]: PR: got an unsolicited param value idx=249, not resetting retries count 3
+[INFO] [1790402474.494546042] [uav4.mavros.param]: PR: got an unsolicited param value idx=250, not resetting retries count 3
+[INFO] [1790402474.525848356] [uav4.mavros.param]: PR: got an unsolicited param value idx=251, not resetting retries count 3
+[INFO] [1790402474.544681073] [uav4.mavros.param]: PR: got an unsolicited param value idx=252, not resetting retries count 3
+[INFO] [1790402474.555211002] [uav4.mavros.param]: PR: got an unsolicited param value idx=253, not resetting retries count 3
+[INFO] [1790402474.563976583] [uav4.mavros.param]: PR: got an unsolicited param value idx=254, not resetting retries count 3
+[INFO] [1790402474.580555314] [uav4.mavros.param]: PR: got an unsolicited param value idx=255, not resetting retries count 3
+[INFO] [1790402474.620504181] [uav4.mavros.param]: PR: got an unsolicited param value idx=256, not resetting retries count 3
+[INFO] [1790402474.648068133] [uav4.mavros.param]: PR: got an unsolicited param value idx=257, not resetting retries count 3
+[INFO] [1790402474.689210871] [uav4.mavros.param]: PR: got an unsolicited param value idx=258, not resetting retries count 3
+[INFO] [1790402474.751214114] [uav4.mavros.param]: PR: got an unsolicited param value idx=259, not resetting retries count 3
+[INFO] [1790402474.819139941] [uav4.mavros.param]: PR: got an unsolicited param value idx=260, not resetting retries count 3
+[INFO] [1790402474.937165636] [uav4.mavros.param]: PR: got an unsolicited param value idx=261, not resetting retries count 3
+[INFO] [1790402475.068560212] [uav4.mavros.param]: PR: got an unsolicited param value idx=262, not resetting retries count 3
+[INFO] [1790402475.149556406] [uav4.mavros.param]: PR: got an unsolicited param value idx=263, not resetting retries count 3
+[INFO] [1790402475.187913931] [uav4.mavros.param]: PR: got an unsolicited param value idx=264, not resetting retries count 3
+[INFO] [1790402475.212925179] [uav4.mavros.param]: PR: got an unsolicited param value idx=265, not resetting retries count 3
+[INFO] [1790402475.236067142] [uav4.mavros.param]: PR: got an unsolicited param value idx=266, not resetting retries count 3
+[INFO] [1790402475.252934333] [uav4.mavros.param]: PR: got an unsolicited param value idx=267, not resetting retries count 3
+[INFO] [1790402475.319695253] [uav4.mavros.param]: PR: got an unsolicited param value idx=268, not resetting retries count 3
+[INFO] [1790402475.398422051] [uav4.mavros.param]: PR: got an unsolicited param value idx=269, not resetting retries count 3
+[INFO] [1790402475.437513408] [uav4.mavros.param]: PR: got an unsolicited param value idx=270, not resetting retries count 3
+[INFO] [1790402475.473348618] [uav4.mavros.param]: PR: got an unsolicited param value idx=271, not resetting retries count 3
+[INFO] [1790402475.506595623] [uav4.mavros.param]: PR: got an unsolicited param value idx=274, not resetting retries count 3
+[INFO] [1790402475.534292997] [uav4.mavros.param]: PR: got an unsolicited param value idx=275, not resetting retries count 3
+[INFO] [1790402475.597642394] [uav4.mavros.param]: PR: got an unsolicited param value idx=278, not resetting retries count 3
+[INFO] [1790402475.633208033] [uav4.mavros.param]: PR: got an unsolicited param value idx=279, not resetting retries count 3
+[INFO] [1790402475.681415815] [uav4.mavros.param]: PR: got an unsolicited param value idx=280, not resetting retries count 3
+[INFO] [1790402475.711977955] [uav4.mavros.param]: PR: got an unsolicited param value idx=281, not resetting retries count 3
+[INFO] [1790402475.768271956] [uav4.mavros.param]: PR: got an unsolicited param value idx=282, not resetting retries count 3
+[INFO] [1790402475.852273856] [uav4.mavros.param]: PR: got an unsolicited param value idx=283, not resetting retries count 3
+[INFO] [1790402475.917161771] [uav4.mavros.param]: PR: got an unsolicited param value idx=285, not resetting retries count 3
+[INFO] [1790402475.949888174] [uav4.mavros.param]: PR: got an unsolicited param value idx=286, not resetting retries count 3
+[INFO] [1790402475.978372945] [uav4.mavros.param]: PR: got an unsolicited param value idx=287, not resetting retries count 3
+[INFO] [1790402475.993695021] [uav4.mavros.param]: PR: got an unsolicited param value idx=288, not resetting retries count 3
+[INFO] [1790402476.029081173] [uav4.mavros.param]: PR: got an unsolicited param value idx=289, not resetting retries count 3
+[INFO] [1790402476.069946567] [uav4.mavros.param]: PR: got an unsolicited param value idx=290, not resetting retries count 3
+[INFO] [1790402476.089364024] [uav4.mavros.param]: PR: got an unsolicited param value idx=291, not resetting retries count 3
+[INFO] [1790402476.130839604] [uav4.mavros.param]: PR: got an unsolicited param value idx=293, not resetting retries count 3
+[INFO] [1790402476.192919683] [uav4.mavros.param]: PR: got an unsolicited param value idx=294, not resetting retries count 3
+[INFO] [1790402476.276649024] [uav4.mavros.param]: PR: got an unsolicited param value idx=295, not resetting retries count 3
+[INFO] [1790402476.315165551] [uav4.mavros.param]: PR: got an unsolicited param value idx=296, not resetting retries count 3
+[INFO] [1790402476.359842355] [uav4.mavros.param]: PR: got an unsolicited param value idx=297, not resetting retries count 3
+[INFO] [1790402476.398442491] [uav4.mavros.param]: PR: got an unsolicited param value idx=298, not resetting retries count 3
+[INFO] [1790402476.421721558] [uav4.mavros.param]: PR: got an unsolicited param value idx=299, not resetting retries count 3
+[INFO] [1790402476.460761427] [uav4.mavros.param]: PR: got an unsolicited param value idx=301, not resetting retries count 3
+[INFO] [1790402476.521470534] [uav4.mavros.param]: PR: got an unsolicited param value idx=302, not resetting retries count 3
+[INFO] [1790402476.620405903] [uav4.mavros.param]: PR: got an unsolicited param value idx=303, not resetting retries count 3
+[INFO] [1790402476.733227184] [uav4.mavros.param]: PR: got an unsolicited param value idx=304, not resetting retries count 3
+[INFO] [1790402476.842061745] [uav4.mavros.param]: PR: got an unsolicited param value idx=305, not resetting retries count 3
+[INFO] [1790402476.883753282] [uav4.mavros.param]: PR: got an unsolicited param value idx=307, not resetting retries count 3
+[INFO] [1790402476.965629199] [uav4.mavros.param]: PR: got an unsolicited param value idx=308, not resetting retries count 3
+[INFO] [1790402477.077722187] [uav4.mavros.param]: PR: got an unsolicited param value idx=309, not resetting retries count 3
+[INFO] [1790402477.185325927] [uav4.mavros.param]: PR: got an unsolicited param value idx=310, not resetting retries count 3
+[INFO] [1790402477.268680972] [uav4.mavros.param]: PR: got an unsolicited param value idx=311, not resetting retries count 3
+[INFO] [1790402477.316025485] [uav4.mavros.param]: PR: got an unsolicited param value idx=312, not resetting retries count 3
+[INFO] [1790402477.374119709] [uav4.mavros.param]: PR: got an unsolicited param value idx=314, not resetting retries count 3
+[INFO] [1790402477.457615713] [uav4.mavros.param]: PR: got an unsolicited param value idx=315, not resetting retries count 3
+[INFO] [1790402477.461875081] [uav4.mavros.geofence]: GF: mission received
+[INFO] [1790402477.606444211] [uav4.mavros.param]: PR: got an unsolicited param value idx=316, not resetting retries count 3
+[INFO] [1790402477.780955156] [uav4.mavros.param]: PR: got an unsolicited param value idx=320, not resetting retries count 3
+[INFO] [1790402477.902245932] [uav4.mavros.param]: PR: got an unsolicited param value idx=322, not resetting retries count 3
+[INFO] [1790402478.073445175] [uav4.mavros.param]: PR: got an unsolicited param value idx=323, not resetting retries count 3
+[INFO] [1790402478.230647545] [uav4.mavros.param]: PR: got an unsolicited param value idx=324, not resetting retries count 3
+[INFO] [1790402478.423616787] [uav4.mavros.param]: PR: got an unsolicited param value idx=325, not resetting retries count 3
+[INFO] [1790402478.660839471] [uav4.mavros.param]: PR: got an unsolicited param value idx=326, not resetting retries count 3
+[INFO] [1790402478.940775071] [uav4.mavros.param]: PR: got an unsolicited param value idx=327, not resetting retries count 3
+[INFO] [1790402479.174910000] [uav4.mavros.param]: PR: got an unsolicited param value idx=328, not resetting retries count 3
+[INFO] [1790402479.299090204] [uav4.mavros.param]: PR: got an unsolicited param value idx=329, not resetting retries count 3
+[INFO] [1790402479.541917324] [uav4.mavros.param]: PR: got an unsolicited param value idx=330, not resetting retries count 3
+[INFO] [1790402479.622613905] [uav4.mavros.param]: PR: got an unsolicited param value idx=331, not resetting retries count 3
+[INFO] [1790402479.720845278] [uav4.mavros.param]: PR: got an unsolicited param value idx=332, not resetting retries count 3
+[INFO] [1790402479.768705383] [uav4.mavros.param]: PR: got an unsolicited param value idx=333, not resetting retries count 3
+[INFO] [1790402479.853119057] [uav4.mavros.param]: PR: got an unsolicited param value idx=334, not resetting retries count 3
+[INFO] [1790402479.947535764] [uav4.mavros.param]: PR: got an unsolicited param value idx=335, not resetting retries count 3
+[INFO] [1790402480.047345807] [uav4.mavros.param]: PR: got an unsolicited param value idx=336, not resetting retries count 3
+[INFO] [1790402480.118155683] [uav4.mavros.param]: PR: got an unsolicited param value idx=337, not resetting retries count 3
+[INFO] [1790402480.183803873] [uav4.mavros.param]: PR: got an unsolicited param value idx=349, not resetting retries count 3
+[INFO] [1790402480.200971289] [uav4.mavros.param]: PR: got an unsolicited param value idx=350, not resetting retries count 3
+[INFO] [1790402480.211576322] [uav4.mavros.param]: PR: got an unsolicited param value idx=351, not resetting retries count 3
+[INFO] [1790402480.230641814] [uav4.mavros.param]: PR: got an unsolicited param value idx=352, not resetting retries count 3
+[INFO] [1790402480.239488366] [uav4.mavros.param]: PR: got an unsolicited param value idx=353, not resetting retries count 3
+[INFO] [1790402480.278629210] [uav4.mavros.param]: PR: got an unsolicited param value idx=354, not resetting retries count 3
+[INFO] [1790402480.319028446] [uav4.mavros.param]: PR: got an unsolicited param value idx=355, not resetting retries count 3
+[INFO] [1790402480.350551355] [uav4.mavros.param]: PR: got an unsolicited param value idx=356, not resetting retries count 3
+[INFO] [1790402480.388347711] [uav4.mavros.param]: PR: got an unsolicited param value idx=357, not resetting retries count 3
+[INFO] [1790402480.431643828] [uav4.mavros.param]: PR: got an unsolicited param value idx=358, not resetting retries count 3
+[INFO] [1790402480.486478552] [uav4.mavros.param]: PR: got an unsolicited param value idx=359, not resetting retries count 3
+[INFO] [1790402480.563911487] [uav4.mavros.param]: PR: got an unsolicited param value idx=360, not resetting retries count 3
+[INFO] [1790402480.620911150] [uav4.mavros.param]: PR: got an unsolicited param value idx=362, not resetting retries count 3
+[INFO] [1790402480.647558336] [uav4.mavros.param]: PR: got an unsolicited param value idx=363, not resetting retries count 3
+[INFO] [1790402480.704130836] [uav4.mavros.param]: PR: got an unsolicited param value idx=364, not resetting retries count 3
+[INFO] [1790402480.777380337] [uav4.mavros.param]: PR: got an unsolicited param value idx=367, not resetting retries count 3
+[INFO] [1790402480.845451016] [uav4.mavros.param]: PR: got an unsolicited param value idx=369, not resetting retries count 3
+[INFO] [1790402480.951082960] [uav4.mavros.param]: PR: got an unsolicited param value idx=370, not resetting retries count 3
+[INFO] [1790402481.131523291] [uav4.mavros.param]: PR: got an unsolicited param value idx=371, not resetting retries count 3
+[INFO] [1790402481.164684310] [uav4.mavros.param]: PR: got an unsolicited param value idx=374, not resetting retries count 3
+[INFO] [1790402481.188323652] [uav4.mavros.param]: PR: got an unsolicited param value idx=375, not resetting retries count 3
+[INFO] [1790402481.200039530] [uav4.mavros.param]: PR: got an unsolicited param value idx=376, not resetting retries count 3
+[INFO] [1790402481.213383010] [uav4.mavros.param]: PR: got an unsolicited param value idx=378, not resetting retries count 3
+[INFO] [1790402481.254592566] [uav4.mavros.param]: PR: got an unsolicited param value idx=382, not resetting retries count 3
+[INFO] [1790402481.301170408] [uav4.mavros.param]: PR: got an unsolicited param value idx=383, not resetting retries count 3
+[INFO] [1790402481.346673021] [uav4.mavros.param]: PR: got an unsolicited param value idx=384, not resetting retries count 3
+[INFO] [1790402481.433932519] [uav4.mavros.param]: PR: got an unsolicited param value idx=385, not resetting retries count 3
+[INFO] [1790402481.586468211] [uav4.mavros.param]: PR: got an unsolicited param value idx=386, not resetting retries count 3
+[INFO] [1790402481.698873331] [uav4.mavros.param]: PR: got an unsolicited param value idx=387, not resetting retries count 3
+[INFO] [1790402481.814461666] [uav4.mavros.param]: PR: got an unsolicited param value idx=388, not resetting retries count 3
+[INFO] [1790402482.001541897] [uav4.mavros.param]: PR: got an unsolicited param value idx=389, not resetting retries count 3
+[INFO] [1790402482.196918656] [uav4.mavros.param]: PR: got an unsolicited param value idx=390, not resetting retries count 3
+[INFO] [1790402482.510053539] [uav4.mavros.param]: PR: got an unsolicited param value idx=391, not resetting retries count 3
+[INFO] [1790402482.695772907] [uav4.mavros.param]: PR: got an unsolicited param value idx=392, not resetting retries count 3
+[INFO] [1790402482.805529841] [uav4.mavros.param]: PR: got an unsolicited param value idx=393, not resetting retries count 3
+[INFO] [1790402482.952241017] [uav4.mavros.param]: PR: got an unsolicited param value idx=394, not resetting retries count 3
+[INFO] [1790402483.185878676] [uav4.mavros.param]: PR: got an unsolicited param value idx=395, not resetting retries count 3
+[INFO] [1790402483.414415967] [uav4.mavros.param]: PR: got an unsolicited param value idx=396, not resetting retries count 3
+[INFO] [1790402483.655513570] [uav4.mavros.param]: PR: got an unsolicited param value idx=397, not resetting retries count 3
+[INFO] [1790402483.880234881] [uav4.mavros.param]: PR: got an unsolicited param value idx=402, not resetting retries count 3
+[INFO] [1790402484.028832149] [uav4.mavros.param]: PR: got an unsolicited param value idx=403, not resetting retries count 3
+[INFO] [1790402484.107384207] [uav4.mavros.param]: PR: got an unsolicited param value idx=404, not resetting retries count 3
+[INFO] [1790402484.189968680] [uav4.mavros.param]: PR: got an unsolicited param value idx=405, not resetting retries count 3
+[INFO] [1790402484.291415660] [uav4.mavros.param]: PR: got an unsolicited param value idx=406, not resetting retries count 3
+[INFO] [1790402484.412812643] [uav4.mavros.param]: PR: got an unsolicited param value idx=407, not resetting retries count 3
+[INFO] [1790402484.505508835] [uav4.mavros.param]: PR: got an unsolicited param value idx=408, not resetting retries count 3
+[INFO] [1790402484.553233299] [uav4.mavros.param]: PR: got an unsolicited param value idx=411, not resetting retries count 3
+[INFO] [1790402484.615046444] [uav4.mavros.param]: PR: got an unsolicited param value idx=412, not resetting retries count 3
+[INFO] [1790402484.674744163] [uav4.mavros.param]: PR: got an unsolicited param value idx=413, not resetting retries count 3
+[INFO] [1790402484.740589865] [uav4.mavros.param]: PR: got an unsolicited param value idx=414, not resetting retries count 3
+[INFO] [1790402484.804270337] [uav4.mavros.param]: PR: got an unsolicited param value idx=415, not resetting retries count 3
+[INFO] [1790402484.873097522] [uav4.mavros.param]: PR: got an unsolicited param value idx=419, not resetting retries count 3
+[INFO] [1790402484.965809821] [uav4.mavros.param]: PR: got an unsolicited param value idx=420, not resetting retries count 3
+[INFO] [1790402485.053820050] [uav4.mavros.param]: PR: got an unsolicited param value idx=421, not resetting retries count 3
+[INFO] [1790402485.092125997] [uav4.mavros.param]: PR: got an unsolicited param value idx=422, not resetting retries count 3
+[INFO] [1790402485.134013641] [uav4.mavros.param]: PR: got an unsolicited param value idx=423, not resetting retries count 3
+[INFO] [1790402485.184522528] [uav4.mavros.param]: PR: got an unsolicited param value idx=424, not resetting retries count 3
+[INFO] [1790402485.219034655] [uav4.mavros.param]: PR: got an unsolicited param value idx=425, not resetting retries count 3
+[INFO] [1790402485.235604325] [uav4.mavros.param]: PR: got an unsolicited param value idx=426, not resetting retries count 3
+[INFO] [1790402485.255085860] [uav4.mavros.param]: PR: got an unsolicited param value idx=427, not resetting retries count 3
+[INFO] [1790402485.261511900] [uav4.mavros.param]: PR: got an unsolicited param value idx=431, not resetting retries count 3
+[INFO] [1790402485.266037011] [uav4.mavros.param]: PR: got an unsolicited param value idx=432, not resetting retries count 3
+[INFO] [1790402485.269747133] [uav4.mavros.param]: PR: got an unsolicited param value idx=435, not resetting retries count 3
+[INFO] [1790402485.282185487] [uav4.mavros.param]: PR: got an unsolicited param value idx=436, not resetting retries count 3
+[INFO] [1790402485.303720363] [uav4.mavros.param]: PR: got an unsolicited param value idx=437, not resetting retries count 3
+[INFO] [1790402485.309941244] [uav4.mavros.param]: PR: got an unsolicited param value idx=438, not resetting retries count 3
+[INFO] [1790402485.321219676] [uav4.mavros.param]: PR: got an unsolicited param value idx=441, not resetting retries count 3
+[INFO] [1790402485.378704991] [uav4.mavros.param]: PR: got an unsolicited param value idx=442, not resetting retries count 3
+[INFO] [1790402485.443006594] [uav4.mavros.param]: PR: got an unsolicited param value idx=443, not resetting retries count 3
+[INFO] [1790402485.480459170] [uav4.mavros.param]: PR: got an unsolicited param value idx=444, not resetting retries count 3
+[INFO] [1790402485.555621752] [uav4.mavros.param]: PR: got an unsolicited param value idx=446, not resetting retries count 3
+[INFO] [1790402485.621195546] [uav4.mavros.param]: PR: got an unsolicited param value idx=447, not resetting retries count 3
+[INFO] [1790402485.718692870] [uav4.mavros.param]: PR: got an unsolicited param value idx=448, not resetting retries count 3
+[INFO] [1790402485.863631071] [uav4.mavros.param]: PR: got an unsolicited param value idx=451, not resetting retries count 3
+[INFO] [1790402486.057268970] [uav4.mavros.param]: PR: got an unsolicited param value idx=452, not resetting retries count 3
+[INFO] [1790402486.244416226] [uav4.mavros.param]: PR: got an unsolicited param value idx=453, not resetting retries count 3
+[INFO] [1790402486.341058166] [uav4.mavros.param]: PR: got an unsolicited param value idx=454, not resetting retries count 3
+[INFO] [1790402486.417876622] [uav4.mavros.param]: PR: got an unsolicited param value idx=455, not resetting retries count 3
+[INFO] [1790402486.488315581] [uav4.mavros.param]: PR: got an unsolicited param value idx=456, not resetting retries count 3
+[INFO] [1790402486.556113403] [uav4.mavros.param]: PR: got an unsolicited param value idx=457, not resetting retries count 3
+[INFO] [1790402486.681145059] [uav4.mavros.param]: PR: got an unsolicited param value idx=458, not resetting retries count 3
+[INFO] [1790402486.738768593] [uav4.mavros.param]: PR: got an unsolicited param value idx=459, not resetting retries count 3
+[INFO] [1790402486.800634540] [uav4.mavros.param]: PR: got an unsolicited param value idx=460, not resetting retries count 3
+[INFO] [1790402486.863522446] [uav4.mavros.param]: PR: got an unsolicited param value idx=461, not resetting retries count 3
+[INFO] [1790402486.899658577] [uav4.mavros.param]: PR: got an unsolicited param value idx=462, not resetting retries count 3
+[INFO] [1790402486.971108303] [uav4.mavros.param]: PR: got an unsolicited param value idx=463, not resetting retries count 3
+[INFO] [1790402487.057051305] [uav4.mavros.param]: PR: got an unsolicited param value idx=464, not resetting retries count 3
+[INFO] [1790402487.134206331] [uav4.mavros.param]: PR: got an unsolicited param value idx=465, not resetting retries count 3
+[INFO] [1790402487.206684958] [uav4.mavros.param]: PR: got an unsolicited param value idx=466, not resetting retries count 3
+[INFO] [1790402487.261567157] [uav4.mavros.param]: PR: got an unsolicited param value idx=467, not resetting retries count 3
+[INFO] [1790402487.280317442] [uav4.mavros.param]: PR: got an unsolicited param value idx=469, not resetting retries count 3
+[INFO] [1790402487.300328098] [uav4.mavros.param]: PR: got an unsolicited param value idx=470, not resetting retries count 3
+[INFO] [1790402487.334987503] [uav4.mavros.param]: PR: got an unsolicited param value idx=471, not resetting retries count 3
+[INFO] [1790402487.383842195] [uav4.mavros.param]: PR: got an unsolicited param value idx=473, not resetting retries count 3
+[INFO] [1790402487.405263023] [uav4.mavros.param]: PR: got an unsolicited param value idx=474, not resetting retries count 3
+[INFO] [1790402487.433392483] [uav4.mavros.param]: PR: got an unsolicited param value idx=475, not resetting retries count 3
+[INFO] [1790402487.470374213] [uav4.mavros.param]: PR: got an unsolicited param value idx=476, not resetting retries count 3
+[INFO] [1790402487.496798642] [uav4.mavros.param]: PR: got an unsolicited param value idx=478, not resetting retries count 3
+[INFO] [1790402487.508803916] [uav4.mavros.param]: PR: got an unsolicited param value idx=479, not resetting retries count 3
+[INFO] [1790402487.523600870] [uav4.mavros.param]: PR: got an unsolicited param value idx=481, not resetting retries count 3
+[INFO] [1790402487.583216384] [uav4.mavros.param]: PR: got an unsolicited param value idx=484, not resetting retries count 3
+[INFO] [1790402487.695313182] [uav4.mavros.param]: PR: got an unsolicited param value idx=485, not resetting retries count 3
+[INFO] [1790402487.745878146] [uav4.mavros.param]: PR: got an unsolicited param value idx=486, not resetting retries count 3
+[INFO] [1790402487.780151515] [uav4.mavros.param]: PR: got an unsolicited param value idx=491, not resetting retries count 3
+[INFO] [1790402487.822626531] [uav4.mavros.param]: PR: got an unsolicited param value idx=492, not resetting retries count 3
+[INFO] [1790402487.877665768] [uav4.mavros.param]: PR: got an unsolicited param value idx=493, not resetting retries count 3
+[INFO] [1790402487.893651527] [uav4.mavros.param]: PR: got an unsolicited param value idx=494, not resetting retries count 3
+[INFO] [1790402487.917914496] [uav4.mavros.param]: PR: got an unsolicited param value idx=495, not resetting retries count 3
+[INFO] [1790402487.933574645] [uav4.mavros.param]: PR: got an unsolicited param value idx=496, not resetting retries count 3
+[INFO] [1790402487.957011857] [uav4.mavros.param]: PR: got an unsolicited param value idx=497, not resetting retries count 3
+[INFO] [1790402487.981490487] [uav4.mavros.param]: PR: got an unsolicited param value idx=498, not resetting retries count 3
+[INFO] [1790402488.004339354] [uav4.mavros.param]: PR: got an unsolicited param value idx=509, not resetting retries count 3
+[INFO] [1790402488.045699048] [uav4.mavros.param]: PR: got an unsolicited param value idx=510, not resetting retries count 3
+[INFO] [1790402488.080809475] [uav4.mavros.param]: PR: got an unsolicited param value idx=511, not resetting retries count 3
+[INFO] [1790402488.119953755] [uav4.mavros.param]: PR: got an unsolicited param value idx=513, not resetting retries count 3
+[INFO] [1790402488.149836628] [uav4.mavros.param]: PR: got an unsolicited param value idx=514, not resetting retries count 3
+[INFO] [1790402488.177187142] [uav4.mavros.param]: PR: got an unsolicited param value idx=515, not resetting retries count 3
+[INFO] [1790402488.214162039] [uav4.mavros.param]: PR: got an unsolicited param value idx=516, not resetting retries count 3
+[INFO] [1790402488.256396668] [uav4.mavros.param]: PR: got an unsolicited param value idx=517, not resetting retries count 3
+[INFO] [1790402488.289019668] [uav4.mavros.param]: PR: got an unsolicited param value idx=518, not resetting retries count 3
+[INFO] [1790402488.325008513] [uav4.mavros.param]: PR: got an unsolicited param value idx=519, not resetting retries count 3
+[WARN] [1790402488.346555069] [uav4.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-16-0-128-0-0-0-176-58-127-128-176-58-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790402488.346696195] [uav4.mavros.sys]: FCU: EVENT 11464574 with args -0-64-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402488.346798118] [uav4.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402488.346869359] [uav4.mavros.sys]: FCU: EVENT 453929 with args -255-255-255-255-7-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402488.346935439] [uav4.mavros.sys]: FCU: EVENT 6801787 with args -255-255-255-255-12-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402488.347003440] [uav4.mavros.sys]: FCU: UNK(8): EVENT 1914663 with args -0-10-13-2-56-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402488.357649334] [uav4.mavros.param]: PR: got an unsolicited param value idx=520, not resetting retries count 3
+[ERROR] [1790402488.380602480] [uav4.mavros.sys]: FCU: EVENT 14605264 with args -0-0-6-0-6-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402488.380751885] [uav4.mavros.sys]: FCU: EVENT 5383828 with args -242-1-0-0-10-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402488.402759128] [uav4.mavros.param]: PR: got an unsolicited param value idx=521, not resetting retries count 3
+[INFO] [1790402488.418798076] [uav4.mavros.sys]: FCU: EVENT 185258 with args -0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402488.433011874] [uav4.mavros.param]: PR: got an unsolicited param value idx=522, not resetting retries count 3
+[INFO] [1790402488.459592983] [uav4.mavros.param]: PR: got an unsolicited param value idx=523, not resetting retries count 3
+[INFO] [1790402488.483313046] [uav4.mavros.param]: PR: got an unsolicited param value idx=524, not resetting retries count 3
+[INFO] [1790402488.512187804] [uav4.mavros.param]: PR: got an unsolicited param value idx=528, not resetting retries count 3
+[INFO] [1790402488.565770134] [uav4.mavros.param]: PR: got an unsolicited param value idx=529, not resetting retries count 3
+[INFO] [1790402488.599048365] [uav4.mavros.param]: PR: got an unsolicited param value idx=532, not resetting retries count 3
+[INFO] [1790402488.637461729] [uav4.mavros.param]: PR: got an unsolicited param value idx=533, not resetting retries count 3
+[INFO] [1790402488.668710857] [uav4.mavros.param]: PR: got an unsolicited param value idx=534, not resetting retries count 3
+[INFO] [1790402488.722315466] [uav4.mavros.param]: PR: got an unsolicited param value idx=535, not resetting retries count 3
+[INFO] [1790402488.792031196] [uav4.mavros.param]: PR: got an unsolicited param value idx=536, not resetting retries count 3
+[INFO] [1790402488.846821374] [uav4.mavros.param]: PR: got an unsolicited param value idx=537, not resetting retries count 3
+[INFO] [1790402488.909817885] [uav4.mavros.param]: PR: got an unsolicited param value idx=540, not resetting retries count 3
+[INFO] [1790402488.931426894] [uav4.mavros.param]: PR: got an unsolicited param value idx=543, not resetting retries count 3
+[INFO] [1790402488.990983277] [uav4.mavros.param]: PR: got an unsolicited param value idx=544, not resetting retries count 3
+[INFO] [1790402489.015671115] [uav4.mavros.param]: PR: got an unsolicited param value idx=545, not resetting retries count 3
+[INFO] [1790402489.056974170] [uav4.mavros.param]: PR: got an unsolicited param value idx=546, not resetting retries count 3
+[INFO] [1790402489.124593833] [uav4.mavros.param]: PR: got an unsolicited param value idx=549, not resetting retries count 3
+[INFO] [1790402489.180638823] [uav4.mavros.param]: PR: got an unsolicited param value idx=550, not resetting retries count 3
+[INFO] [1790402489.212961954] [uav4.mavros.param]: PR: got an unsolicited param value idx=551, not resetting retries count 3
+[INFO] [1790402489.274961593] [uav4.mavros.param]: PR: got an unsolicited param value idx=552, not resetting retries count 3
+[INFO] [1790402489.319513705] [uav4.mavros.param]: PR: got an unsolicited param value idx=553, not resetting retries count 3
+[INFO] [1790402489.357603907] [uav4.mavros.param]: PR: got an unsolicited param value idx=554, not resetting retries count 3
+[INFO] [1790402489.385537678] [uav4.mavros.param]: PR: got an unsolicited param value idx=555, not resetting retries count 3
+[INFO] [1790402489.399929889] [uav4.mavros.param]: PR: got an unsolicited param value idx=556, not resetting retries count 3
+[INFO] [1790402489.434446699] [uav4.mavros.param]: PR: got an unsolicited param value idx=557, not resetting retries count 3
+[INFO] [1790402489.455682329] [uav4.mavros.param]: PR: got an unsolicited param value idx=558, not resetting retries count 3
+[INFO] [1790402489.473886428] [uav4.mavros.param]: PR: got an unsolicited param value idx=561, not resetting retries count 3
+[INFO] [1790402489.487900377] [uav4.mavros.param]: PR: got an unsolicited param value idx=562, not resetting retries count 3
+[INFO] [1790402489.512814807] [uav4.mavros.param]: PR: got an unsolicited param value idx=563, not resetting retries count 3
+[INFO] [1790402489.537646859] [uav4.mavros.param]: PR: got an unsolicited param value idx=565, not resetting retries count 3
+[INFO] [1790402489.572927645] [uav4.mavros.param]: PR: got an unsolicited param value idx=566, not resetting retries count 3
+[INFO] [1790402489.584676309] [uav4.mavros.param]: PR: got an unsolicited param value idx=567, not resetting retries count 3
+[INFO] [1790402489.610436475] [uav4.mavros.param]: PR: got an unsolicited param value idx=568, not resetting retries count 3
+[INFO] [1790402489.670096859] [uav4.mavros.param]: PR: got an unsolicited param value idx=569, not resetting retries count 3
+[INFO] [1790402489.701386595] [uav4.mavros.param]: PR: got an unsolicited param value idx=570, not resetting retries count 3
+[INFO] [1790402489.727569728] [uav4.mavros.param]: PR: got an unsolicited param value idx=571, not resetting retries count 3
+[INFO] [1790402489.754887814] [uav4.mavros.param]: PR: got an unsolicited param value idx=575, not resetting retries count 3
+[INFO] [1790402489.813545754] [uav4.mavros.param]: PR: got an unsolicited param value idx=576, not resetting retries count 3
+[INFO] [1790402489.849038625] [uav4.mavros.param]: PR: got an unsolicited param value idx=588, not resetting retries count 3
+[INFO] [1790402489.868872904] [uav4.mavros.param]: PR: got an unsolicited param value idx=589, not resetting retries count 3
+[INFO] [1790402489.887659335] [uav4.mavros.param]: PR: got an unsolicited param value idx=590, not resetting retries count 3
+[INFO] [1790402489.906402589] [uav4.mavros.param]: PR: got an unsolicited param value idx=591, not resetting retries count 3
+[INFO] [1790402489.946561140] [uav4.mavros.param]: PR: got an unsolicited param value idx=592, not resetting retries count 3
+[INFO] [1790402490.006737488] [uav4.mavros.param]: PR: got an unsolicited param value idx=593, not resetting retries count 3
+[INFO] [1790402490.071593224] [uav4.mavros.param]: PR: got an unsolicited param value idx=594, not resetting retries count 3
+[INFO] [1790402490.100002096] [uav4.mavros.param]: PR: got an unsolicited param value idx=595, not resetting retries count 3
+[INFO] [1790402490.122744313] [uav4.mavros.param]: PR: got an unsolicited param value idx=596, not resetting retries count 3
+[INFO] [1790402490.175049091] [uav4.mavros.param]: PR: got an unsolicited param value idx=597, not resetting retries count 3
+[INFO] [1790402490.241813576] [uav4.mavros.param]: PR: got an unsolicited param value idx=598, not resetting retries count 3
+[INFO] [1790402490.324019199] [uav4.mavros.param]: PR: got an unsolicited param value idx=599, not resetting retries count 3
+[INFO] [1790402490.359135372] [uav4.mavros.param]: PR: got an unsolicited param value idx=600, not resetting retries count 3
+[INFO] [1790402490.433386780] [uav4.mavros.param]: PR: got an unsolicited param value idx=601, not resetting retries count 3
+[INFO] [1790402490.481907252] [uav4.mavros.param]: PR: got an unsolicited param value idx=602, not resetting retries count 3
+[INFO] [1790402490.518212040] [uav4.mavros.param]: PR: got an unsolicited param value idx=603, not resetting retries count 3
+[INFO] [1790402490.572616486] [uav4.mavros.param]: PR: got an unsolicited param value idx=604, not resetting retries count 3
+[INFO] [1790402490.629352897] [uav4.mavros.param]: PR: got an unsolicited param value idx=629, not resetting retries count 3
+[INFO] [1790402490.673650328] [uav4.mavros.param]: PR: got an unsolicited param value idx=630, not resetting retries count 3
+[WARN] [1790402490.686491113] [uav4.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402490.686646868] [uav4.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402490.686744930] [uav4.mavros.sys]: FCU: EVENT 453929 with args -255-255-255-255-7-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402490.686837392] [uav4.mavros.sys]: FCU: EVENT 6801787 with args -255-255-255-255-12-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402490.686955027] [uav4.mavros.sys]: FCU: UNK(8): EVENT 1914663 with args -0-10-13-2-56-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402490.696585531] [uav4.mavros.param]: PR: got an unsolicited param value idx=631, not resetting retries count 3
+[INFO] [1790402490.715692534] [uav4.mavros.param]: PR: got an unsolicited param value idx=632, not resetting retries count 3
+[INFO] [1790402490.729933505] [uav4.mavros.param]: PR: got an unsolicited param value idx=633, not resetting retries count 3
+[INFO] [1790402490.757522488] [uav4.mavros.param]: PR: got an unsolicited param value idx=634, not resetting retries count 3
+[INFO] [1790402490.795483856] [uav4.mavros.param]: PR: got an unsolicited param value idx=635, not resetting retries count 3
+[INFO] [1790402490.811591105] [uav4.mavros.param]: PR: got an unsolicited param value idx=636, not resetting retries count 3
+[INFO] [1790402490.834575337] [uav4.mavros.param]: PR: got an unsolicited param value idx=637, not resetting retries count 3
+[INFO] [1790402490.861648207] [uav4.mavros.param]: PR: got an unsolicited param value idx=638, not resetting retries count 3
+[INFO] [1790402490.922441802] [uav4.mavros.param]: PR: got an unsolicited param value idx=653, not resetting retries count 3
+[INFO] [1790402490.944589462] [uav4.mavros.param]: PR: got an unsolicited param value idx=654, not resetting retries count 3
+[INFO] [1790402490.962070379] [uav4.mavros.param]: PR: got an unsolicited param value idx=655, not resetting retries count 3
+[INFO] [1790402490.964894165] [uav4.mavros.param]: PR: got an unsolicited param value idx=656, not resetting retries count 3
+[INFO] [1790402490.994865547] [uav4.mavros.param]: PR: got an unsolicited param value idx=657, not resetting retries count 3
+[INFO] [1790402491.029518085] [uav4.mavros.param]: PR: got an unsolicited param value idx=658, not resetting retries count 3
+[INFO] [1790402491.040699098] [uav4.mavros.param]: PR: got an unsolicited param value idx=659, not resetting retries count 3
+[INFO] [1790402491.052648539] [uav4.mavros.param]: PR: got an unsolicited param value idx=660, not resetting retries count 3
+[INFO] [1790402491.076952519] [uav4.mavros.param]: PR: got an unsolicited param value idx=661, not resetting retries count 3
+[INFO] [1790402491.114664430] [uav4.mavros.param]: PR: got an unsolicited param value idx=662, not resetting retries count 3
+[INFO] [1790402491.150968720] [uav4.mavros.param]: PR: got an unsolicited param value idx=663, not resetting retries count 3
+[INFO] [1790402491.172760764] [uav4.mavros.param]: PR: got an unsolicited param value idx=664, not resetting retries count 3
+[INFO] [1790402491.202537722] [uav4.mavros.param]: PR: got an unsolicited param value idx=665, not resetting retries count 3
+[INFO] [1790402491.237819154] [uav4.mavros.param]: PR: got an unsolicited param value idx=667, not resetting retries count 3
+[INFO] [1790402491.261927971] [uav4.mavros.param]: PR: got an unsolicited param value idx=668, not resetting retries count 3
+[INFO] [1790402491.290059189] [uav4.mavros.param]: PR: got an unsolicited param value idx=669, not resetting retries count 3
+[INFO] [1790402491.309765088] [uav4.mavros.param]: PR: got an unsolicited param value idx=671, not resetting retries count 3
+[INFO] [1790402491.323245825] [uav4.mavros.param]: PR: got an unsolicited param value idx=672, not resetting retries count 3
+[INFO] [1790402491.348735100] [uav4.mavros.param]: PR: got an unsolicited param value idx=673, not resetting retries count 3
+[INFO] [1790402491.374353399] [uav4.mavros.param]: PR: got an unsolicited param value idx=674, not resetting retries count 3
+[INFO] [1790402491.395966895] [uav4.mavros.param]: PR: got an unsolicited param value idx=675, not resetting retries count 3
+[INFO] [1790402491.418419553] [uav4.mavros.param]: PR: got an unsolicited param value idx=676, not resetting retries count 3
+[INFO] [1790402491.489657302] [uav4.mavros.param]: PR: got an unsolicited param value idx=677, not resetting retries count 3
+[INFO] [1790402491.512106562] [uav4.mavros.param]: PR: got an unsolicited param value idx=678, not resetting retries count 3
+[INFO] [1790402491.562669150] [uav4.mavros.param]: PR: got an unsolicited param value idx=681, not resetting retries count 3
+[INFO] [1790402491.633615100] [uav4.mavros.param]: PR: got an unsolicited param value idx=682, not resetting retries count 3
+[INFO] [1790402491.668133219] [uav4.mavros.param]: PR: got an unsolicited param value idx=683, not resetting retries count 3
+[INFO] [1790402491.709606868] [uav4.mavros.param]: PR: got an unsolicited param value idx=684, not resetting retries count 3
+[INFO] [1790402491.745235339] [uav4.mavros.param]: PR: got an unsolicited param value idx=686, not resetting retries count 3
+[INFO] [1790402491.759943923] [uav4.mavros.param]: PR: got an unsolicited param value idx=687, not resetting retries count 3
+[INFO] [1790402491.811490529] [uav4.mavros.param]: PR: got an unsolicited param value idx=688, not resetting retries count 3
+[INFO] [1790402491.849438090] [uav4.mavros.param]: PR: got an unsolicited param value idx=689, not resetting retries count 3
+[INFO] [1790402491.875086035] [uav4.mavros.param]: PR: got an unsolicited param value idx=690, not resetting retries count 3
+[INFO] [1790402491.921982934] [uav4.mavros.param]: PR: got an unsolicited param value idx=691, not resetting retries count 3
+[INFO] [1790402491.970374776] [uav4.mavros.param]: PR: got an unsolicited param value idx=692, not resetting retries count 3
+[INFO] [1790402492.003013855] [uav4.mavros.param]: PR: got an unsolicited param value idx=693, not resetting retries count 3
+[INFO] [1790402492.060813112] [uav4.mavros.param]: PR: got an unsolicited param value idx=694, not resetting retries count 3
+[INFO] [1790402492.090762974] [uav4.mavros.param]: PR: got an unsolicited param value idx=695, not resetting retries count 3
+[INFO] [1790402492.139472647] [uav4.mavros.param]: PR: got an unsolicited param value idx=696, not resetting retries count 3
+[INFO] [1790402492.185599018] [uav4.mavros.param]: PR: got an unsolicited param value idx=697, not resetting retries count 3
+[INFO] [1790402492.217136680] [uav4.mavros.param]: PR: got an unsolicited param value idx=698, not resetting retries count 3
+[INFO] [1790402492.243346631] [uav4.mavros.param]: PR: got an unsolicited param value idx=701, not resetting retries count 3
+[INFO] [1790402492.254022853] [uav4.mavros.param]: PR: got an unsolicited param value idx=702, not resetting retries count 3
+[INFO] [1790402492.266824142] [uav4.mavros.param]: PR: got an unsolicited param value idx=703, not resetting retries count 3
+[INFO] [1790402492.281993097] [uav4.mavros.param]: PR: got an unsolicited param value idx=704, not resetting retries count 3
+[INFO] [1790402492.305325548] [uav4.mavros.param]: PR: got an unsolicited param value idx=705, not resetting retries count 3
+[INFO] [1790402492.319010010] [uav4.mavros.param]: PR: got an unsolicited param value idx=709, not resetting retries count 3
+[INFO] [1790402492.342649268] [uav4.mavros.param]: PR: got an unsolicited param value idx=710, not resetting retries count 3
+[INFO] [1790402492.363630144] [uav4.mavros.param]: PR: got an unsolicited param value idx=713, not resetting retries count 3
+[INFO] [1790402492.379106222] [uav4.mavros.param]: PR: got an unsolicited param value idx=715, not resetting retries count 3
+[INFO] [1790402492.397548693] [uav4.mavros.param]: PR: got an unsolicited param value idx=716, not resetting retries count 3
+[INFO] [1790402492.416210670] [uav4.mavros.param]: PR: got an unsolicited param value idx=717, not resetting retries count 3
+[INFO] [1790402492.441173104] [uav4.mavros.param]: PR: got an unsolicited param value idx=718, not resetting retries count 3
+[INFO] [1790402492.462534711] [uav4.mavros.param]: PR: got an unsolicited param value idx=721, not resetting retries count 3
+[INFO] [1790402492.481663210] [uav4.mavros.param]: PR: got an unsolicited param value idx=722, not resetting retries count 3
+[INFO] [1790402492.525367256] [uav4.mavros.param]: PR: got an unsolicited param value idx=723, not resetting retries count 3
+[INFO] [1790402492.547378054] [uav4.mavros.param]: PR: got an unsolicited param value idx=724, not resetting retries count 3
+[INFO] [1790402492.564401526] [uav4.mavros.param]: PR: got an unsolicited param value idx=725, not resetting retries count 3
+[INFO] [1790402492.603945604] [uav4.mavros.param]: PR: got an unsolicited param value idx=726, not resetting retries count 3
+[INFO] [1790402492.639725628] [uav4.mavros.param]: PR: got an unsolicited param value idx=727, not resetting retries count 3
+[INFO] [1790402492.662242383] [uav4.mavros.param]: PR: got an unsolicited param value idx=728, not resetting retries count 3
+[INFO] [1790402492.679017491] [uav4.mavros.param]: PR: got an unsolicited param value idx=729, not resetting retries count 3
+[INFO] [1790402492.718463971] [uav4.mavros.param]: PR: got an unsolicited param value idx=730, not resetting retries count 3
+[INFO] [1790402492.751709817] [uav4.mavros.param]: PR: got an unsolicited param value idx=731, not resetting retries count 3
+[INFO] [1790402492.799733397] [uav4.mavros.param]: PR: got an unsolicited param value idx=734, not resetting retries count 3
+[INFO] [1790402492.846348628] [uav4.mavros.param]: PR: got an unsolicited param value idx=735, not resetting retries count 3
+[INFO] [1790402492.887979233] [uav4.mavros.param]: PR: got an unsolicited param value idx=736, not resetting retries count 3
+[INFO] [1790402492.928961605] [uav4.mavros.param]: PR: got an unsolicited param value idx=743, not resetting retries count 3
+[INFO] [1790402492.937697049] [uav4.mavros.param]: PR: got an unsolicited param value idx=744, not resetting retries count 3
+[INFO] [1790402492.954235329] [uav4.mavros.param]: PR: got an unsolicited param value idx=745, not resetting retries count 3
+[INFO] [1790402492.970435863] [uav4.mavros.param]: PR: got an unsolicited param value idx=747, not resetting retries count 3
+[INFO] [1790402492.995387206] [uav4.mavros.param]: PR: got an unsolicited param value idx=751, not resetting retries count 3
+[INFO] [1790402493.011638150] [uav4.mavros.param]: PR: got an unsolicited param value idx=752, not resetting retries count 3
+[INFO] [1790402493.018973983] [uav4.mavros.param]: PR: got an unsolicited param value idx=755, not resetting retries count 3
+[INFO] [1790402493.032454587] [uav4.mavros.param]: PR: got an unsolicited param value idx=756, not resetting retries count 3
+[INFO] [1790402493.068220132] [uav4.mavros.param]: PR: got an unsolicited param value idx=757, not resetting retries count 3
+[INFO] [1790402493.114946890] [uav4.mavros.param]: PR: got an unsolicited param value idx=758, not resetting retries count 3
+[INFO] [1790402493.147090840] [uav4.mavros.param]: PR: got an unsolicited param value idx=759, not resetting retries count 3
+[INFO] [1790402493.183159946] [uav4.mavros.param]: PR: got an unsolicited param value idx=760, not resetting retries count 3
+[INFO] [1790402493.212270534] [uav4.mavros.param]: PR: got an unsolicited param value idx=761, not resetting retries count 3
+[INFO] [1790402493.238901264] [uav4.mavros.param]: PR: got an unsolicited param value idx=762, not resetting retries count 3
+[INFO] [1790402493.265450900] [uav4.mavros.param]: PR: got an unsolicited param value idx=763, not resetting retries count 3
+[INFO] [1790402493.310207181] [uav4.mavros.param]: PR: got an unsolicited param value idx=765, not resetting retries count 3
+[INFO] [1790402493.341621331] [uav4.mavros.param]: PR: got an unsolicited param value idx=767, not resetting retries count 3
+[INFO] [1790402493.377162473] [uav4.mavros.param]: PR: got an unsolicited param value idx=768, not resetting retries count 3
+[INFO] [1790402493.402280595] [uav4.mavros.param]: PR: got an unsolicited param value idx=769, not resetting retries count 3
+[INFO] [1790402493.441694924] [uav4.mavros.param]: PR: got an unsolicited param value idx=771, not resetting retries count 3
+[INFO] [1790402493.466620997] [uav4.mavros.param]: PR: got an unsolicited param value idx=772, not resetting retries count 3
+[INFO] [1790402493.477744552] [uav4.mavros.param]: PR: got an unsolicited param value idx=775, not resetting retries count 3
+[INFO] [1790402493.486168757] [uav4.mavros.param]: PR: got an unsolicited param value idx=776, not resetting retries count 3
+[INFO] [1790402493.497286966] [uav4.mavros.param]: PR: got an unsolicited param value idx=777, not resetting retries count 3
+[INFO] [1790402493.520168010] [uav4.mavros.param]: PR: got an unsolicited param value idx=781, not resetting retries count 3
+[INFO] [1790402493.541492019] [uav4.mavros.param]: PR: got an unsolicited param value idx=782, not resetting retries count 3
+[INFO] [1790402493.568458109] [uav4.mavros.param]: PR: got an unsolicited param value idx=783, not resetting retries count 3
+[INFO] [1790402493.604045263] [uav4.mavros.param]: PR: got an unsolicited param value idx=784, not resetting retries count 3
+[INFO] [1790402493.669976928] [uav4.mavros.param]: PR: got an unsolicited param value idx=785, not resetting retries count 3
+[INFO] [1790402493.719455176] [uav4.mavros.param]: PR: got an unsolicited param value idx=786, not resetting retries count 3
+[INFO] [1790402493.756506318] [uav4.mavros.param]: PR: got an unsolicited param value idx=787, not resetting retries count 3
+[INFO] [1790402493.784118357] [uav4.mavros.param]: PR: got an unsolicited param value idx=788, not resetting retries count 3
+[INFO] [1790402493.802927483] [uav4.mavros.param]: PR: got an unsolicited param value idx=789, not resetting retries count 3
+[INFO] [1790402493.835433882] [uav4.mavros.param]: PR: got an unsolicited param value idx=790, not resetting retries count 3
+[INFO] [1790402493.871842420] [uav4.mavros.param]: PR: got an unsolicited param value idx=791, not resetting retries count 3
+[INFO] [1790402493.901194805] [uav4.mavros.param]: PR: got an unsolicited param value idx=793, not resetting retries count 3
+[INFO] [1790402493.917740809] [uav4.mavros.param]: PR: got an unsolicited param value idx=794, not resetting retries count 3
+[INFO] [1790402493.928129549] [uav4.mavros.param]: PR: got an unsolicited param value idx=795, not resetting retries count 3
+[INFO] [1790402493.964215413] [uav4.mavros.param]: PR: got an unsolicited param value idx=796, not resetting retries count 3
+[INFO] [1790402493.994387143] [uav4.mavros.param]: PR: got an unsolicited param value idx=798, not resetting retries count 3
+[INFO] [1790402494.038843841] [uav4.mavros.param]: PR: got an unsolicited param value idx=799, not resetting retries count 3
+[INFO] [1790402494.063976421] [uav4.mavros.param]: PR: got an unsolicited param value idx=801, not resetting retries count 3
+[INFO] [1790402494.092405532] [uav4.mavros.param]: PR: got an unsolicited param value idx=802, not resetting retries count 3
+[INFO] [1790402494.104442781] [uav4.mavros.param]: PR: got an unsolicited param value idx=803, not resetting retries count 3
+[INFO] [1790402494.125611235] [uav4.mavros.param]: PR: got an unsolicited param value idx=804, not resetting retries count 3
+[INFO] [1790402494.145400893] [uav4.mavros.param]: PR: got an unsolicited param value idx=806, not resetting retries count 3
+[INFO] [1790402494.159612960] [uav4.mavros.param]: PR: got an unsolicited param value idx=808, not resetting retries count 3
+[INFO] [1790402494.182415639] [uav4.mavros.param]: PR: got an unsolicited param value idx=809, not resetting retries count 3
+[INFO] [1790402494.201237866] [uav4.mavros.param]: PR: got an unsolicited param value idx=810, not resetting retries count 3
+[INFO] [1790402494.227779133] [uav4.mavros.param]: PR: got an unsolicited param value idx=811, not resetting retries count 3
+[INFO] [1790402494.257072405] [uav4.mavros.param]: PR: got an unsolicited param value idx=813, not resetting retries count 3
+[INFO] [1790402494.292491756] [uav4.mavros.param]: PR: got an unsolicited param value idx=814, not resetting retries count 3
+[INFO] [1790402494.314552415] [uav4.mavros.param]: PR: got an unsolicited param value idx=815, not resetting retries count 3
+[INFO] [1790402494.352379230] [uav4.mavros.param]: PR: got an unsolicited param value idx=816, not resetting retries count 3
+[INFO] [1790402494.408398155] [uav4.mavros.param]: PR: got an unsolicited param value idx=817, not resetting retries count 3
+[INFO] [1790402494.457357047] [uav4.mavros.param]: PR: got an unsolicited param value idx=818, not resetting retries count 3
+[INFO] [1790402494.525864856] [uav4.mavros.param]: PR: got an unsolicited param value idx=819, not resetting retries count 3
+[INFO] [1790402494.545905339] [uav4.mavros.param]: PR: got an unsolicited param value idx=820, not resetting retries count 3
+[INFO] [1790402494.593336080] [uav4.mavros.param]: PR: got an unsolicited param value idx=821, not resetting retries count 3
+[INFO] [1790402494.649999787] [uav4.mavros.param]: PR: got an unsolicited param value idx=822, not resetting retries count 3
+[INFO] [1790402494.672066438] [uav4.mavros.param]: PR: got an unsolicited param value idx=823, not resetting retries count 3
+[INFO] [1790402494.705712954] [uav4.mavros.param]: PR: got an unsolicited param value idx=824, not resetting retries count 3
+[INFO] [1790402494.736989613] [uav4.mavros.param]: PR: got an unsolicited param value idx=825, not resetting retries count 3
+[INFO] [1790402494.762557805] [uav4.mavros.param]: PR: got an unsolicited param value idx=826, not resetting retries count 3
+[INFO] [1790402494.786782035] [uav4.mavros.param]: PR: got an unsolicited param value idx=828, not resetting retries count 3
+[INFO] [1790402494.822330827] [uav4.mavros.param]: PR: got an unsolicited param value idx=829, not resetting retries count 3
+[INFO] [1790402494.853680239] [uav4.mavros.param]: PR: got an unsolicited param value idx=830, not resetting retries count 3
+[INFO] [1790402494.884954187] [uav4.mavros.param]: PR: got an unsolicited param value idx=831, not resetting retries count 3
+[INFO] [1790402494.925282218] [uav4.mavros.param]: PR: got an unsolicited param value idx=834, not resetting retries count 3
+[INFO] [1790402494.955727482] [uav4.mavros.param]: PR: got an unsolicited param value idx=835, not resetting retries count 3
+[INFO] [1790402494.982077461] [uav4.mavros.param]: PR: got an unsolicited param value idx=836, not resetting retries count 3
+[INFO] [1790402495.069615011] [uav4.mavros.param]: PR: got an unsolicited param value idx=837, not resetting retries count 3
+[INFO] [1790402495.136348568] [uav4.mavros.param]: PR: got an unsolicited param value idx=838, not resetting retries count 3
+[INFO] [1790402495.195127000] [uav4.mavros.param]: PR: got an unsolicited param value idx=840, not resetting retries count 3
+[INFO] [1790402495.242620068] [uav4.mavros.param]: PR: got an unsolicited param value idx=841, not resetting retries count 3
+[INFO] [1790402495.256968563] [uav4.mavros.param]: PR: got an unsolicited param value idx=843, not resetting retries count 3
+[INFO] [1790402495.275453787] [uav4.mavros.param]: PR: got an unsolicited param value idx=844, not resetting retries count 3
+[INFO] [1790402495.316913605] [uav4.mavros.param]: PR: got an unsolicited param value idx=845, not resetting retries count 3
+[INFO] [1790402495.358802264] [uav4.mavros.param]: PR: got an unsolicited param value idx=846, not resetting retries count 3
+[INFO] [1790402495.374671807] [uav4.mavros.param]: PR: got an unsolicited param value idx=848, not resetting retries count 3
+[INFO] [1790402495.381499288] [uav4.mavros.param]: PR: got an unsolicited param value idx=849, not resetting retries count 3
+[INFO] [1790402495.413934806] [uav4.mavros.param]: PR: got an unsolicited param value idx=850, not resetting retries count 3
+[INFO] [1790402495.425259584] [uav4.mavros.param]: PR: got an unsolicited param value idx=851, not resetting retries count 3
+[INFO] [1790402495.434273731] [uav4.mavros.param]: PR: got an unsolicited param value idx=852, not resetting retries count 3
+[INFO] [1790402495.440297113] [uav4.mavros.param]: PR: got an unsolicited param value idx=853, not resetting retries count 3
+[INFO] [1790402495.457125723] [uav4.mavros.param]: PR: got an unsolicited param value idx=854, not resetting retries count 3
+[INFO] [1790402495.506288981] [uav4.mavros.param]: PR: got an unsolicited param value idx=855, not resetting retries count 3
+[INFO] [1790402495.541191876] [uav4.mavros.param]: PR: got an unsolicited param value idx=856, not resetting retries count 3
+[INFO] [1790402495.558508738] [uav4.mavros.param]: PR: got an unsolicited param value idx=857, not resetting retries count 3
+[INFO] [1790402495.602206775] [uav4.mavros.param]: PR: got an unsolicited param value idx=858, not resetting retries count 3
+[INFO] [1790402495.641859630] [uav4.mavros.param]: PR: got an unsolicited param value idx=860, not resetting retries count 3
+[INFO] [1790402495.691701584] [uav4.mavros.param]: PR: got an unsolicited param value idx=862, not resetting retries count 3
+[INFO] [1790402495.719936260] [uav4.mavros.param]: PR: got an unsolicited param value idx=863, not resetting retries count 3
+[INFO] [1790402495.769584693] [uav4.mavros.param]: PR: got an unsolicited param value idx=864, not resetting retries count 3
+[INFO] [1790402495.796326721] [uav4.mavros.param]: PR: got an unsolicited param value idx=865, not resetting retries count 3
+[INFO] [1790402495.846591295] [uav4.mavros.param]: PR: got an unsolicited param value idx=866, not resetting retries count 3
+[INFO] [1790402495.881801502] [uav4.mavros.param]: PR: got an unsolicited param value idx=867, not resetting retries count 3
+[INFO] [1790402495.911035666] [uav4.mavros.param]: PR: got an unsolicited param value idx=869, not resetting retries count 3
+[INFO] [1790402495.958543181] [uav4.mavros.param]: PR: got an unsolicited param value idx=870, not resetting retries count 3
+[INFO] [1790402495.994532572] [uav4.mavros.param]: PR: got an unsolicited param value idx=871, not resetting retries count 3
+[INFO] [1790402496.032945841] [uav4.mavros.param]: PR: got an unsolicited param value idx=872, not resetting retries count 3
+[INFO] [1790402496.051922898] [uav4.mavros.param]: PR: got an unsolicited param value idx=874, not resetting retries count 3
+[INFO] [1790402496.117557014] [uav4.mavros.param]: PR: got an unsolicited param value idx=875, not resetting retries count 3
+[INFO] [1790402496.166943558] [uav4.mavros.param]: PR: got an unsolicited param value idx=876, not resetting retries count 3
+[INFO] [1790402496.198632203] [uav4.mavros.param]: PR: got an unsolicited param value idx=877, not resetting retries count 3
+[INFO] [1790402496.207795860] [uav4.mavros.param]: PR: got an unsolicited param value idx=878, not resetting retries count 3
+[INFO] [1790402496.227600602] [uav4.mavros.param]: PR: got an unsolicited param value idx=880, not resetting retries count 3
+[INFO] [1790402496.250974046] [uav4.mavros.param]: PR: got an unsolicited param value idx=881, not resetting retries count 3
+[INFO] [1790402496.286762162] [uav4.mavros.param]: PR: got an unsolicited param value idx=882, not resetting retries count 3
+[INFO] [1790402496.339997153] [uav4.mavros.param]: PR: got an unsolicited param value idx=883, not resetting retries count 3
+[INFO] [1790402496.356644660] [uav4.mavros.param]: PR: got an unsolicited param value idx=884, not resetting retries count 3
+[INFO] [1790402496.380275929] [uav4.mavros.param]: PR: got an unsolicited param value idx=885, not resetting retries count 3
+[INFO] [1790402496.415519813] [uav4.mavros.param]: PR: got an unsolicited param value idx=886, not resetting retries count 3
+[INFO] [1790402496.446322885] [uav4.mavros.param]: PR: got an unsolicited param value idx=887, not resetting retries count 3
+[INFO] [1790402496.495647862] [uav4.mavros.param]: PR: got an unsolicited param value idx=888, not resetting retries count 3
+[INFO] [1790402496.530277297] [uav4.mavros.param]: PR: got an unsolicited param value idx=889, not resetting retries count 3
+[INFO] [1790402496.579450778] [uav4.mavros.param]: PR: got an unsolicited param value idx=890, not resetting retries count 3
+[INFO] [1790402496.632322794] [uav4.mavros.param]: PR: got an unsolicited param value idx=891, not resetting retries count 3
+[INFO] [1790402496.653736805] [uav4.mavros.param]: PR: got an unsolicited param value idx=893, not resetting retries count 3
+[INFO] [1790402496.696031410] [uav4.mavros.param]: PR: got an unsolicited param value idx=894, not resetting retries count 3
+[INFO] [1790402496.730433884] [uav4.mavros.param]: PR: got an unsolicited param value idx=895, not resetting retries count 3
+[INFO] [1790402496.764464160] [uav4.mavros.param]: PR: got an unsolicited param value idx=896, not resetting retries count 3
+[INFO] [1790402496.790544605] [uav4.mavros.param]: PR: got an unsolicited param value idx=898, not resetting retries count 3
+[INFO] [1790402496.816839558] [uav4.mavros.param]: PR: got an unsolicited param value idx=900, not resetting retries count 3
+[INFO] [1790402496.881114572] [uav4.mavros.param]: PR: got an unsolicited param value idx=901, not resetting retries count 3
+[INFO] [1790402496.900209895] [uav4.mavros.param]: PR: got an unsolicited param value idx=902, not resetting retries count 3
+[INFO] [1790402496.928101664] [uav4.mavros.param]: PR: got an unsolicited param value idx=903, not resetting retries count 3
+[INFO] [1790402496.959805551] [uav4.mavros.param]: PR: got an unsolicited param value idx=904, not resetting retries count 3
+[INFO] [1790402496.990704366] [uav4.mavros.param]: PR: got an unsolicited param value idx=906, not resetting retries count 3
+[INFO] [1790402497.024125465] [uav4.mavros.param]: PR: got an unsolicited param value idx=907, not resetting retries count 3
+[INFO] [1790402497.052973687] [uav4.mavros.param]: PR: got an unsolicited param value idx=908, not resetting retries count 3
+[INFO] [1790402497.109403627] [uav4.mavros.param]: PR: got an unsolicited param value idx=910, not resetting retries count 3
+[INFO] [1790402497.155117306] [uav4.mavros.param]: PR: got an unsolicited param value idx=911, not resetting retries count 3
+[INFO] [1790402497.189130979] [uav4.mavros.param]: PR: got an unsolicited param value idx=913, not resetting retries count 3
+[INFO] [1790402497.229757869] [uav4.mavros.param]: PR: got an unsolicited param value idx=914, not resetting retries count 3
+[INFO] [1790402497.273550475] [uav4.mavros.param]: PR: got an unsolicited param value idx=915, not resetting retries count 3
+[INFO] [1790402497.328479812] [uav4.mavros.param]: PR: got an unsolicited param value idx=916, not resetting retries count 3
+[INFO] [1790402497.359434937] [uav4.mavros.param]: PR: got an unsolicited param value idx=918, not resetting retries count 3
+[INFO] [1790402497.385760356] [uav4.mavros.param]: PR: got an unsolicited param value idx=919, not resetting retries count 3
+[INFO] [1790402497.409605540] [uav4.mavros.param]: PR: got an unsolicited param value idx=920, not resetting retries count 3
+[INFO] [1790402497.453443960] [uav4.mavros.param]: PR: got an unsolicited param value idx=921, not resetting retries count 3
+[INFO] [1790402497.523239519] [uav4.mavros.param]: PR: got an unsolicited param value idx=922, not resetting retries count 3
+[INFO] [1790402497.600856582] [uav4.mavros.param]: PR: got an unsolicited param value idx=923, not resetting retries count 3
+[INFO] [1790402497.646538755] [uav4.mavros.param]: PR: got an unsolicited param value idx=924, not resetting retries count 3
+[INFO] [1790402497.676054320] [uav4.mavros.param]: PR: got an unsolicited param value idx=925, not resetting retries count 3
+[INFO] [1790402497.720717858] [uav4.mavros.param]: PR: got an unsolicited param value idx=926, not resetting retries count 3
+[INFO] [1790402497.779214837] [uav4.mavros.param]: PR: got an unsolicited param value idx=927, not resetting retries count 3
+[INFO] [1790402497.813961372] [uav4.mavros.param]: PR: got an unsolicited param value idx=928, not resetting retries count 3
+[INFO] [1790402497.835768711] [uav4.mavros.param]: PR: got an unsolicited param value idx=929, not resetting retries count 3
+[INFO] [1790402497.852312476] [uav4.mavros.param]: PR: got an unsolicited param value idx=930, not resetting retries count 3
+[INFO] [1790402497.863220913] [uav4.mavros.param]: PR: got an unsolicited param value idx=931, not resetting retries count 3
+[INFO] [1790402497.883739828] [uav4.mavros.param]: PR: got an unsolicited param value idx=933, not resetting retries count 3
+[INFO] [1790402497.901193329] [uav4.mavros.param]: PR: got an unsolicited param value idx=934, not resetting retries count 3
+[INFO] [1790402497.916240984] [uav4.mavros.param]: PR: got an unsolicited param value idx=935, not resetting retries count 3
+[INFO] [1790402497.932845821] [uav4.mavros.param]: PR: got an unsolicited param value idx=936, not resetting retries count 3
+[INFO] [1790402497.952144722] [uav4.mavros.param]: PR: got an unsolicited param value idx=941, not resetting retries count 3
+[INFO] [1790402497.972720112] [uav4.mavros.param]: PR: got an unsolicited param value idx=942, not resetting retries count 3
+[INFO] [1790402497.986369319] [uav4.mavros.param]: PR: got an unsolicited param value idx=943, not resetting retries count 3
+[INFO] [1790402497.999470990] [uav4.mavros.param]: PR: got an unsolicited param value idx=944, not resetting retries count 3
+[INFO] [1790402498.017840322] [uav4.mavros.param]: PR: got an unsolicited param value idx=946, not resetting retries count 3
+[INFO] [1790402498.030388799] [uav4.mavros.param]: PR: got an unsolicited param value idx=947, not resetting retries count 3
+[INFO] [1790402498.047190993] [uav4.mavros.param]: PR: got an unsolicited param value idx=948, not resetting retries count 3
+[INFO] [1790402498.056998309] [uav4.mavros.param]: PR: got an unsolicited param value idx=949, not resetting retries count 3
+[INFO] [1790402498.071960525] [uav4.mavros.param]: PR: got an unsolicited param value idx=950, not resetting retries count 3
+[INFO] [1790402498.088264094] [uav4.mavros.param]: PR: got an unsolicited param value idx=951, not resetting retries count 3
+[INFO] [1790402498.102401878] [uav4.mavros.param]: PR: got an unsolicited param value idx=952, not resetting retries count 3
+[INFO] [1790402498.126127060] [uav4.mavros.param]: PR: got an unsolicited param value idx=955, not resetting retries count 3
+[INFO] [1790402498.145035044] [uav4.mavros.param]: PR: got an unsolicited param value idx=956, not resetting retries count 3
+[INFO] [1790402498.168016335] [uav4.mavros.param]: PR: got an unsolicited param value idx=957, not resetting retries count 3
+[INFO] [1790402498.189653872] [uav4.mavros.param]: PR: got an unsolicited param value idx=958, not resetting retries count 3
+[INFO] [1790402498.212083492] [uav4.mavros.param]: PR: got an unsolicited param value idx=959, not resetting retries count 3
+[INFO] [1790402498.233779431] [uav4.mavros.param]: PR: got an unsolicited param value idx=960, not resetting retries count 3
+[INFO] [1790402498.244120088] [uav4.mavros.param]: PR: got an unsolicited param value idx=961, not resetting retries count 3
+[INFO] [1790402498.261237131] [uav4.mavros.param]: PR: got an unsolicited param value idx=964, not resetting retries count 3
+[INFO] [1790402498.281429088] [uav4.mavros.param]: PR: got an unsolicited param value idx=965, not resetting retries count 3
+[INFO] [1790402498.304734960] [uav4.mavros.param]: PR: got an unsolicited param value idx=966, not resetting retries count 3
+[WARN] [1790402500.317992180] [uav4.mavros.cmd]: CMD: Unexpected command 176, result 0
+[INFO] [1790402519.071787866] [uav4.mavros.sys]: FCU: EVENT 9844908 with args -0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402521.216644530] [uav4.mavros.sys]: FCU: EVENT 16017271 with args -6-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402524.818457931] [uav4.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402524.818557084] [uav4.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402524.818615523] [uav4.mavros.sys]: FCU: EVENT 453929 with args -255-255-255-255-7-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402524.818658597] [uav4.mavros.sys]: FCU: EVENT 6801787 with args -255-255-255-255-12-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790402524.818700068] [uav4.mavros.sys]: FCU: UNK(8): EVENT 1914663 with args -0-10-9-2-56-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790402527.371425722] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[WARN] [1790402527.382482291] [uav4.mavros]: UAS Executor terminated

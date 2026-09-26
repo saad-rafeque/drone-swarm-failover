@@ -1,0 +1,15 @@
+topic   /uav1/mavros/state                            OK
+topic   /uav1/mavros/extended_state                   OK
+topic   /uav1/mavros/battery                          OK
+topic   /uav1/mavros/local_position/pose              OK
+topic   /uav1/mavros/local_position/velocity_local    OK
+topic   /uav1/mavros/global_position/global           OK
+topic   /uav1/mavros/global_position/rel_alt          OK
+topic   /uav1/mavros/setpoint_velocity/cmd_vel        OK
+service /uav1/mavros/set_mode                         OK
+service /uav1/mavros/cmd/arming                       OK
+service /uav1/mavros/cmd/command                      OK
+topics outside /uavN: ['/diagnostics', '/parameter_events', '/rosout', '/uas1/mavlink_sink', '/uas1/mavlink_source', '/uas2/mavlink_sink', '/uas2/mavlink_source']
+/uav1/parameter_events: rcl_interfaces/msg/ParameterEvent Publisher count: 3 Subscription count: 4
+ROS nodes total for 2 drones: 20
+battery sample: ['voltage: 16.200000762939453', 'percentage: 1.0']

@@ -1,0 +1,3 @@
+{"label": "lean", "n": 1, "system_cpu_pct": 8.9, "mavros_cpu_per_instance_pct_core": 4.1, "px4_cpu_per_instance_pct_core": 9.1, "mavros_rss_per_instance_mb": 81.9, "mavros_threads_per_instance": 22.0}
+{"label": "lean", "n": 3, "system_cpu_pct": 15.1, "mavros_cpu_per_instance_pct_core": 4.6, "px4_cpu_per_instance_pct_core": 7.7, "mavros_rss_per_instance_mb": 85.2, "mavros_threads_per_instance": 22.0}
+{"label": "lean", "n": 5, "system_cpu_pct": 24.2, "mavros_cpu_per_instance_pct_core": 4.7, "px4_cpu_per_instance_pct_core": 7.6, "mavros_rss_per_instance_mb": 88.3, "mavros_threads_per_instance": 22.0}

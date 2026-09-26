@@ -29,7 +29,7 @@ Phase 0 tasks:
 | OS | Ubuntu 24.04.5 LTS, kernel 7.0.0-34-generic, x86_64 | env_audit.txt |
 | ROS 2 | Jazzy (`ROS_DISTRO=jazzy`) | env_audit.txt |
 | Python | 3.12.3 | env_audit.txt |
-| RAM | 7721 MB total; 2357–3287 MB available during this phase (Chrome open, ~3.1 GB) | env_audit*.txt, flight_summary.json |
+| RAM | 7721 MiB (8,097 MB) total; available 2357–3150 MiB (`free -m`) / 3,267–3,287 MB (psutil) during this phase, with Chrome open (~3.1 GB) | env_audit*.txt, flight_summary.json |
 | CPU | Intel i3-1115G4, 2 cores / 4 threads | env_audit.txt |
 | Free disk | 131 GB before, 128 GB after the PX4 build (need ≥ 15 GB) | env_audit.txt, env_audit_crosscheck.txt |
 | PX4 | v1.18.0-rc1, target `px4_sitl_sih`, model `sihsim_quadx` | env_audit_crosscheck.txt |

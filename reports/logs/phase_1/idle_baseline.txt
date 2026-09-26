@@ -1,0 +1,13 @@
+idle baseline 2026-09-26T11:00:36, no sim running
+system CPU over 10 s: mean 14.6% max 18.3% (of 4 logical CPUs)
+load average (1, 5, 15 min): (2.32, 1.89, 1.57)
+memory available: 3253 MB of 8097 MB (decimal MB, psutil)
+top CPU consumers over the 10 s window (% of one core; psutil cpu_percent since previous call):
+  opera                          31.1
+  gnome-shell                    11.6
+  irq/134-ELAN06FA:00             7.6
+  chrome                          1.6
+  assistant-cli                   1.2
+  assistant-desktop               1.0
+  kworker/2:1-i915-unordered      0.8
+  kworker/u17:2+i915_flip         0.5

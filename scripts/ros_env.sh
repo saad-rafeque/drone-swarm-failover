@@ -5,4 +5,6 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck disable=SC1091
 source /opt/ros/jazzy/setup.bash
 export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+# Keep DDS discovery on this machine (verified in librcl: ROS_LOCALHOST_ONLY is deprecated).
+export ROS_AUTOMATIC_DISCOVERY_RANGE="${ROS_AUTOMATIC_DISCOVERY_RANGE:-LOCALHOST}"
 exec "$@"
