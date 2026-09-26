@@ -276,7 +276,7 @@ class FastSimBackend:
     def _loop(self) -> None:
         last = time.monotonic()
         while True:
-            time.sleep(0.01)
+            time.sleep(0.005)
             now = time.monotonic()
             wall_dt, last = now - last, now
             with self.lock:
@@ -285,7 +285,7 @@ class FastSimBackend:
                     continue
                 t_before = self.sim.t
                 self._debt = min(self._debt + wall_dt * self.speed, 2.0)
-                budget = time.monotonic() + 0.03
+                budget = time.monotonic() + 0.045   # ~90 % of a core for the simulation at "Max"
                 while self._debt >= self.sim.dt and time.monotonic() < budget:
                     self._stats = self.sim.step()
                     self._debt -= self.sim.dt

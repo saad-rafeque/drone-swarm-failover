@@ -54,6 +54,7 @@ ROUTE_CLEARANCE_M = 8.0     # planned routes keep this far from every obstacle
 CHARGE_FULL_PCT = 95.0      # at a charging stop, take off again once every battery reaches this
 CHARGE_TIMEOUT_S = 1800.0   # ...or after this long, whatever the batteries say
 STOP_APPROACH_M = 25.0      # the master leaves the route follower and homes on the stop this far before it
+AVOID_PERIOD_S = 0.1        # the avoider runs at 10 Hz (as in training); its correction is held in between
 
 
 class FlightMode(IntEnum):
@@ -107,6 +108,7 @@ class AgentCore:
         self._final = False             # reached the goal: the current LAND ends the mission
         self._pos_xy = (home[0], home[1])
         self._takeoff_xy = (home[0], home[1])   # vertical takeoff from here (home, or a charging stop)
+        self._avoid_t, self._avoid_dv = -math.inf, (0.0, 0.0)
         self.my_id = my_id
         self.home = home
         hb = cfg.heartbeat
@@ -357,26 +359,31 @@ class AgentCore:
                 for p in self.election.peers.values() if now - p.rx_time <= horizon]
 
     def _avoid(self, own: OwnState, v: Vec3, target: Vec3 | None, now: float, brake_only: bool = False) -> Vec3:
-        """Add the avoider's horizontal correction (followers) or just the stopping-distance brake
-        (the master on its route, drones going home). No World: unchanged."""
+        """Add the avoider's horizontal correction (followers; recomputed at 10 Hz as in training, held in
+        between) or just the stopping-distance brake (the master on its route, drones going home).
+        No World: unchanged."""
         w = self.world
         if w is None or w.avoider is None or isinstance(w.avoider, NoAvoidance):
             return v
-        x, y = own.pos[0], own.pos[1]
-        heading = self.heading
-        inp = AvoidInput(heading, (v[0], v[1]), (own.vel[0], own.vel[1]),
-                         (0.0, 0.0) if target is None else (target[0] - x, target[1] - y),
-                         w.omap.raycast(x, y, heading + RAY_ANGLES, RAY_RANGE_M),
-                         w.omap.nearest_point(x, y, RAY_RANGE_M),
-                         [(p[0] - x, p[1] - y, pv[0] - own.vel[0], pv[1] - own.vel[1]) for p, pv in self._neighbours(now)])
-        if brake_only or target is None:
-            bx, by = brake((v[0], v[1]), inp)
-        else:
-            dvx, dvy = w.avoider.correction(inp)
-            bx, by = v[0] + dvx, v[1] + dvy
+        use_brake = brake_only or target is None
+        if use_brake or now - self._avoid_t >= AVOID_PERIOD_S - 1e-9:
+            x, y = own.pos[0], own.pos[1]
+            heading = self.heading
+            inp = AvoidInput(heading, (v[0], v[1]), (own.vel[0], own.vel[1]),
+                             (0.0, 0.0) if target is None else (target[0] - x, target[1] - y),
+                             w.omap.raycast(x, y, heading + RAY_ANGLES, RAY_RANGE_M),
+                             w.omap.nearest_point(x, y, RAY_RANGE_M),
+                             [(p[0] - x, p[1] - y, pv[0] - own.vel[0], pv[1] - own.vel[1])
+                              for p, pv in self._neighbours(now)])
+            if use_brake:
+                bx, by = brake((v[0], v[1]), inp)
+                m = self.cfg.mission
+                return clamp_xy_z((float(bx), float(by), v[2]), self.cfg.formation.max_speed_mps, m.climb_rate_mps,
+                                  m.descent_rate_mps)
+            self._avoid_t, self._avoid_dv = now, w.avoider.correction(inp)
         m = self.cfg.mission
-        return clamp_xy_z((float(bx), float(by), v[2]), self.cfg.formation.max_speed_mps, m.climb_rate_mps,
-                          m.descent_rate_mps)
+        return clamp_xy_z((v[0] + self._avoid_dv[0], v[1] + self._avoid_dv[1], v[2]), self.cfg.formation.max_speed_mps,
+                          m.climb_rate_mps, m.descent_rate_mps)
 
     def _formation(self, own: OwnState, mhb: Heartbeat, now: float) -> tuple[Vec3, Vec3, str]:
         f, m = self.cfg.formation, self.cfg.mission

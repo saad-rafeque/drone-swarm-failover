@@ -52,21 +52,29 @@ class AvoidInput:
 
 
 def observation(inp: AvoidInput) -> np.ndarray:
-    h = -inp.heading
+    """The policy input (plain float arithmetic where possible: this runs for every drone at 10 Hz)."""
+    c, s_ = math.cos(-inp.heading), math.sin(-inp.heading)
     o = np.zeros(OBS_DIM, dtype=np.float32)
-    o[0:2] = np.array(rot(*inp.v_des, h)) / V_SCALE_MPS
-    o[2:4] = np.array(rot(*inp.vel, h)) / V_SCALE_MPS
-    o[4:6] = np.clip(np.array(rot(*inp.slot_err, h)) / ERR_SCALE_M, -1.5, 1.5)
-    o[6:6 + N_RAYS] = np.clip(np.asarray(inp.rays, dtype=float) / RAY_RANGE_M, 0.0, 1.0)
+    vx, vy = inp.v_des
+    o[0], o[1] = (vx * c - vy * s_) / V_SCALE_MPS, (vx * s_ + vy * c) / V_SCALE_MPS
+    vx, vy = inp.vel
+    o[2], o[3] = (vx * c - vy * s_) / V_SCALE_MPS, (vx * s_ + vy * c) / V_SCALE_MPS
+    ex, ey = inp.slot_err
+    o[4] = max(-1.5, min(1.5, (ex * c - ey * s_) / ERR_SCALE_M))
+    o[5] = max(-1.5, min(1.5, (ex * s_ + ey * c) / ERR_SCALE_M))
+    o[6:6 + N_RAYS] = np.clip(np.asarray(inp.rays, dtype=np.float32) / RAY_RANGE_M, 0.0, 1.0)
     if inp.nearest is not None:
-        o[6 + N_RAYS:8 + N_RAYS] = np.array(rot(*inp.nearest, h)) / RAY_RANGE_M
-    near = sorted((n for n in inp.neighbors if math.hypot(n[0], n[1]) < NEIGHBOR_RANGE_M),
+        nx, ny = inp.nearest
+        o[6 + N_RAYS], o[7 + N_RAYS] = (nx * c - ny * s_) / RAY_RANGE_M, (nx * s_ + ny * c) / RAY_RANGE_M
+    r2 = NEIGHBOR_RANGE_M * NEIGHBOR_RANGE_M
+    near = sorted((n for n in inp.neighbors if n[0] * n[0] + n[1] * n[1] < r2),
                   key=lambda n: n[0] * n[0] + n[1] * n[1])[:N_NEIGHBORS]
     base = 8 + N_RAYS
     for k, (rx, ry, rvx, rvy) in enumerate(near):
-        o[base + 5 * k: base + 5 * k + 2] = np.array(rot(rx, ry, h)) / NEIGHBOR_RANGE_M
-        o[base + 5 * k + 2: base + 5 * k + 4] = np.array(rot(rvx, rvy, h)) / V_SCALE_MPS
-        o[base + 5 * k + 4] = 1.0
+        j = base + 5 * k
+        o[j], o[j + 1] = (rx * c - ry * s_) / NEIGHBOR_RANGE_M, (rx * s_ + ry * c) / NEIGHBOR_RANGE_M
+        o[j + 2], o[j + 3] = (rvx * c - rvy * s_) / V_SCALE_MPS, (rvx * s_ + rvy * c) / V_SCALE_MPS
+        o[j + 4] = 1.0
     return o
 
 
@@ -162,16 +170,17 @@ class LearnedPolicy:
     def __init__(self, path: str | Path) -> None:
         w = np.load(path)
         n = int(w["n_layers"])
-        self.layers = [(w[f"W{k}"], w[f"b{k}"]) for k in range(n)]
-        self.out = (w["Wa"], w["ba"])
-        if self.layers[0][0].shape[1] != OBS_DIM:
-            raise ValueError(f"policy expects {self.layers[0][0].shape[1]} inputs, this code builds {OBS_DIM}")
+        if w["W0"].shape[1] != OBS_DIM:
+            raise ValueError(f"policy expects {w['W0'].shape[1]} inputs, this code builds {OBS_DIM}")
+        # transposed once, contiguous: one small matrix product per layer at run time
+        self.layers = [(np.ascontiguousarray(w[f"W{k}"].T), w[f"b{k}"]) for k in range(n)]
+        self.out = (np.ascontiguousarray(w["Wa"].T), w["ba"])
 
     def act(self, obs: np.ndarray) -> np.ndarray:
         x = np.asarray(obs, dtype=np.float64)
-        for W, b in self.layers:
-            x = np.tanh(x @ W.T + b)
-        return x @ self.out[0].T + self.out[1]
+        for Wt, b in self.layers:
+            x = np.tanh(x @ Wt + b)
+        return x @ self.out[0] + self.out[1]
 
     def correction(self, inp: AvoidInput) -> tuple[float, float]:
         return action_to_correction(self.act(observation(inp)), inp.heading)
