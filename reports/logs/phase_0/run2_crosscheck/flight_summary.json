@@ -1,0 +1,29 @@
+{
+  "drone_id": 1,
+  "target_alt_m": 10.0,
+  "hover_s": 20.0,
+  "available_mb_before": 3267,
+  "px4_work_dir": "/tmp/swarm_sim/20260926-105232",
+  "t_connected_s": 1.3,
+  "t_to_offboard_armed_s": 1.1,
+  "t_climb_s": 10.3,
+  "hover_actual_s": 20.0,
+  "hover_alt_mean_m": 9.943,
+  "hover_alt_min_m": 9.706,
+  "hover_alt_max_m": 10.125,
+  "t_land_to_disarm_s": 19.6,
+  "landed_state_final": 1,
+  "result": "PASS",
+  "max_alt_m": 10.125,
+  "peak_rss_sampled_mb": {
+    "px4": 10.1,
+    "mavros": 124.9,
+    "total": 135.0
+  },
+  "peak_rss_vmhwm_mb": {
+    "px4": 10.1,
+    "mavros": 124.9,
+    "total": 135.0
+  },
+  "duration_s": 56.3
+}

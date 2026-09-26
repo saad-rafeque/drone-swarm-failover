@@ -1,0 +1,240 @@
+[ubuntu.sh] Starting...
+[ubuntu.sh] arch: x86_64
+[ubuntu.sh] Ubuntu 24.04
+[ubuntu.sh] Installing PX4 general dependencies
+Hit:1 https://dl.winehq.org/wine-builds/ubuntu noble InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu noble InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:4 http://security.ubuntu.com/ubuntu noble-security InRelease
+Hit:5 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Get:6 https://apt.syncthing.net syncthing InRelease [24.2 kB]
+Hit:7 https://esm.ubuntu.com/apps/ubuntu noble-apps-security InRelease
+Hit:8 https://dl.google.com/linux/chrome-stable/deb stable InRelease
+Hit:9 https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev antigravity-debian InRelease
+Hit:10 https://esm.ubuntu.com/apps/ubuntu noble-apps-updates InRelease
+Hit:11 https://packages.microsoft.com/repos/edge-stable stable InRelease
+Hit:12 https://packages.microsoft.com/repos/code stable InRelease
+Hit:13 https://esm.ubuntu.com/infra/ubuntu noble-infra-security InRelease
+Hit:14 https://esm.ubuntu.com/infra/ubuntu noble-infra-updates InRelease
+Hit:15 https://ppa.launchpadcontent.net/danielrichter2007/grub-customizer/ubuntu noble InRelease
+Hit:16 http://packages.ros.org/ros2/ubuntu noble InRelease
+Get:17 https://download.sublimetext.com apt/stable/ InRelease [3,320 B]
+Hit:18 <third-party apt repository> stable InRelease
+Hit:19 https://deb.opera.com/opera-stable stable InRelease
+Fetched 27.5 kB in 12s (2,381 B/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+build-essential is already the newest version (12.10ubuntu1).
+build-essential set to manually installed.
+ccache is already the newest version (4.9.1-1).
+cmake is already the newest version (3.28.3-1build7).
+cppcheck is already the newest version (2.13.0-2ubuntu3).
+file is already the newest version (1:5.45-3build1).
+file set to manually installed.
+g++ is already the newest version (4:13.2.0-7ubuntu1).
+gcc is already the newest version (4:13.2.0-7ubuntu1).
+gdb is already the newest version (15.1-1ubuntu1~24.04.1).
+git is already the newest version (1:2.43.0-1ubuntu7.3).
+lcov is already the newest version (2.0-4ubuntu2).
+libssl-dev is already the newest version (3.0.13-0ubuntu3.15).
+libssl-dev set to manually installed.
+libxml2-dev is already the newest version (2.9.14+dfsg-1.3ubuntu3.9).
+libxml2-dev set to manually installed.
+libxml2-utils is already the newest version (2.9.14+dfsg-1.3ubuntu3.9).
+make is already the newest version (4.3-4.1build2).
+python3 is already the newest version (3.12.3-0ubuntu2.1).
+python3-dev is already the newest version (3.12.3-0ubuntu2.1).
+python3-dev set to manually installed.
+python3-pip is already the newest version (24.0+dfsg-1ubuntu1.3+esm3).
+python3-setuptools is already the newest version (68.1.2-2ubuntu1.2).
+python3-setuptools set to manually installed.
+python3-wheel is already the newest version (0.42.0-2ubuntu0.1~esm1).
+python3-wheel set to manually installed.
+rsync is already the newest version (3.2.7-1ubuntu1.5).
+rsync set to manually installed.
+unzip is already the newest version (6.0-28ubuntu4.1).
+zip is already the newest version (3.0-13ubuntu0.2).
+The following NEW packages will be installed:
+  astyle ninja-build shellcheck
+0 upgraded, 3 newly installed, 0 to remove and 7 not upgraded.
+Need to get 3,186 kB of archives.
+After this operation, 20.6 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble/universe amd64 astyle amd64 3.1-3build1 [212 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble/universe amd64 ninja-build amd64 1.11.1-2 [129 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble/universe amd64 shellcheck amd64 0.9.0-1 [2,845 kB]
+Fetched 3,186 kB in 13s (251 kB/s)
+Selecting previously unselected package astyle.
+(Reading database… (Reading database… 5%(Reading database… 10%(Reading database… 15%(Reading database… 20%(Reading database… 25%(Reading database… 30%(Reading database… 35%(Reading database… 40%(Reading database… 45%(Reading database… 50%(Reading database… 55%(Reading database… 60%(Reading database… 65%(Reading database… 70%(Reading database… 75%(Reading database… 80%(Reading database… 85%(Reading database… 90%(Reading database… 95%(Reading database… 100%(Reading database… 335799 files and directories currently installed.)
+Preparing to unpack …/astyle_3.1-3build1_amd64.deb…
+Unpacking astyle (3.1-3build1)…
+Selecting previously unselected package ninja-build.
+Preparing to unpack …/ninja-build_1.11.1-2_amd64.deb…
+Unpacking ninja-build (1.11.1-2)…
+Selecting previously unselected package shellcheck.
+Preparing to unpack …/shellcheck_0.9.0-1_amd64.deb…
+Unpacking shellcheck (0.9.0-1)…
+Setting up shellcheck (0.9.0-1)…
+Setting up ninja-build (1.11.1-2)…
+Setting up astyle (3.1-3build1)…
+Processing triggers for man-db (2.12.0-4build2)…
+
+[ubuntu.sh] Installing PX4 Python3 dependencies
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: argcomplete in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 1)) (3.1.4)
+Collecting cerberus (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 2))
+  Using cached cerberus-1.3.8-py3-none-any.whl.metadata (5.5 kB)
+Requirement already satisfied: coverage in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 3)) (7.4.4)
+Requirement already satisfied: empy<4,>=3.3 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 4)) (3.3.4)
+Collecting future (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 5))
+  Using cached future-1.0.0-py3-none-any.whl.metadata (4.0 kB)
+Requirement already satisfied: jinja2>=2.8 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 6)) (3.1.2)
+Requirement already satisfied: jsonschema in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 7)) (4.10.3)
+Collecting kconfiglib (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 8))
+  Using cached kconfiglib-14.1.0-py2.py3-none-any.whl.metadata (39 kB)
+Requirement already satisfied: lark in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 9)) (1.1.9)
+Requirement already satisfied: lxml in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 10)) (5.2.1)
+Requirement already satisfied: matplotlib>=3.0 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 11)) (3.6.3)
+Requirement already satisfied: numpy>=1.13 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 12)) (1.26.4)
+Collecting nunavut>=1.1.0 (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 13))
+  Using cached nunavut-2.3.1-6748279276-py3-none-any.whl.metadata (11 kB)
+Requirement already satisfied: packaging in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 14)) (24.0)
+Collecting pandas>=0.21 (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 15))
+  Using cached pandas-3.0.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Collecting pkgconfig (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 16))
+  Using cached pkgconfig-1.6.0-py3-none-any.whl.metadata (4.9 kB)
+Requirement already satisfied: psutil in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 17)) (5.9.8)
+Collecting pycryptodome (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 18))
+  Using cached pycryptodome-3.23.0-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.4 kB)
+Requirement already satisfied: pygments in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 19)) (2.17.2)
+Collecting pymavlink (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 20))
+  Using cached pymavlink-2.4.50-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (7.6 kB)
+Requirement already satisfied: pynacl in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 21)) (1.5.0)
+Collecting pyros-genmsg (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 22))
+  Using cached pyros_genmsg-0.5.8-py2.py3-none-any.whl.metadata (358 bytes)
+Requirement already satisfied: pyserial in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 23)) (3.5)
+Collecting pyulog>=0.5.0 (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 24))
+  Using cached pyulog-1.2.4-py3-none-any.whl.metadata (1.6 kB)
+Requirement already satisfied: pyyaml in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 25)) (6.0.1)
+Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 26)) (2.31.0)
+Requirement already satisfied: setuptools<=81.0.0,>=39.2.0 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 27)) (68.1.2)
+Requirement already satisfied: six>=1.12.0 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 28)) (1.16.0)
+Requirement already satisfied: sympy>=1.10.1 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 29)) (1.12)
+Collecting toml>=0.9 (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 30))
+  Using cached toml-0.10.2-py2.py3-none-any.whl.metadata (7.1 kB)
+Requirement already satisfied: wheel>=0.31.1 in /usr/lib/python3/dist-packages (from -r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 31)) (0.42.0)
+Requirement already satisfied: attrs>=17.4.0 in /usr/lib/python3/dist-packages (from jsonschema->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 7)) (23.2.0)
+Requirement already satisfied: pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0 in /usr/lib/python3/dist-packages (from jsonschema->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 7)) (0.20.0)
+Collecting pydsdl~=1.18 (from nunavut>=1.1.0->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 13))
+  Using cached pydsdl-1.25.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting importlib-resources (from nunavut>=1.1.0->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 13))
+  Using cached importlib_resources-7.1.0-py3-none-any.whl.metadata (4.0 kB)
+Requirement already satisfied: python-dateutil>=2.8.2 in /usr/lib/python3/dist-packages (from pandas>=0.21->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 15)) (2.8.2)
+Collecting fastcrc (from pymavlink->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 20))
+  Using cached fastcrc-0.5.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+Collecting cffi>=1.4.1 (from pynacl->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 21))
+  Using cached cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+Collecting pycparser (from cffi>=1.4.1->pynacl->-r /home/saad-rafique/PX4-Autopilot/Tools/setup/requirements.txt (line 21))
+  Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Using cached cerberus-1.3.8-py3-none-any.whl (30 kB)
+Using cached future-1.0.0-py3-none-any.whl (491 kB)
+Using cached kconfiglib-14.1.0-py2.py3-none-any.whl (145 kB)
+Using cached nunavut-2.3.1-6748279276-py3-none-any.whl (369 kB)
+Using cached pandas-3.0.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.8 MB)
+Using cached pkgconfig-1.6.0-py3-none-any.whl (7.1 kB)
+Using cached pycryptodome-3.23.0-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.3 MB)
+Using cached pymavlink-2.4.50-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (7.2 MB)
+Using cached pyros_genmsg-0.5.8-py2.py3-none-any.whl (25 kB)
+Using cached pyulog-1.2.4-py3-none-any.whl (52 kB)
+Using cached toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Using cached cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+Using cached pydsdl-1.25.0-py3-none-any.whl (145 kB)
+Using cached fastcrc-0.5.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.0 MB)
+Using cached importlib_resources-7.1.0-py3-none-any.whl (37 kB)
+Using cached pycparser-3.0-py3-none-any.whl (48 kB)
+Installing collected packages: pyros-genmsg, pydsdl, toml, pyulog, pycryptodome, pycparser, pkgconfig, pandas, kconfiglib, importlib-resources, future, fastcrc, cerberus, pymavlink, nunavut, cffi
+Successfully installed cerberus-1.3.8 cffi-2.1.1 fastcrc-0.5.0 future-1.0.0 importlib-resources-7.1.0 kconfiglib-14.1.0 nunavut-2.3.1 pandas-3.0.6 pkgconfig-1.6.0 pycparser-3.0 pycryptodome-3.23.0 pydsdl-1.25.0 pymavlink-2.4.50 pyros-genmsg-0.5.8 pyulog-1.2.4 toml-0.10.2
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  geographiclib-tools libasio-dev libgeographiclib-dev libgeographiclib26
+  ros-jazzy-diagnostic-updater ros-jazzy-eigen-stl-containers
+  ros-jazzy-geographic-msgs ros-jazzy-libmavconn ros-jazzy-mavlink
+  ros-jazzy-mavros-msgs
+Suggested packages:
+  geographiclib-doc
+The following NEW packages will be installed:
+  geographiclib-tools libasio-dev libgeographiclib-dev libgeographiclib26
+  ros-jazzy-diagnostic-updater ros-jazzy-eigen-stl-containers
+  ros-jazzy-geographic-msgs ros-jazzy-libmavconn ros-jazzy-mavlink
+  ros-jazzy-mavros ros-jazzy-mavros-msgs
+0 upgraded, 11 newly installed, 0 to remove and 7 not upgraded.
+Need to get 6,427 kB of archives.
+After this operation, 80.4 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble/universe amd64 libgeographiclib26 amd64 2.3-1build1 [251 kB]
+Get:2 http://packages.ros.org/ros2/ubuntu noble/main amd64 ros-jazzy-diagnostic-updater amd64 4.2.7-1noble.20260902.061455 [112 kB]
+Get:3 http://packages.ros.org/ros2/ubuntu noble/main amd64 ros-jazzy-eigen-stl-containers amd64 1.1.0-1noble.20260225.233822 [9,570 B]
+Get:4 http://packages.ros.org/ros2/ubuntu noble/main amd64 ros-jazzy-geographic-msgs amd64 1.0.6-2noble.20260902.041337 [321 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble/universe amd64 geographiclib-tools amd64 2.3-1build1 [189 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble/universe amd64 libasio-dev all 1:1.28.1-0.2 [443 kB]
+Get:7 http://archive.ubuntu.com/ubuntu noble/universe amd64 libgeographiclib-dev amd64 2.3-1build1 [416 kB]
+Get:8 http://packages.ros.org/ros2/ubuntu noble/main amd64 ros-jazzy-mavlink amd64 2026.8.8-1noble.20260810.124005 [959 kB]
+Get:9 http://packages.ros.org/ros2/ubuntu noble/main amd64 ros-jazzy-libmavconn amd64 2.15.1-1noble.20260825.004631 [125 kB]
+Get:10 http://packages.ros.org/ros2/ubuntu noble/main amd64 ros-jazzy-mavros-msgs amd64 2.15.1-1noble.20260902.043048 [1,933 kB]
+Get:11 http://packages.ros.org/ros2/ubuntu noble/main amd64 ros-jazzy-mavros amd64 2.15.1-1noble.20260903.022619 [1,667 kB]
+Fetched 6,427 kB in 7s (942 kB/s)
+Selecting previously unselected package libgeographiclib26:amd64.
+(Reading database… (Reading database… 5%(Reading database… 10%(Reading database… 15%(Reading database… 20%(Reading database… 25%(Reading database… 30%(Reading database… 35%(Reading database… 40%(Reading database… 45%(Reading database… 50%(Reading database… 55%(Reading database… 60%(Reading database… 65%(Reading database… 70%(Reading database… 75%(Reading database… 80%(Reading database… 85%(Reading database… 90%(Reading database… 95%(Reading database… 100%(Reading database… 335828 files and directories currently installed.)
+Preparing to unpack …/00-libgeographiclib26_2.3-1build1_amd64.deb…
+Unpacking libgeographiclib26:amd64 (2.3-1build1)…
+Selecting previously unselected package geographiclib-tools.
+Preparing to unpack …/01-geographiclib-tools_2.3-1build1_amd64.deb…
+Unpacking geographiclib-tools (2.3-1build1)…
+Selecting previously unselected package libasio-dev.
+Preparing to unpack …/02-libasio-dev_1%3a1.28.1-0.2_all.deb…
+Unpacking libasio-dev (1:1.28.1-0.2)…
+Selecting previously unselected package libgeographiclib-dev.
+Preparing to unpack …/03-libgeographiclib-dev_2.3-1build1_amd64.deb…
+Unpacking libgeographiclib-dev (2.3-1build1)…
+Selecting previously unselected package ros-jazzy-diagnostic-updater.
+Preparing to unpack …/04-ros-jazzy-diagnostic-updater_4.2.7-1noble.20260902.061455_amd64.deb…
+Unpacking ros-jazzy-diagnostic-updater (4.2.7-1noble.20260902.061455)…
+Selecting previously unselected package ros-jazzy-eigen-stl-containers.
+Preparing to unpack …/05-ros-jazzy-eigen-stl-containers_1.1.0-1noble.20260225.233822_amd64.deb…
+Unpacking ros-jazzy-eigen-stl-containers (1.1.0-1noble.20260225.233822)…
+Selecting previously unselected package ros-jazzy-geographic-msgs.
+Preparing to unpack …/06-ros-jazzy-geographic-msgs_1.0.6-2noble.20260902.041337_amd64.deb…
+Unpacking ros-jazzy-geographic-msgs (1.0.6-2noble.20260902.041337)…
+Selecting previously unselected package ros-jazzy-mavlink.
+Preparing to unpack …/07-ros-jazzy-mavlink_2026.8.8-1noble.20260810.124005_amd64.deb…
+Unpacking ros-jazzy-mavlink (2026.8.8-1noble.20260810.124005)…
+Selecting previously unselected package ros-jazzy-libmavconn.
+Preparing to unpack …/08-ros-jazzy-libmavconn_2.15.1-1noble.20260825.004631_amd64.deb…
+Unpacking ros-jazzy-libmavconn (2.15.1-1noble.20260825.004631)…
+Selecting previously unselected package ros-jazzy-mavros-msgs.
+Preparing to unpack …/09-ros-jazzy-mavros-msgs_2.15.1-1noble.20260902.043048_amd64.deb…
+Unpacking ros-jazzy-mavros-msgs (2.15.1-1noble.20260902.043048)…
+Selecting previously unselected package ros-jazzy-mavros.
+Preparing to unpack …/10-ros-jazzy-mavros_2.15.1-1noble.20260903.022619_amd64.deb…
+Unpacking ros-jazzy-mavros (2.15.1-1noble.20260903.022619)…
+Setting up ros-jazzy-mavlink (2026.8.8-1noble.20260810.124005)…
+Setting up ros-jazzy-geographic-msgs (1.0.6-2noble.20260902.041337)…
+Setting up ros-jazzy-diagnostic-updater (4.2.7-1noble.20260902.061455)…
+Setting up ros-jazzy-eigen-stl-containers (1.1.0-1noble.20260225.233822)…
+Setting up libgeographiclib26:amd64 (2.3-1build1)…
+Setting up geographiclib-tools (2.3-1build1)…
+Setting up ros-jazzy-mavros-msgs (2.15.1-1noble.20260902.043048)…
+Setting up libasio-dev (1:1.28.1-0.2)…
+Setting up libgeographiclib-dev (2.3-1build1)…
+Setting up ros-jazzy-libmavconn (2.15.1-1noble.20260825.004631)…
+Setting up ros-jazzy-mavros (2.15.1-1noble.20260903.022619)…
+Processing triggers for man-db (2.12.0-4build2)…
+Processing triggers for libc-bin (2.39-0ubuntu8.9)…
+Installing GeographicLib geoids egm96-5
+Error while installing GeographicLib geoids egm96-5
+Installing GeographicLib gravity egm96
+Installing GeographicLib magnetic emm2015
+Error while installing GeographicLib magnetic emm2015
+INSTALL_EXIT=0

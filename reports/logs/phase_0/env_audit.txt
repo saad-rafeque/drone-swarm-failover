@@ -1,0 +1,63 @@
+
+===== date =====
+2026-09-26T10:26:47+05:00
+
+===== OS =====
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+VERSION_ID="24.04"
+Linux 7.0.0-34-generic x86_64
+
+===== ROS 2 =====
+ROS_DISTRO=jazzy
+jazzy
+
+===== Python =====
+Python 3.12.3
+numpy 1.26.4
+yaml 6.0.1
+pytest 7.4.4
+pytest_cov 4.1.0
+coverage 7.4.4
+matplotlib 3.6.3
+scipy 1.11.4
+pymavlink MISSING
+
+===== RAM (free -m) =====
+               total        used        free      shared  buff/cache   available
+Mem:            7721        4945         264         932        3750        2776
+Swap:           8191         965        7226
+
+===== CPU =====
+nproc=4
+CPU(s):                                  4
+Model name:                              11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz
+Thread(s) per core:                      2
+Core(s) per socket:                      2
+CPU(s) scaling MHz:                      39%
+
+===== Disk (need >= 15 GB free) =====
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p4  196G   58G  129G  31% /
+
+===== Build tools =====
+git      /usr/bin/git
+cmake    /usr/bin/cmake
+make     /usr/bin/make
+ninja    MISSING
+gcc      /usr/bin/gcc
+g++      /usr/bin/g++
+ccache   /usr/bin/ccache
+colcon   /usr/bin/colcon
+rosdep   /usr/bin/rosdep
+
+===== MAVROS / GeographicLib =====
+ros-jazzy-mavros NOT installed
+GeographicLib datasets NOT found in /usr/share/GeographicLib
+
+===== PX4 =====
+v1.18.0-rc1
+no build/ yet
+
+===== Orphan px4/mavros processes =====
+no px4
+no mavros

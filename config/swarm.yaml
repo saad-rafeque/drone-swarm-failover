@@ -1,0 +1,70 @@
+# Swarm failover — all tunables live here (docs/SPECIFICATION.md §3.9). No ports/IDs hardcoded in code.
+# Values marked "§5" are the mission defaults from docs/SPECIFICATION.md §5; the rest are design choices
+# documented in reports/PHASE_2.md.
+
+swarm:
+  num_drones: 3            # §5 target 10; start with 3 and scale in Phase 1 (3 -> 5 -> 10)
+  first_id: 1              # drone IDs are first_id .. first_id + num_drones - 1 (max ID 63)
+
+# Shared ENU frame anchor. Every drone converts its own global position (lat/lon/alt) into
+# this frame; local MAVROS positions are NEVER compared across drones (docs/SPECIFICATION.md §6).
+origin:
+  lat_deg: 47.397742       # arbitrary test location for simulation
+  lon_deg: 8.545594
+  alt_m: 488.0
+
+mission:
+  cruise_alt_m: 30.0       # §5, AGL
+  cruise_speed_mps: 5.0    # §5
+  goal_enu_m: [0.0, 1000.0]  # §5 ~1 km [east, north] from origin; known to every drone before takeoff
+  goal_radius_m: 3.0       # master is "at goal" inside this horizontal radius
+  hover_at_goal_s: 10.0    # §5, then all drones land
+  takeoff_alt_tolerance_m: 1.5  # master starts cruise when every member is this close to cruise alt
+  takeoff_timeout_s: 60.0  # ... or after this long in TAKEOFF
+  startup_listen_s: 3.0    # listen for peers before the first election
+  startup_timeout_s: 30.0  # master takes off without missing drones after this long
+  climb_rate_mps: 2.0      # takeoff / altitude-change speed limit
+  land_speed_mps: 1.0      # descent speed while landing (pure sim; PX4 uses its own LAND mode)
+
+formation:
+  shape: V
+  spacing_m: 10.0          # §5, between neighbours along each arm
+  v_half_angle_deg: 45.0   # angle between each arm and the master's reverse heading
+  pos_gain: 0.6            # P-gain on position error [1/s]
+  max_correction_mps: 3.0  # saturation of the P-term
+  max_speed_mps: 8.0       # saturation of the total horizontal command
+  orphan_alt_offset_m: 8.0 # drones the master cannot hear fly this much above cruise alt
+
+heartbeat:
+  rate_hz: 5.0             # §5
+  master_timeout_s: 1.5    # §5, master declared dead after this long without its heartbeat
+  peer_timeout_s: 1.5      # any other drone considered gone after this long
+  handover_timeout_s: 1.0  # retiring master tries the next successor after this long
+
+battery:
+  handover_pct: 30.0       # §5, master hands over voluntarily, leaves formation, returns home
+  retire_alt_offset_m: 15.0  # returning drones fly this much above cruise alt (below geofence)
+
+safety:
+  min_separation_m: 5.0    # §5 hard
+  repulsion_factor: 1.5    # §6, repulsion active below factor * min_separation_m
+  repulsion_gain: 3.0      # [m/s] at contact
+  ghost_timeout_s: 3.0     # keep avoiding a drone's extrapolated position this long after losing it
+  geofence_radius_m: 1500.0  # §5, from origin
+  geofence_max_alt_m: 50.0   # §5
+  geofence_margin_m: 3.0     # start pushing back this far inside the fence
+
+setpoints:
+  rate_hz: 20.0            # §5 velocity setpoints (PX4 offboard 2 Hz minimum: verify in docs, Phase 3)
+
+link_emulator:
+  latency_ms: 0.0
+  loss_pct: 0.0
+
+sim:
+  px4_dir: ~/PX4-Autopilot
+  px4_version: v1.18.0-rc1   # first tag with the px4_sitl_sih build target (absent in v1.17.0)
+  build_target: px4_sitl_sih
+  model: sihsim_quadx
+  work_dir: /tmp/swarm_sim   # PX4 working dirs (no spaces allowed); fresh subdir per run
+  # MAVLink ports / fcu_url per instance: filled in Phase 0/1 once verified from PX4 docs + source.

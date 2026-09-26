@@ -1,0 +1,22 @@
+# GeographicLib datasets after sudo copy (2026-09-26T10:43:37+05:00)
+/usr/share/GeographicLib/geoids:
+total 18252
+drwxr-xr-x 2 root root     4096 Sep 26 10:39 .
+drwxr-xr-x 5 root root     4096 Sep 26 10:35 ..
+-rw-r--r-- 1 root root 18671448 Sep 26 10:39 egm96-5.pgm
+-rw-r--r-- 1 root root     1080 Sep 26 10:39 egm96-5.pgm.aux.xml
+-rw-r--r-- 1 root root       50 Sep 26 10:39 egm96-5.wld
+
+/usr/share/GeographicLib/gravity:
+total 2052
+drwxr-xr-x 2 root root    4096 Sep 26 10:35 .
+drwxr-xr-x 5 root root    4096 Sep 26 10:35 ..
+-rw-rw-r-- 1 root root     753 Dec  5  2011 egm96.egm
+-rw-rw-r-- 1 root root 2085160 Nov 12  2011 egm96.egm.cof
+
+/usr/share/GeographicLib/magnetic:
+total 4212
+drwxr-xr-x 2 root root    4096 Sep 26 10:39 .
+drwxr-xr-x 5 root root    4096 Sep 26 10:35 ..
+-rw-r--r-- 1 root root     843 Sep 26 10:39 emm2015.wmm
+-rw-r--r-- 1 root root 4297112 Sep 26 10:39 emm2015.wmm.cof

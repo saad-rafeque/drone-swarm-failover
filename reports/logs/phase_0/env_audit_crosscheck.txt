@@ -1,0 +1,66 @@
+
+===== date =====
+2026-09-26T10:52:31+05:00
+
+===== OS =====
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+VERSION_ID="24.04"
+Linux 7.0.0-34-generic x86_64
+
+===== ROS 2 =====
+ROS_DISTRO=jazzy
+jazzy
+
+===== Python =====
+Python 3.12.3
+numpy 1.26.4
+yaml 6.0.1
+pytest 7.4.4
+pytest_cov 4.1.0
+coverage 7.4.4
+matplotlib 3.6.3
+scipy 1.11.4
+pymavlink 2.4.50
+
+===== RAM (free -m) =====
+               total        used        free      shared  buff/cache   available
+Mem:            7721        4571         336        1017        4136        3150
+Swap:           8191        1568        6623
+
+===== CPU =====
+nproc=4
+CPU(s):                                  4
+Model name:                              11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz
+Thread(s) per core:                      2
+Core(s) per socket:                      2
+CPU(s) scaling MHz:                      85%
+
+===== Disk (need >= 15 GB free) =====
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p4  196G   59G  128G  32% /
+
+===== Build tools =====
+git      /usr/bin/git
+cmake    /usr/bin/cmake
+make     /usr/bin/make
+ninja    /usr/bin/ninja
+gcc      /usr/bin/gcc
+g++      /usr/bin/g++
+ccache   /usr/bin/ccache
+colcon   /usr/bin/colcon
+rosdep   /usr/bin/rosdep
+
+===== MAVROS / GeographicLib =====
+ros-jazzy-mavros 2.15.1-1noble.20260903.022619
+ros-jazzy-mavros-msgs 2.15.1-1noble.20260902.043048
+geoids
+gravity
+magnetic
+
+===== PX4 =====
+v1.18.0-rc1
+px4_sitl_sih
+
+===== Orphan px4/mavros processes =====
+no px4
+47940 /bin/bash -c source <shell snapshot> 2>/dev/null || true && shopt -u extglob 2>/dev/null || true && { \builtin unalias -- 'unsetenv'; \builtin unset -f -- 'unsetenv'; } >/dev/null 2>&1 || true && eval 'pkill -x px4; pkill -x mavros_node; sleep 1; echo "px4 left: $(pgrep -c -x px4)  mavros left: $(pgrep -c -x mavros_node)"; env -i HOME="$HOME" USER="$USER" PATH=/usr/local/bin:/usr/bin:/bin bash --noprofile --norc -c '"'"'cd "/home/saad-rafique/Documents/drone swarm" && scripts/env_audit.sh > reports/logs/phase_0/env_audit_crosscheck.txt 2>&1 && timeout 400 scripts/ros_env.sh python3 scripts/phase0_flight_test.py --out-subdir run2_crosscheck'"'"' 2>&1 | tail -32' < /dev/null && pwd -P >| <cwd file>

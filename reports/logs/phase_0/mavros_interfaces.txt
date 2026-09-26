@@ -1,0 +1,57 @@
+=== mavros_msgs/srv/SetMode ===
+uint8 MAV_MODE_PREFLIGHT		= 0
+uint8 MAV_MODE_STABILIZE_DISARMED	= 80
+uint8 MAV_MODE_STABILIZE_ARMED		= 208
+uint8 MAV_MODE_MANUAL_DISARMED		= 64
+uint8 MAV_MODE_MANUAL_ARMED		= 192
+uint8 MAV_MODE_GUIDED_DISARMED		= 88
+uint8 MAV_MODE_GUIDED_ARMED		= 216
+uint8 MAV_MODE_AUTO_DISARMED		= 92
+uint8 MAV_MODE_AUTO_ARMED		= 220
+uint8 MAV_MODE_TEST_DISARMED		= 66
+uint8 MAV_MODE_TEST_ARMED		= 194
+uint8 base_mode		# filled by MAV_MODE enum value or 0 if custom_mode != ''
+string custom_mode	# string mode representation or integer
+---
+bool mode_sent		# Mode known/parsed correctly and SET_MODE are sent
+=== mavros_msgs/srv/CommandBool ===
+bool value
+---
+bool success
+uint8 result
+=== mavros_msgs/msg/State ===
+uint8 VTOL_STATE_UNDEFINED = 0
+uint8 VTOL_STATE_TRANSITION_TO_FW = 1
+uint8 VTOL_STATE_TRANSITION_TO_MC = 2
+uint8 VTOL_STATE_MC = 3
+uint8 VTOL_STATE_FW = 4
+uint8 LANDED_STATE_UNDEFINED = 0
+uint8 LANDED_STATE_ON_GROUND = 1
+uint8 LANDED_STATE_IN_AIR = 2
+uint8 LANDED_STATE_TAKEOFF = 3
+uint8 LANDED_STATE_LANDING = 4
+std_msgs/Header header
+	builtin_interfaces/Time stamp
+		int32 sec
+		uint32 nanosec
+	string frame_id
+uint8 vtol_state
+uint8 landed_state
+=== mavros_msgs/msg/ExtendedState ===
+uint8 VTOL_STATE_UNDEFINED = 0
+uint8 VTOL_STATE_TRANSITION_TO_FW = 1
+uint8 VTOL_STATE_TRANSITION_TO_MC = 2
+uint8 VTOL_STATE_MC = 3
+uint8 VTOL_STATE_FW = 4
+uint8 LANDED_STATE_UNDEFINED = 0
+uint8 LANDED_STATE_ON_GROUND = 1
+uint8 LANDED_STATE_IN_AIR = 2
+uint8 LANDED_STATE_TAKEOFF = 3
+uint8 LANDED_STATE_LANDING = 4
+std_msgs/Header header
+	builtin_interfaces/Time stamp
+		int32 sec
+		uint32 nanosec
+	string frame_id
+uint8 vtol_state
+uint8 landed_state

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+# colcon artefacts (if ever used)
+build/
+install/
+log/
+.sim/
