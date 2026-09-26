@@ -5,6 +5,7 @@
   GET  /api/state     one JSON snapshot of the swarm
   GET  /api/stream    Server-Sent Events: a snapshot every 100 ms
   GET  /api/obstacles buildings / woods of the current mission as lat-lon polygons
+  GET  /api/config    map service keys from config/map_keys.local.yaml (git-ignored), read on every call
   POST /api/cmd       JSON command (start, pause, resume, reset, speed, fault, partition, heal)
 Bound to 127.0.0.1: only this laptop can open it.
 """
@@ -16,9 +17,23 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import yaml
+
 STATIC = Path(__file__).resolve().parent / "static"
+KEYS_FILE = Path(__file__).resolve().parents[3] / "config" / "map_keys.local.yaml"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
          ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml"}
+
+
+def map_keys() -> dict:
+    """Mapbox / Cesium ion tokens the user pasted into the local key file (empty strings if missing)."""
+    keys = {"mapbox_token": "", "cesium_ion_token": ""}
+    try:
+        data = yaml.safe_load(KEYS_FILE.read_text()) or {}
+        keys.update({k: str(data.get(k) or "").strip() for k in keys})
+    except (OSError, yaml.YAMLError):
+        pass
+    return keys
 STREAM_PERIOD_S = 0.1
 
 
@@ -54,6 +69,8 @@ def make_handler(backend):
                 self._json(backend.snapshot())
             elif path == "/api/obstacles":
                 self._json(backend.obstacles_payload())
+            elif path == "/api/config":
+                self._json(map_keys())
             elif path == "/api/stream":
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "text/event-stream")

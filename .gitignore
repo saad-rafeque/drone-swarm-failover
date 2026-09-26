@@ -10,3 +10,6 @@ install/
 log/
 .sim/
 kaggle/swarm-rl-code.zip
+
+# local map service keys (never commit)
+config/map_keys.local.yaml

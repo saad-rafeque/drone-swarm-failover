@@ -1,0 +1,5 @@
+# Map service keys for the ground-control app (2-D satellite map and 3-D view).
+# Copy this file to config/map_keys.local.yaml and paste your own tokens between the quotes.
+# map_keys.local.yaml is git-ignored: keys never go into the repository, reports or PDFs.
+mapbox_token: ""        # Mapbox public token (starts with pk.)  https://account.mapbox.com/access-tokens/
+cesium_ion_token: ""    # Cesium ion access token                https://ion.cesium.com/tokens

@@ -32,7 +32,29 @@
   const streets = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" });
   satellite.addTo(map);
-  L.control.layers({ Satellite: satellite, Streets: streets }, null, { position: "topright" }).addTo(map);
+  const layers = L.control.layers({ "Satellite (Esri)": satellite, Streets: streets }, null, { position: "topright" }).addTo(map);
+  // Mapbox satellite when the user has put a token in config/map_keys.local.yaml (attribution and logo per Mapbox terms)
+  const mapboxLogo = L.control({ position: "bottomleft" });
+  mapboxLogo.onAdd = () => {
+    const a = L.DomUtil.create("a", "mapbox-logo");
+    a.href = "https://www.mapbox.com/about/maps"; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = '<img src="/static/mapbox-logo.svg" width="88" height="23" alt="Mapbox">';
+    return a;
+  };
+  const getConfig = (tries = 5) => fetch("/api/config").then((r) => r.json())
+    .catch((e) => (tries > 1 ? new Promise((ok) => setTimeout(ok, 1000)).then(() => getConfig(tries - 1)) : Promise.reject(e)));
+  getConfig().then((cfg) => {
+    if (!cfg.mapbox_token) return;
+    const mb = L.tileLayer(`https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg90?access_token=${encodeURIComponent(cfg.mapbox_token)}`, {
+      maxZoom: 21, maxNativeZoom: 20,
+      attribution: '&copy; <a href="https://www.mapbox.com/about/maps" target="_blank" rel="noopener">Mapbox</a> ' +
+        '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> ' +
+        '&copy; <a href="https://www.maxar.com/" target="_blank" rel="noopener">Maxar</a> ' +
+        '<strong><a href="https://apps.mapbox.com/feedback/" target="_blank" rel="noopener">Improve this map</a></strong>' });
+    layers.addBaseLayer(mb, "Satellite (Mapbox)");
+    map.removeLayer(satellite); mb.addTo(map); mapboxLogo.addTo(map);
+    map.on("baselayerchange", (e) => { if (e.layer === mb) mapboxLogo.addTo(map); else mapboxLogo.remove(); });
+  }).catch((e) => console.error("Mapbox layer:", e));
   L.control.scale({ imperial: false }).addTo(map);
   map.setView([33.71, 73.03], 14);
   const zoomClass = () => {
