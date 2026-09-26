@@ -19,8 +19,8 @@ from swarm_agent.geometry import EnuFrame, GeoPoint
 from swarm_agent.obstacles import ObstacleMap
 
 CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "osm"
-OVERPASS_URLS = ("https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
-                 "https://overpass.private.coffee/api/interpreter")
+OVERPASS_URLS = ("https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+                 "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter")
 TREE_RADIUS_M = 3.0
 LEVEL_M = 3.2              # storey height when OSM gives building:levels
 DEFAULT_BUILDING_M = 9.0   # about three storeys when OSM gives no height at all
@@ -40,40 +40,58 @@ def height_m(tags: dict, default: float) -> float:
     return default
 
 
-def overpass_query(south: float, west: float, north: float, east: float) -> str:
+def overpass_query(south: float, west: float, north: float, east: float, tall_only: bool = False) -> str:
+    """Every building, wood and mapped tree in the box; or (tall_only) just buildings that carry a height
+    or storey count - a much lighter query, enough when the swarm flies above ordinary houses and trees."""
     b = f"{south:.6f},{west:.6f},{north:.6f},{east:.6f}"
+    if tall_only:
+        return f'[out:json][timeout:90];(way["building"]["height"]({b});way["building"]["building:levels"]({b}););out geom;'
     return (f'[out:json][timeout:90];(way["building"]({b});way["natural"="wood"]({b});'
             f'way["landuse"="forest"]({b});node["natural"="tree"]({b}););out geom;')
 
 
-def cache_path(south: float, west: float, north: float, east: float, cache_dir: str | Path = CACHE_DIR) -> Path:
-    q = overpass_query(south, west, north, east)
+def cache_path(south: float, west: float, north: float, east: float, cache_dir: str | Path = CACHE_DIR,
+               tall_only: bool = False) -> Path:
+    q = overpass_query(south, west, north, east, tall_only)
     return Path(cache_dir) / f"{hashlib.sha1(q.encode()).hexdigest()[:16]}.json"
 
 
-def fetch(south: float, west: float, north: float, east: float, cache_dir: str | Path = CACHE_DIR) -> dict:
-    q = overpass_query(south, west, north, east)
-    cache = cache_path(south, west, north, east, cache_dir)
+_dead: set[str] = set()     # mirrors that could not be reached in this session
+
+
+def fetch(south: float, west: float, north: float, east: float, cache_dir: str | Path = CACHE_DIR,
+          note=None, tall_only: bool = False) -> dict:
+    """Overpass download of one box (cached). The main server is tried first and again after a pause when
+    it is busy (HTTP 429/504); mirrors that cannot be reached are skipped for the rest of the session.
+    `note(text)` receives what is happening, for progress displays."""
+    q = overpass_query(south, west, north, east, tall_only)
+    cache = cache_path(south, west, north, east, cache_dir, tall_only)
     if cache.exists():
         return json.loads(cache.read_text())
     body = urllib.parse.urlencode({"data": q}).encode()
     errors = []
-    for attempt in range(2):
-        for url in OVERPASS_URLS:
-            req = urllib.request.Request(url, data=body,
-                                         headers={"User-Agent": "swarm-failover-sim/0.1 (research simulation)"})
-            try:
-                with urllib.request.urlopen(req, timeout=120) as resp:
-                    data = json.loads(resp.read().decode())
-                break
-            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
-                errors.append(f"{url}: {exc}")
-        else:
-            time.sleep(10)
+    plan = [OVERPASS_URLS[0]] * 3 + list(OVERPASS_URLS[1:]) + [OVERPASS_URLS[0]] * 2
+    for attempt, url in enumerate(plan):
+        if url in _dead:
             continue
-        break
+        req = urllib.request.Request(url, data=body, headers={"User-Agent": "swarm-failover-sim/0.1 (research simulation)"})
+        try:
+            with urllib.request.urlopen(req, timeout=90) as resp:
+                data = json.loads(resp.read().decode())
+            break
+        except urllib.error.HTTPError as exc:
+            errors.append(f"{url}: HTTP {exc.code}")
+            if note:
+                note(f"map server busy (HTTP {exc.code}), retrying")
+            time.sleep(15 if exc.code in (429, 504) else 3)
+        except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{url}: {exc}")
+            if url != OVERPASS_URLS[0]:
+                _dead.add(url)
+            if note:
+                note("map server not answering, trying another")
     else:
-        raise RuntimeError("Overpass download failed: " + "; ".join(errors))
+        raise RuntimeError("Overpass download failed: " + "; ".join(errors[-4:]))
     data["source"] = url
     data["query"] = q
     cache.parent.mkdir(parents=True, exist_ok=True)
@@ -93,17 +111,19 @@ def corridor_boxes(frame: EnuFrame, goal_en: tuple[float, float], tile_m: float 
             for a, b in zip(pts, pts[1:])]
 
 
-def fetch_boxes(boxes, progress=None, pause_s: float = 1.0, cache_dir: str | Path = CACHE_DIR) -> dict:
+def fetch_boxes(boxes, progress=None, pause_s: float = 1.0, cache_dir: str | Path = CACHE_DIR,
+                tall_only: bool = False) -> dict:
     """Download (or read from cache) every box and merge the elements, without duplicates. Pauses between
     real downloads to be gentle with the public Overpass servers."""
     elements: dict[tuple[str, int], dict] = {}
     for k, bb in enumerate(boxes):
-        cached = cache_path(*bb, cache_dir).exists()
-        data = fetch(*bb, cache_dir=cache_dir)
+        cached = cache_path(*bb, cache_dir, tall_only).exists()
+        data = fetch(*bb, cache_dir=cache_dir, tall_only=tall_only,
+                     note=(lambda t, k=k: progress(k, len(boxes), t)) if progress else None)
         for el in data.get("elements", []):
             elements[(el["type"], el["id"])] = el
         if progress:
-            progress(k + 1, len(boxes))
+            progress(k + 1, len(boxes), "")
         if not cached and k + 1 < len(boxes):
             time.sleep(pause_s)
     return {"elements": list(elements.values())}

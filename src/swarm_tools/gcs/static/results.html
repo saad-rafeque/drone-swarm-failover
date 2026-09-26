@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swarm Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="docpage">
+<header class="bar">
+  <div class="brand">
+    <h1>Swarm Ground Control</h1>
+    <nav class="nav" aria-label="Views">
+      <a href="/">Mission</a>
+      <a href="/static/3d.html">3D view</a>
+      <a href="/static/results.html" aria-current="page">Results</a>
+      <a href="/reports/replay/swarm_replay.html">PX4 flights</a>
+      <a href="/static/docs.html">Docs</a>
+    </nav>
+  </div>
+</header>
+<main class="doc">
+  <section class="card">
+    <h2>Obstacle avoidance: learned policy vs classical</h2>
+    <p class="hint" id="rl-meta">Loading&hellip;</p>
+    <img class="chart" src="/reports/logs/rl/eval/comparison.png" alt="Success rate, crashes and drones left behind per method and obstacle density">
+    <div id="rl-table"></div>
+    <p class="hint" id="rl-paired"></p>
+  </section>
+  <section class="card">
+    <h2>On the real map: F-9 Park to Faisal Mosque</h2>
+    <div id="route" class="md">Loading&hellip;</div>
+  </section>
+  <section class="card">
+    <h2>RL training</h2>
+    <img class="chart" src="/reports/rl_training.png" alt="Training return and held-out scores over training steps">
+    <p class="hint">PPO, 6 million steps, 38 minutes on the laptop CPU; still improving at the end of the run.
+      Longer training is planned on Kaggle (see Docs &rarr; Kaggle).</p>
+  </section>
+  <section class="card">
+    <h2>Swarm size: 1 to 100 drones</h2>
+    <div id="scaling" class="md">Loading&hellip;</div>
+  </section>
+  <section class="card">
+    <h2>PX4 simulation</h2>
+    <div class="twoimg">
+      <figure><img class="chart" src="/reports/phase0_altitude.png" alt="Altitude of the first PX4 flight"><figcaption>One PX4 drone: arm, climb to 10 m, hover, land.</figcaption></figure>
+      <figure><img class="chart" src="/reports/phase1_resources.png" alt="RAM and CPU for 3, 5 and 10 PX4 drones"><figcaption>10 PX4 drones on this laptop: RAM and CPU.</figcaption></figure>
+    </div>
+    <p class="hint">Flight replays: <a href="/reports/replay/swarm_replay.html">PX4 flights</a>. Full reports: <a href="/static/docs.html">Docs</a>.</p>
+  </section>
+</main>
+<script src="/static/md.js"></script>
+<script src="/static/results.js"></script>
+</body>
+</html>

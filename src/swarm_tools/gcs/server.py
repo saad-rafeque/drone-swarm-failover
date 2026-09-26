@@ -6,6 +6,8 @@
   GET  /api/stream    Server-Sent Events: a snapshot every 100 ms
   GET  /api/obstacles buildings / woods of the current mission as lat-lon polygons
   GET  /api/config    map service keys from config/map_keys.local.yaml (git-ignored), read on every call
+  GET  /reports/<f>   result files (charts, reports, logs summaries, the PX4 replay page)
+  GET  /docs/<f>      handover documents (docs/ and the README)
   POST /api/cmd       JSON command (start, pause, resume, reset, speed, fault, partition, heal)
 Bound to 127.0.0.1: only this laptop can open it.
 """
@@ -13,6 +15,7 @@ from __future__ import annotations
 
 import json
 import time
+import urllib.parse
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -20,9 +23,25 @@ from pathlib import Path
 import yaml
 
 STATIC = Path(__file__).resolve().parent / "static"
-KEYS_FILE = Path(__file__).resolve().parents[3] / "config" / "map_keys.local.yaml"
+REPO = Path(__file__).resolve().parents[3]
+KEYS_FILE = REPO / "config" / "map_keys.local.yaml"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
-         ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml"}
+         ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png",
+         ".md": "text/markdown; charset=utf-8", ".json": "application/json", ".jsonl": "text/plain; charset=utf-8",
+         ".csv": "text/csv; charset=utf-8", ".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8"}
+SHARED = {"/reports/": REPO / "reports", "/docs/": REPO / "docs"}   # read-only file areas
+
+
+def shared_file(path: str) -> Path | None:
+    """A file under reports/ or docs/ (or README.md) for a /reports/... or /docs/... URL; None if outside."""
+    if path == "/docs/README.md":
+        return REPO / "README.md"
+    for prefix, root in SHARED.items():
+        if path.startswith(prefix):
+            f = (root / path[len(prefix):]).resolve()
+            if f.is_file() and f.suffix in TYPES and root.resolve() in f.parents:
+                return f
+    return None
 
 
 def map_keys() -> dict:
@@ -71,6 +90,12 @@ def make_handler(backend):
                 self._json(backend.obstacles_payload())
             elif path == "/api/config":
                 self._json(map_keys())
+            elif path.startswith(("/reports/", "/docs/")):
+                f = shared_file(urllib.parse.unquote(path))
+                if f is None:
+                    self._send(404, b"not found", "text/plain")
+                else:
+                    self._send(200, f.read_bytes(), TYPES[f.suffix])
             elif path == "/api/stream":
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "text/event-stream")

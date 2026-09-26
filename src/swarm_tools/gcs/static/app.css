@@ -106,3 +106,31 @@ table.drones { width: 100%; border-collapse: collapse; font-size: 13px; }
   background: #e0a33a; color: #1a1300; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
 .stop.done { background: #6b7b87; color: #e3eaef; opacity: 0.75; }
 @media (prefers-reduced-motion: reduce) { .drone-icon .rot { transition: none; } }
+
+/* document pages (Results, Docs) */
+body.docpage { display: block; min-height: 100%; }
+.doc { max-width: 1100px; margin: 0 auto; padding: 18px 16px 48px; display: grid; gap: 16px; }
+.doc .card { gap: 12px; }
+.doc .chart { width: 100%; max-width: 100%; height: auto; border-radius: 8px; background: #fff; }
+.twoimg { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.twoimg figure { margin: 0; display: grid; gap: 6px; }
+.twoimg figcaption { font-size: 13px; color: var(--ink-2); }
+.md { line-height: 1.55; overflow-wrap: anywhere; }
+.md h2, .md h3, .md h4, .md h5 { font-family: var(--display); margin: 14px 0 6px; }
+.md h2 { font-size: 26px; } .md h3 { font-size: 20px; } .md h4 { font-size: 17px; }
+.md p, .md ul, .md ol { margin: 6px 0; max-width: 80ch; }
+.md code { font-family: var(--mono); font-size: 12.5px; background: var(--panel-2); padding: 1px 4px; border-radius: 4px; }
+.md pre { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto; }
+.md pre code { background: none; padding: 0; }
+.md a, .doc a { color: #9cc4f5; }
+.tbl table, .md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+.tbl th, .tbl td { padding: 6px 8px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
+.tbl th { background: var(--panel-2); font: 600 12px/1.2 var(--display); letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); border-top: 0; }
+.tbl td.num, .tbl th.num { text-align: right; font-family: var(--mono); }
+.docs { grid-template-columns: 260px minmax(0, 1fr); align-items: start; }
+@media (max-width: 800px) { .docs { grid-template-columns: minmax(0, 1fr); } }
+.doclist ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.doclist a { display: block; padding: 6px 8px; border-radius: 6px; text-decoration: none; color: var(--ink-2); }
+.doclist a:hover { background: var(--panel-2); color: var(--ink); }
+.doclist a[aria-current="true"] { background: rgba(74, 146, 234, 0.2); color: #fff; }

@@ -148,6 +148,13 @@ class FastSimBackend:
         g = frame.surface_point(e, n)
         return [round(g.lat_deg, 7), round(g.lon_deg, 7)]
 
+    @staticmethod
+    def _alt_mode(p: dict, dist: float) -> str:
+        mode = p.get("altitude", "auto")
+        if mode == "auto":
+            mode = "low" if p.get("obstacles", "none") == "osm" and dist <= CORRIDOR_OVER_M else "normal"
+        return mode
+
     def _prepare(self, p: dict) -> dict:
         """The slow part of starting a mission (map download, route planning, stops); touches no shared state
         except the progress text, so it can run outside the lock."""
@@ -155,23 +162,32 @@ class FastSimBackend:
         ge, gn, _ = frame.to_enu(GeoPoint(p["target"][0], p["target"][1], 0.0))
         dist = math.hypot(ge, gn)
         osm_on = p.get("obstacles", "none") == "osm"
-        alt_mode = p.get("altitude", "auto")
-        if alt_mode == "auto":
-            alt_mode = "low" if osm_on and dist <= CORRIDOR_OVER_M else "normal"
+        alt_mode = self._alt_mode(p, dist)
         cruise_alt = LOW_ALT_M if alt_mode == "low" else NORMAL_ALT_M
         min_h = 0.0 if alt_mode == "low" else cruise_alt - 5.0
         cfg = mission_config(self.base, int(p["n"]), p["home"], p["target"], float(p["cruise_mps"]), cruise_alt)
         goal = cfg.mission.goal_enu_m
         leg_m = max(1000.0, LEG_FRACTION * float(p["endurance_min"]) * 60.0 * float(p["cruise_mps"]))
         omap, counts, kinds = ObstacleMap(), None, []
+        tall_only = min_h > 0.0          # flying above ordinary houses and trees: only tagged tall buildings matter
+        data_note = None
         if osm_on:
-            if dist <= CORRIDOR_OVER_M:
-                self._progress("Downloading buildings and trees from OpenStreetMap")
-                data = osm.fetch(*self._bbox(p))
-            else:
-                boxes = osm.corridor_boxes(frame, goal, margin_deg=OSM_MARGIN_DEG)
-                data = osm.fetch_boxes(boxes, progress=lambda k, n: self._progress(
-                    f"Downloading buildings along the route: box {k} of {n}"))
+            try:
+                if dist <= CORRIDOR_OVER_M:
+                    self._progress("Downloading buildings and trees from OpenStreetMap")
+                    data = osm.fetch(*self._bbox(p), tall_only=tall_only,
+                                     note=lambda t: self._progress(f"Downloading buildings: {t}"))
+                else:
+                    boxes = osm.corridor_boxes(frame, goal, tile_m=20000.0 if tall_only else 3000.0,
+                                               margin_deg=OSM_MARGIN_DEG)
+                    data = osm.fetch_boxes(boxes, tall_only=tall_only, progress=lambda k, n, t: self._progress(
+                        f"Downloading buildings along the route: box {k} of {n}" + (f" ({t})" if t else "")))
+            except RuntimeError as exc:
+                if not tall_only:
+                    raise ValueError(f"the OpenStreetMap servers are not answering right now ({exc}); try again "
+                                     f"in a few minutes or use the normal flight height") from exc
+                data, data_note = {"elements": []}, "OpenStreetMap servers busy: no building data, the swarm flies " \
+                    f"at {cruise_alt:.0f} m where almost everything is below it"
             omap, counts, kinds = osm.to_obstacles(data, frame, min_height_m=min_h)
             self._progress("Planning the route around the buildings")
             try:
@@ -192,6 +208,7 @@ class FastSimBackend:
         world = World(omap, avoider, route, stops) if (osm_on or stops) else None
         return {
             "cfg": cfg, "frame": frame, "world": world, "counts": counts, "leg_m": leg_m, "alt_mode": alt_mode,
+            "data_note": data_note,
             "route_m": sum(math.dist(a, b) for a, b in zip(route, route[1:])),
             "obstacles": {"kinds": kinds, "polygons": [[self._ll(frame, x, y) for x, y in poly] for poly in omap.polygons],
                           "circles": [self._ll(frame, x, y) + [r] for x, y, r in omap.circles]},
@@ -235,6 +252,8 @@ class FastSimBackend:
         dist = math.hypot(*cfg.mission.goal_enu_m)
         self._event("info", f"Mission ready: {len(cfg.drone_ids)} drones, route {dist / 1000:.2f} km, "
                             f"battery endurance {p['endurance_min']:.0f} min (seed {p['seed']})")
+        if prep.get("data_note"):
+            self._event("fault", prep["data_note"])
         if prep["counts"] is not None:
             c = prep["counts"]
             over = f"; {c['below']} lower ones ignored (the swarm flies over them at {cfg.mission.cruise_alt_m:.0f} m)" \
@@ -428,7 +447,8 @@ class FastSimBackend:
                 if dist > MAX_ROUTE_M:
                     return {"ok": False, "msg": f"routes up to {MAX_ROUTE_M / 1000:.0f} km are supported "
                                                 f"(this one is {dist / 1000:.0f} km)"}
-                slow = p["obstacles"] == "osm" and (dist > CORRIDOR_OVER_M or not osm.cache_path(*self._bbox(p)).exists())
+                tall = self._alt_mode(p, dist) != "low"
+                slow = p["obstacles"] == "osm" and (dist > CORRIDOR_OVER_M or not osm.cache_path(*self._bbox(p), tall_only=tall).exists())
                 if slow:
                     self.loading = "Preparing the mission (map data and route)"
                     threading.Thread(target=self._prepare_then_start, args=(p,), daemon=True).start()
