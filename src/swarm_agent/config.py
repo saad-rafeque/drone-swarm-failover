@@ -72,6 +72,7 @@ class HeartbeatCfg:
 @dataclass(frozen=True)
 class BatteryCfg:
     handover_pct: float
+    critical_pct: float
     retire_alt_offset_m: float
 
 
@@ -201,6 +202,8 @@ def validate(cfg: Config) -> None:
         raise ConfigError(f"altitude layers {layers} (relative to cruise) must be >= min separation apart")
     if m.cruise_alt_m + f.transit_alt_offset_m < 2.0 * s.min_separation_m:
         raise ConfigError("transit layer too close to the ground")
+    if not 0.0 <= cfg.battery.critical_pct < cfg.battery.handover_pct:
+        raise ConfigError("battery.critical_pct must be below battery.handover_pct")
     if not f.transit_exit_m < f.transit_threshold_m:
         raise ConfigError("transit_exit_m must be below transit_threshold_m")
     if math.hypot(*m.goal_enu_m) > s.geofence_radius_m - s.geofence_margin_m:

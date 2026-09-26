@@ -50,6 +50,7 @@ heartbeat:
 
 battery:
   handover_pct: 30.0       # §5, master hands over voluntarily, leaves formation, returns home
+  critical_pct: 10.0       # at or below this (or GPS lost): hand over and land where it is
   retire_alt_offset_m: 15.0  # returning drones fly this much above cruise alt (below geofence)
 
 safety:

@@ -125,7 +125,7 @@ def test_f5_partition_then_heal_single_master(cfg):
 
 def test_low_battery_follower_retires_home(cfg):
     sim = fault_sim(cfg, 4)
-    sim.set_battery(3, 10.0)
+    sim.set_battery(3, 20.0)   # below handover (30 %), above critical (10 %): fly home
     sim.run_until(sim.t + 1.0)
     assert sim.role(3) == Role.RETIRED and sim.masters() == [1]
     finish(sim)
@@ -200,3 +200,38 @@ def test_mission_completes_on_lossy_slow_links(cfg, latency, loss):
     sim.run_until(330.0)
     assert all(at_goal(sim, i) for i in sim.alive_ids())
     assert sim.min_sep_seen >= cfg.safety.min_separation_m
+
+
+def test_gps_loss_master_hands_over_and_lands_in_place(cfg):
+    sim = fault_sim(cfg, 5)
+    where = sim.drones[1].pos
+    sim.drones[1].gps_ok = False
+    took = time_to(sim, lambda: sim.masters() == [2] and sim.converged(), 2.0)
+    assert took < 1.0
+    time_to(sim, lambda: sim.drones[1].landed, 60.0)
+    assert sim.agents[1].last_cmd.reason in ("emergency_land", "retired_on_ground")
+    assert norm_xy(sub(sim.drones[1].pos, where)) < 60.0     # came down near where GPS failed, not at home
+    finish(sim)
+
+
+def test_critical_battery_follower_lands_in_place(cfg):
+    sim = fault_sim(cfg, 4)
+    sim.set_battery(3, cfg.battery.critical_pct - 1.0)
+    sim.step()
+    assert sim.role(3) == Role.RETIRED and sim.agents[3].emergency
+    time_to(sim, lambda: sim.drones[3].landed, 60.0)
+    assert sim.masters() == [1]
+
+
+def test_killed_drone_falls_to_the_ground(cfg):
+    sim = fault_sim(cfg, 3)
+    sim.kill(3)
+    assert sim.drones[3].falling
+    time_to(sim, lambda: not sim.drones[3].falling, 5.0)
+    assert sim.drones[3].pos[2] == 0.0 and not sim.drones[3].alive
+
+
+def test_empty_battery_in_air_is_a_crash(cfg):
+    sim = PureSim(cfg.with_num_drones(3), seed=2, drain_pct_per_s=5.0)
+    sim.run_until(40.0)
+    assert any(not d.alive for d in sim.drones.values())

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swarm Ground Control</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <h1>Swarm Ground Control</h1>
+    <span class="badge" id="backend">connecting&hellip;</span>
+  </div>
+  <div class="bar-right">
+    <span class="conn" id="conn">offline</span>
+    <span class="clock" id="clock">t = 0 s</span>
+  </div>
+</header>
+
+<main class="main">
+  <section class="mapwrap">
+    <div id="map" aria-label="Map with the drones"></div>
+    <div class="maptools">
+      <label class="check"><input type="checkbox" id="follow" checked> Follow swarm</label>
+      <label class="check"><input type="checkbox" id="trails" checked> Trails</label>
+      <span class="pickhint" id="pickhint" hidden>Click on the map to set the <b id="pickwhat">target</b></span>
+    </div>
+  </section>
+
+  <aside class="side">
+    <section class="card" aria-labelledby="h-mission">
+      <h2 id="h-mission">Mission</h2>
+      <div class="grid2">
+        <label>Home latitude<input id="home_lat" type="number" step="0.000001"></label>
+        <label>Home longitude<input id="home_lon" type="number" step="0.000001"></label>
+        <label>Target latitude<input id="tgt_lat" type="number" step="0.000001"></label>
+        <label>Target longitude<input id="tgt_lon" type="number" step="0.000001"></label>
+      </div>
+      <div class="row">
+        <button class="ghost" id="pick_home" type="button">Pick home on map</button>
+        <button class="ghost" id="pick_target" type="button">Pick target on map</button>
+      </div>
+      <div class="grid4">
+        <label>Drones<select id="n"></select></label>
+        <label>Speed m/s<input id="cruise" type="number" min="1" max="12" step="0.5"></label>
+        <label>Battery min<input id="endurance" type="number" min="1" step="1"></label>
+        <label>Seed<input id="seed" type="number" min="0" step="1"></label>
+      </div>
+      <p class="hint" id="route">&nbsp;</p>
+      <div class="row">
+        <button class="primary" id="start" type="button">Start mission</button>
+        <button class="ghost" id="reset" type="button" title="Same settings, same seed">Restart same</button>
+        <button class="ghost" id="pause" type="button">Pause</button>
+      </div>
+      <div class="row speeds" role="group" aria-label="Simulation speed">
+        <span class="label">Sim speed</span>
+        <button type="button" data-speed="1">1&times;</button>
+        <button type="button" data-speed="4">4&times;</button>
+        <button type="button" data-speed="10">10&times;</button>
+        <button type="button" data-speed="30">30&times;</button>
+        <button type="button" data-speed="500">Max</button>
+        <span class="actual" id="actual"></span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-status">
+      <h2 id="h-status">Swarm status</h2>
+      <div class="readouts">
+        <div><span class="label">Phase</span><span class="v" id="r_phase">&mdash;</span></div>
+        <div><span class="label">Master</span><span class="v" id="r_master">&mdash;</span></div>
+        <div><span class="label">Alive</span><span class="v" id="r_alive">&mdash;</span></div>
+        <div><span class="label">Formation error</span><span class="v" id="r_rms">&mdash;</span></div>
+        <div><span class="label">Closest pair</span><span class="v" id="r_sep">&mdash;</span></div>
+        <div><span class="label">Distance left</span><span class="v" id="r_left">&mdash;</span></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-faults">
+      <h2 id="h-faults">Faults</h2>
+      <div class="row wrap">
+        <button class="warn" data-quick="master" type="button">Kill master</button>
+        <button class="warn" data-quick="random:2" type="button">Kill 2 random</button>
+        <button class="warn" data-quick="random:3" type="button">Kill 3 random</button>
+        <button class="warn" data-quick="random:4" type="button">Kill 4 random</button>
+        <button class="ghost" id="partition" type="button">Radio partition</button>
+        <button class="ghost" id="heal" type="button">Heal radios</button>
+      </div>
+      <div class="row">
+        <select id="fault_type" aria-label="Fault to apply"></select>
+        <button class="warn" id="apply" type="button">Apply to selected</button>
+      </div>
+      <div class="tablewrap">
+        <table class="drones">
+          <thead><tr><th><input type="checkbox" id="sel_all" aria-label="Select all"></th><th>ID</th><th>Role</th>
+            <th class="num">Alt m</th><th class="num">Speed</th><th>Battery</th><th>Doing</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-alt">
+      <h2 id="h-alt">Altitude over time</h2>
+      <canvas id="altchart" height="150" aria-label="Altitude of every drone over the last minutes"></canvas>
+    </section>
+
+    <section class="card" aria-labelledby="h-events">
+      <h2 id="h-events">Events</h2>
+      <ol id="events" class="events"></ol>
+    </section>
+  </aside>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

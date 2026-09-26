@@ -33,7 +33,8 @@ HOLD_MAX_MPS = 2.0
 KP_CROSS_TRACK = 0.3        # master's cross-track correction toward its leg line [1/s]
 CROSS_TRACK_MAX_MPS = 1.0
 TRANSIT_ENTER_DELAY_S = 0.5  # slot error must exceed the threshold this long (filters glitches)
-LAYER_TOL_M = 1.5           # "on the layer" tolerance
+LAYER_TOL_M = 1.5
+EMERGENCY_DROP_MARGIN_M = 2.0  # emergency descent keeps formation speed until min_sep + this below cruise           # "on the layer" tolerance
 LAYER_CHANGE_MAX_CORRECTION_MPS = 1.0  # horizontal P-term limit until vertically clear of the formation layer
 
 
@@ -50,6 +51,7 @@ class OwnState:
     battery_pct: float
     ready: bool         # valid position, able to arm
     landed: bool
+    gps_ok: bool = True # False: position no longer trustworthy -> emergency landing
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,6 +92,7 @@ class AgentCore:
         self._last_slot: Slot | None = None
         self._was_master = False
         self.retire_stage = ""
+        self.emergency = False
         self._retire_vel: Vec3 = ZERO
         self._speed_cmd = 0.0   # master's ramped cruise speed
         self._speed_t = now
@@ -103,10 +106,17 @@ class AgentCore:
     def step(self, own: OwnState, now: float) -> tuple[Command, Heartbeat | None]:
         e = self.election
         low_battery = own.battery_pct <= self.cfg.battery.handover_pct
-        if low_battery and not e.retiring:
+        emergency = not own.gps_ok or own.battery_pct <= self.cfg.battery.critical_pct
+        if (low_battery or emergency) and not e.retiring:
             self._retire_vel = (own.vel[0], own.vel[1], 0.0)
             e.start_retire(now)
-        e.set_eligible(own.ready and not low_battery)
+        if emergency and not self.emergency:
+            # GPS lost or battery critical: a master hands over first (start_retire); then the
+            # drone drops out of the formation layer while keeping the formation's speed (so the
+            # drones behind pass over it, not into it) and lands where it is instead of flying home.
+            self.emergency = True
+            self.retire_stage = "drop"
+        e.set_eligible(own.ready and not low_battery and not emergency)
         e.update(now)
 
         if e.role == Role.MASTER:
@@ -269,9 +279,17 @@ class AgentCore:
 
     def _retire_command(self, own: OwnState, now: float) -> Command:
         m = self.cfg.mission
-        if own.landed and self.retire_stage in ("", "land"):
+        if own.landed and self.retire_stage in ("", "land", "drop"):
             self.retire_stage = "land"
             return Command(FlightMode.GROUND, ZERO, "retired_on_ground")
+        if self.retire_stage == "drop":
+            floor = m.cruise_alt_m - self.cfg.safety.min_separation_m - EMERGENCY_DROP_MARGIN_M
+            if own.pos[2] <= floor:
+                self.retire_stage = "land"
+            else:
+                v = (self._retire_vel[0], self._retire_vel[1], -m.descent_rate_mps)
+                return Command(FlightMode.OFFBOARD, self._safe(own, v, now), "emergency_drop",
+                               (own.pos[0], own.pos[1], floor))
         return_alt = m.cruise_alt_m + self.cfg.battery.retire_alt_offset_m
         if self.retire_stage == "":
             self.retire_stage = "climb"
@@ -291,6 +309,8 @@ class AgentCore:
             if dxy <= m.goal_radius_m:
                 self.retire_stage = "land"
             return Command(FlightMode.OFFBOARD, self._safe(own, v, now), "retire_transit", target)
+        if self.emergency:
+            return Command(FlightMode.LAND, ZERO, "emergency_land", (own.pos[0], own.pos[1], 0.0))
         return Command(FlightMode.LAND, ZERO, "retire_land", (self.home[0], self.home[1], 0.0))
 
     # ------------------------------------------------------------------ safety

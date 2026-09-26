@@ -38,6 +38,16 @@ class SimDrone:
     alive: bool = True
     landed: bool = True
     dist: tuple[float, float] = (0.0, 0.0)
+    gps_ok: bool = True
+    falling: bool = False   # dead and still dropping to the ground
+
+    def fall(self, dt: float) -> None:
+        """A dead drone drops under gravity (no thrust) until it hits the ground."""
+        vx, vy, vz = self.vel[0] * 0.99, self.vel[1] * 0.99, self.vel[2] - 9.81 * dt
+        x, y, z = self.pos[0] + vx * dt, self.pos[1] + vy * dt, self.pos[2] + vz * dt
+        if z <= 0.0:
+            z, vx, vy, vz, self.falling = 0.0, 0.0, 0.0, 0.0, False
+        self.pos, self.vel = (x, y, z), (vx, vy, vz)
 
     def integrate(self, cmd: Command | None, dt: float, dyn: Dynamics, land_speed: float,
                   rng: random.Random | None = None) -> None:
@@ -110,6 +120,9 @@ class Network:
     def block_tx(self, src: int, dsts) -> None:
         self.blocked.update((src, d) for d in dsts if d != src)
 
+    def unblock_tx(self, src: int) -> None:
+        self.blocked = {l for l in self.blocked if l[0] != src}
+
     def heal(self) -> None:
         self.blocked.clear()
 
@@ -149,7 +162,10 @@ class PureSim:
         return [i for i, d in self.drones.items() if d.alive]
 
     def kill(self, drone_id: int) -> None:
-        self.drones[drone_id].alive = False
+        """Hard failure (crash, motor or power loss): no more heartbeats, the drone drops."""
+        d = self.drones[drone_id]
+        d.alive = False
+        d.falling = d.pos[2] > 0.05
 
     def set_battery(self, drone_id: int, pct: float) -> None:
         self.drones[drone_id].battery_pct = pct
@@ -208,7 +224,7 @@ class PureSim:
         alive = self.alive_ids()
         for i in order:
             d = self.drones[i]
-            own = OwnState(d.pos, d.vel, d.battery_pct, ready=True, landed=d.landed)
+            own = OwnState(d.pos, d.vel, d.battery_pct, ready=True, landed=d.landed, gps_ok=d.gps_ok)
             cmd, hb = self.agents[i].step(own, t)
             self.cmds[i] = cmd
             if hb is not None:
@@ -219,6 +235,11 @@ class PureSim:
             d.integrate(self.cmds.get(i), self.dt, self.dyn, land_speed, self.rng)
             if not d.landed and self.drain:
                 d.battery_pct = max(0.0, d.battery_pct - self.drain * self.dt)
+                if d.battery_pct <= 0.0:
+                    self.kill(i)   # battery empty in the air: it drops
+        for d in self.drones.values():
+            if d.falling:
+                d.fall(self.dt)
         pos = self.airborne_positions()
         min_sep, pair = min_pairwise_distance(pos) if len(pos) > 1 else (math.inf, None)
         if min_sep < self.min_sep_seen:
