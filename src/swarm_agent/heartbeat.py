@@ -42,6 +42,7 @@ class Phase(IntEnum):
     HOLD = 3      # hovering at the goal
     LAND = 4
     LANDED = 5
+    CHARGE = 6    # on the ground at a charging stop of a long route, waiting for full batteries
 
 
 class Flag:

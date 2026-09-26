@@ -66,7 +66,12 @@ def test_osm_elements_become_obstacles_without_network():
                          {"type": "way", "tags": {"building": "yes"}, "geometry": sq[:3]},       # not closed: skipped
                          {"type": "node", "tags": {"natural": "tree"}, "lat": 33.7, "lon": 73.02}]}
     omap, counts, kinds = to_obstacles(data, frame)
-    assert counts == {"buildings": 1, "woods": 1, "trees": 1} and kinds == ["building", "wood"]
+    assert counts == {"buildings": 1, "woods": 1, "trees": 1, "below": 0} and kinds == ["building", "wood"]
+    tall = {"elements": [dict(data["elements"][0], tags={"building": "yes", "building:levels": "10"}),
+                         dict(data["elements"][0], tags={"building": "yes"}),                  # ~9 m: below 25 m
+                         dict(data["elements"][1]), data["elements"][3]]}
+    _, c25, k25 = to_obstacles(tall, frame, min_height_m=25.0)
+    assert c25 == {"buildings": 1, "woods": 0, "trees": 0, "below": 3} and k25 == ["building"]
     assert omap.clearance(0.0, 0.0) < 0.0                      # inside the tree at the frame origin
     assert omap.clearance(0.0, -10.0, search_m=50) == pytest.approx(7.0)   # 10 m to the tree centre, radius 3
 
@@ -85,5 +90,19 @@ def test_obstacle_mission_uses_the_cached_osm_map(cfg):
     s = b.snapshot()
     assert s["phase"] == "CRUISE" and s["hits"] == 0
     assert not b.command({"cmd": "start", "obstacles": "osm", "avoider": "nonsense"})["ok"]
-    far = b.command({"cmd": "start", "obstacles": "osm", "avoider": "apf", "target": [31.5204, 74.3587]})
-    assert not far["ok"] and "up to" in far["msg"]
+    far = b.command({"cmd": "start", "obstacles": "osm", "avoider": "apf", "target": [24.8607, 67.0011]})  # Karachi
+    assert not far["ok"] and "up to" in far["msg"] and b.loading is None                     # refused before any download
+
+
+def test_city_to_city_open_sky_gets_charging_stops(cfg):
+    b = FastSimBackend(cfg)
+    r = b.command({"cmd": "start", "n": 5, "obstacles": "none", "target": [31.5204, 74.3587],   # Lahore
+                   "endurance_min": 25, "cruise_mps": 5})
+    assert r["ok"] and b.loading is None
+    s = b.snapshot()
+    assert 55 <= len(s["stops"]) <= 75                          # ~270 km in legs of ~4 km
+    assert abs(s["route"][-1][0] - 31.5204) < 1e-5 and abs(s["route"][-1][1] - 74.3587) < 1e-5
+    assert any("charging stops" in e[3] for e in s["events"])
+    run(b, 60.0)
+    s = b.snapshot()
+    assert s["phase"] == "CRUISE" and s["next_stop"] == 0 and s["alive"] == 5

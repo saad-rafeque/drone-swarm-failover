@@ -9,11 +9,13 @@
     takeoff: "Taking off", land: "Landing", idle: "On ground", climb_to_join: "Climbing to join",
     retire_climb: "Leaving formation", retire_transit: "Flying home", retire_land: "Landing at home",
     retired_on_ground: "Landed", emergency_drop: "Emergency descent", emergency_land: "Emergency landing",
-    falling: "Falling", crashed: "Crashed",
+    falling: "Falling", crashed: "Crashed", charging: "Charging (battery swap)",
   };
   const OFF_FORMATION = new Set(["transit", "orphan", "climb_to_join", "retire_climb", "retire_transit", "retire_land",
                                   "emergency_drop", "emergency_land"]);
-  const PHASE = { IDLE: "On ground", TAKEOFF: "Takeoff", CRUISE: "Cruise", HOLD: "At target", LAND: "Landing", LANDED: "Landed" };
+  const PHASE = { IDLE: "On ground", TAKEOFF: "Takeoff", CRUISE: "Cruise", HOLD: "At target", LAND: "Landing", LANDED: "Landed",
+                  CHARGE: "Charging stop" };
+  const LEG_FRACTION = 0.55;      // same as the backend: a leg between charging stops uses ~half a battery
   const HISTORY_S = 240;
   const FOLLOW_ZOOM = 19;          // closest zoom when following: ~0.25 m per pixel, 10 m slots ~40 px apart
   let zoomToSwarm = true;
@@ -70,20 +72,39 @@
   const obstacleRenderer = L.canvas({ padding: 0.5 });
   const obstacleLayer = L.layerGroup().addTo(map);
   const plannedL = L.polyline([], { color: "#ffd166", weight: 3, opacity: 0.9 }).addTo(map);
-  let obstaclesVersion = -1, routeKey = "";
+  let obstaclesVersion = -1, routeKey = "", stopsKey = "";
+  let obstacleData = { polys: [], circles: [] };
+  const stopsLayer = L.layerGroup().addTo(map);
+  function drawObstacles() {          // long routes carry tens of thousands of buildings: draw only those in view
+    obstacleLayer.clearLayers();
+    if (map.getZoom() < 13) return;
+    const b = map.getBounds().pad(0.5);
+    for (const o of obstacleData.polys) {
+      if (o.s > b.getNorth() || o.n < b.getSouth() || o.w > b.getEast() || o.e < b.getWest()) continue;
+      const wood = o.kind === "wood";
+      L.polygon(o.pts, { renderer: obstacleRenderer, interactive: false, weight: 1,
+        color: wood ? "#5fd39a" : "#ff8f7a", fillColor: wood ? "#3fbf86" : "#ef6a5f", fillOpacity: wood ? 0.25 : 0.4 })
+        .addTo(obstacleLayer);
+    }
+    for (const [lat, lon, r] of obstacleData.circles) {
+      if (!b.contains([lat, lon])) continue;
+      L.circle([lat, lon], { radius: r, renderer: obstacleRenderer, interactive: false,
+        weight: 1, color: "#5fd39a", fillColor: "#3fbf86", fillOpacity: 0.4 }).addTo(obstacleLayer);
+    }
+  }
+  map.on("moveend", drawObstacles);
   async function loadObstacles(version) {
     obstaclesVersion = version;
     try {
       const o = await (await fetch("/api/obstacles")).json();
-      obstacleLayer.clearLayers();
-      o.polygons.forEach((poly, k) => {
-        const wood = o.kinds[k] === "wood";
-        L.polygon(poly, { renderer: obstacleRenderer, interactive: false, weight: 1,
-          color: wood ? "#5fd39a" : "#ff8f7a", fillColor: wood ? "#3fbf86" : "#ef6a5f", fillOpacity: wood ? 0.25 : 0.4 })
-          .addTo(obstacleLayer);
-      });
-      o.circles.forEach(([lat, lon, r]) => L.circle([lat, lon], { radius: r, renderer: obstacleRenderer, interactive: false,
-        weight: 1, color: "#5fd39a", fillColor: "#3fbf86", fillOpacity: 0.4 }).addTo(obstacleLayer));
+      obstacleData = {
+        polys: o.polygons.map((pts, k) => {
+          const lats = pts.map((q) => q[0]), lons = pts.map((q) => q[1]);
+          return { pts, kind: o.kinds[k], s: Math.min(...lats), n: Math.max(...lats), w: Math.min(...lons), e: Math.max(...lons) };
+        }),
+        circles: o.circles,
+      };
+      drawObstacles();
     } catch (e) { obstaclesVersion = -1; }
   }
 
@@ -115,6 +136,15 @@
     if (s.obstacles_version !== obstaclesVersion) loadObstacles(s.obstacles_version);
     const rk = s.route ? `${s.route.length}:${s.route[0]}:${s.route[s.route.length - 1]}` : "";
     if (rk !== routeKey) { plannedL.setLatLngs(s.route || []); routeKey = rk; routeL.setStyle({ opacity: s.route ? 0.3 : 0.75 }); }
+    const sk = `${(s.stops || []).length}:${s.next_stop}:${rk}`;
+    if (sk !== stopsKey) {
+      stopsKey = sk;
+      stopsLayer.clearLayers();
+      (s.stops || []).forEach(([lat, lon], k) => L.marker([lat, lon], { interactive: false, keyboard: false,
+        icon: L.divIcon({ className: "", iconSize: [22, 22], iconAnchor: [11, 11],
+          html: `<div class="stop${s.next_stop != null && k < s.next_stop ? " done" : ""}" title="Charging stop ${k + 1}">&#9889;</div>` }) })
+        .addTo(stopsLayer));
+    }
     if (!fitted) { map.fitBounds(L.latLngBounds([home, tgt]).pad(0.25)); fitted = true; }
     const showTrails = $("trails").checked;
     const many = s.drones.length > 30;   // big swarms: trail only the leader and drones that left formation
@@ -175,8 +205,11 @@
     if (h.some(isNaN) || t.some(isNaN)) return;
     const dist = haversine(h, t), v = Number($("cruise").value) || 5, e = Number($("endurance").value) || 25;
     const need = dist / v / 60;
-    $("route").textContent = `Route ${(dist / 1000).toFixed(2)} km · about ${need.toFixed(0)} min at ${v} m/s · battery ${e} min` +
-      (need > 0.8 * e ? " — too far for this battery: drones will turn back" : "");
+    const leg = Math.max(1000, LEG_FRACTION * e * 60 * v), stops = dist > leg + 500 ? Math.ceil((dist - 500) / leg) - 1 : 0;
+    const fmtMin = (m) => (m >= 90 ? `${(m / 60).toFixed(1)} h` : `${m.toFixed(0)} min`);
+    $("route").textContent = `Route ${(dist / 1000).toFixed(dist > 20000 ? 0 : 2)} km · about ${fmtMin(need)} at ${v} m/s · battery ${e} min` +
+      (stops ? ` · about ${stops} charging stops, one every ${(leg / 1000).toFixed(1)} km` : "") +
+      (dist > 400000 ? " — too far: the page accepts up to 400 km" : "");
     homeM.setLatLng(h); tgtM.setLatLng(t); routeL.setLatLngs([h, t]);
   }
   function fillParams(p) {
@@ -186,7 +219,7 @@
     const set = (id, v) => { if (document.activeElement !== $(id)) $(id).value = v; };
     set("home_lat", p.home[0]); set("home_lon", p.home[1]); set("tgt_lat", p.target[0]); set("tgt_lon", p.target[1]);
     set("n", p.n); set("cruise", p.cruise_mps); set("endurance", p.endurance_min); set("seed", p.seed);
-    set("obstacles", p.obstacles || "none"); set("avoider", p.avoider || "apf");
+    set("obstacles", p.obstacles || "none"); set("avoider", p.avoider || "apf"); set("altitude", p.altitude || "auto");
     routeHint();
   }
   ["home_lat", "home_lon", "tgt_lat", "tgt_lon", "cruise", "endurance"].forEach((id) => $(id).addEventListener("input", routeHint));
@@ -244,7 +277,8 @@
     const sep = $("r_sep");
     sep.textContent = s.min_sep == null ? "—" : `${s.min_sep.toFixed(1)} m`;
     sep.className = "v " + (s.min_sep == null ? "" : s.min_sep >= 5 ? "ok" : "bad");
-    $("r_left").innerHTML = s.dist_left == null ? "—" : `${(s.dist_left / 1000).toFixed(2)} km <small>ETA ${fmtTime(s.eta)}</small>`;
+    const stopTxt = s.stops && s.stops.length ? ` · stop ${Math.min((s.next_stop || 0) + 1, s.stops.length)}/${s.stops.length}` : "";
+    $("r_left").innerHTML = s.dist_left == null ? "—" : `${(s.dist_left / 1000).toFixed(s.dist_left > 20000 ? 0 : 2)} km <small>ETA ${fmtTime(s.eta)}${stopTxt}</small>`;
     const hits = $("r_hits");
     hits.textContent = s.route ? String(s.hits) : "—";
     hits.className = "v " + (s.route ? (s.hits ? "bad" : "ok") : "");
@@ -333,7 +367,7 @@
   $("start").addEventListener("click", async () => {
     const r = await cmd({ cmd: "start", n: Number($("n").value), cruise_mps: Number($("cruise").value),
       endurance_min: Number($("endurance").value), seed: Number($("seed").value),
-      obstacles: $("obstacles").value, avoider: $("avoider").value,
+      obstacles: $("obstacles").value, avoider: $("avoider").value, altitude: $("altitude").value,
       home: [Number($("home_lat").value), Number($("home_lon").value)], target: [Number($("tgt_lat").value), Number($("tgt_lon").value)] });
     if (r.ok) { fitted = false; zoomToSwarm = true; clearSwarm(); }
   });
@@ -383,6 +417,8 @@
           return `<option value="${k}"${off ? " disabled" : ""}>${v}${off ? " (not trained yet)" : ""}</option>`;
         }).join("");
         $("avoider").value = state.params.avoider || "apf";
+        $("altitude").innerHTML = Object.entries(state.altitudes).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+        $("altitude").value = state.params.altitude || "auto";
         faultsFilled = true;
       }
       if (!drawPending) { drawPending = true; requestAnimationFrame(render); }

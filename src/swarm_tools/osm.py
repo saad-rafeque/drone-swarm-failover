@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import time
 import urllib.error
 import urllib.parse
@@ -21,6 +22,22 @@ CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "osm"
 OVERPASS_URLS = ("https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
                  "https://overpass.private.coffee/api/interpreter")
 TREE_RADIUS_M = 3.0
+LEVEL_M = 3.2              # storey height when OSM gives building:levels
+DEFAULT_BUILDING_M = 9.0   # about three storeys when OSM gives no height at all
+WOOD_M = 15.0              # canopy height of woods and forests without a height tag
+TREE_M = 12.0
+
+
+def height_m(tags: dict, default: float) -> float:
+    """Height from OSM tags: height (metres), else building:levels x 3.2 m, else the default."""
+    for key, scale in (("height", 1.0), ("building:levels", LEVEL_M)):
+        v = str(tags.get(key, "")).strip().lower().replace("m", "").replace(",", ".").strip()
+        try:
+            if v:
+                return float(v.split(";")[0].split()[0]) * scale
+        except ValueError:
+            pass
+    return default
 
 
 def overpass_query(south: float, west: float, north: float, east: float) -> str:
@@ -64,12 +81,47 @@ def fetch(south: float, west: float, north: float, east: float, cache_dir: str |
     return data
 
 
-def to_obstacles(data: dict, frame: EnuFrame) -> tuple[ObstacleMap, dict, list[str]]:
-    """(obstacle map, counts, kind of every polygon: "building" or "wood")."""
+def corridor_boxes(frame: EnuFrame, goal_en: tuple[float, float], tile_m: float = 3000.0,
+                   margin_deg: float = 0.004) -> list[tuple[float, float, float, float]]:
+    """Lat/lon boxes (south, west, north, east) covering the straight route home -> goal in tile_m pieces,
+    each widened by margin_deg (about 400 m): the strip a long route needs, not the whole region."""
+    d = math.hypot(*goal_en)
+    n = max(1, math.ceil(d / tile_m))
+    pts = [frame.surface_point(goal_en[0] * k / n, goal_en[1] * k / n) for k in range(n + 1)]
+    return [(min(a.lat_deg, b.lat_deg) - margin_deg, min(a.lon_deg, b.lon_deg) - margin_deg,
+             max(a.lat_deg, b.lat_deg) + margin_deg, max(a.lon_deg, b.lon_deg) + margin_deg)
+            for a, b in zip(pts, pts[1:])]
+
+
+def fetch_boxes(boxes, progress=None, pause_s: float = 1.0, cache_dir: str | Path = CACHE_DIR) -> dict:
+    """Download (or read from cache) every box and merge the elements, without duplicates. Pauses between
+    real downloads to be gentle with the public Overpass servers."""
+    elements: dict[tuple[str, int], dict] = {}
+    for k, bb in enumerate(boxes):
+        cached = cache_path(*bb, cache_dir).exists()
+        data = fetch(*bb, cache_dir=cache_dir)
+        for el in data.get("elements", []):
+            elements[(el["type"], el["id"])] = el
+        if progress:
+            progress(k + 1, len(boxes))
+        if not cached and k + 1 < len(boxes):
+            time.sleep(pause_s)
+    return {"elements": list(elements.values())}
+
+
+def to_obstacles(data: dict, frame: EnuFrame, min_height_m: float = 0.0) -> tuple[ObstacleMap, dict, list[str]]:
+    """(obstacle map, counts, kind of every polygon: "building" or "wood").
+
+    min_height_m > 0 keeps only what reaches the flight height: at 30 m most houses and trees are below
+    the drones, so only taller structures remain obstacles (counted in counts["below"] otherwise)."""
     polys, circles, kinds = [], [], []
-    counts = {"buildings": 0, "woods": 0, "trees": 0}
+    counts = {"buildings": 0, "woods": 0, "trees": 0, "below": 0}
     for el in data.get("elements", []):
         tags = el.get("tags", {})
+        default = TREE_M if el["type"] == "node" else (DEFAULT_BUILDING_M if "building" in tags else WOOD_M)
+        if min_height_m > 0.0 and height_m(tags, default) < min_height_m:
+            counts["below"] += 1
+            continue
         if el["type"] == "node" and tags.get("natural") == "tree":
             e, n, _ = frame.to_enu(GeoPoint(el["lat"], el["lon"], 0.0))
             circles.append((e, n, TREE_RADIUS_M))

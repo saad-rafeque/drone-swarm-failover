@@ -87,6 +87,22 @@ class EnuFrame:
         dz = cl * n + sl * u
         return ecef_to_geodetic(self._x0 + dx, self._y0 + dy, self._z0 + dz)
 
+    def surface_point(self, e: float, n: float, h: float = 0.0) -> GeoPoint:
+        """The point at height h whose horizontal ENU coordinates are (e, n).
+
+        The swarm works in the (east, north) plane and drops the up coordinate of ground points. Far
+        from the origin the ground drops below that tangent plane (u ~ -d^2 / 2R, about -5.7 km at
+        270 km), so converting (e, n, 0) back would place a drone hundreds of metres off; this puts it
+        back on the ground (a few Newton steps along the local vertical)."""
+        u = -(e * e + n * n) / (2.0 * 6_371_000.0)
+        g = self.to_geodetic((e, n, u))
+        for _ in range(4):
+            if abs(g.alt_m - h) < 0.01:
+                break
+            u -= g.alt_m - h
+            g = self.to_geodetic((e, n, u))
+        return GeoPoint(g.lat_deg, g.lon_deg, h)
+
 
 # ---------------------------------------------------------------- vector helpers (ENU tuples)
 

@@ -8,6 +8,11 @@ latitude/longitude. Faults are injected per drone from the web page.
 Optional obstacles: buildings and woods from OpenStreetMap around the route (low-altitude flight:
 drones go around them). The leader flies an A* route; followers use the chosen avoider
 (off / classical potential field / learned RL policy, optionally with the stopping-distance brake).
+
+Long routes (up to 400 km, e.g. city to city): map data only for a strip along the route, downloaded
+in 3 km boxes; the route is planned chunk by chunk; charging stops are placed so every leg uses about
+half a battery, and the swarm lands, swaps batteries and continues. Downloading and planning run in a
+background thread with progress on the page.
 """
 from __future__ import annotations
 
@@ -25,7 +30,8 @@ from swarm_agent.avoidance import LearnedPolicy, NoAvoidance, PotentialField, Sh
 from swarm_agent.config import Config, OriginCfg, validate
 from swarm_agent.geometry import EnuFrame, GeoPoint
 from swarm_agent.heartbeat import Phase, Role
-from swarm_agent.planner import plan_path
+from swarm_agent.obstacles import ObstacleMap
+from swarm_agent.planner import NoRouteError, place_stops, plan_long_route, plan_path
 from swarm_tools import osm
 from swarm_tools.puresim import Dynamics, PureSim
 
@@ -40,23 +46,33 @@ FAULTS = {
     "radio_restore": "Radio transmitter restored",
 }
 PHASE_TEXT = {Phase.TAKEOFF: "Takeoff to cruise altitude", Phase.CRUISE: "Cruise to the target",
-              Phase.HOLD: "Target reached: hovering", Phase.LAND: "Landing at the target"}
+              Phase.HOLD: "Target reached: hovering", Phase.LAND: "Landing at the target",
+              Phase.CHARGE: "On the ground: swapping batteries"}
 DEFAULTS = {
     "n": 10, "home": [33.7036, 73.0231], "target": [33.7299, 73.0373],   # example: F-9 Park -> Faisal Mosque
     "cruise_mps": 5.0, "endurance_min": 25.0, "seed": 1, "drift": 0.15, "obstacles": "none", "avoider": "apf",
+    "altitude": "auto",
 }
+ALTITUDES = {"auto": "Auto (low in town, normal on long routes)",
+             "low": "Low, 16 m: every building and tree is in the way",
+             "normal": "Normal, 30 m: only buildings of 25 m or more are in the way"}
+LOW_ALT_M, NORMAL_ALT_M = 16.0, 30.0
 AVOIDERS = {"none": "Off", "apf": "Classical (potential field + brake)", "rl": "RL policy",
             "rl+shield": "RL policy + brake"}
 REPO = Path(__file__).resolve().parents[3]
 POLICY_PATH = REPO / "models" / "avoid_policy.npz"
 APF_TUNING = REPO / "reports" / "logs" / "rl" / "apf_tuning.jsonl"
-MAX_OBSTACLE_ROUTE_M = 6000.0
-OSM_MARGIN_DEG = 0.004          # about 400 m around the home-target box
+MAX_ROUTE_M = 400_000.0        # longest route the page accepts (city to city)
+CORRIDOR_OVER_M = 6000.0        # longer routes download a strip of 3 km boxes along the route
+OSM_MARGIN_DEG = 0.004          # about 400 m around the home-target box (or around each strip box)
+LEG_FRACTION = 0.55             # a leg between charging stops uses about this share of a full battery
+SWAP_S = 180.0                  # battery swap time at a charging stop
 MIN_ROUTE_M = 50.0
 MAX_DRONES = 100      # the logic allows 250 (PX4 system IDs); above ~100 the fast sim runs slower than real time
 
 
-def mission_config(base: Config, n: int, home: list[float], target: list[float], cruise_mps: float) -> Config:
+def mission_config(base: Config, n: int, home: list[float], target: list[float], cruise_mps: float,
+                   cruise_alt_m: float | None = None) -> Config:
     """Base config re-anchored at a real home position, with a real GPS target."""
     frame = EnuFrame(GeoPoint(home[0], home[1], 0.0))
     ge, gn, _ = frame.to_enu(GeoPoint(target[0], target[1], 0.0))
@@ -67,7 +83,8 @@ def mission_config(base: Config, n: int, home: list[float], target: list[float],
     cfg = r(base,
             swarm=r(base.swarm, num_drones=n),
             origin=OriginCfg(home[0], home[1], 0.0),
-            mission=r(base.mission, goal_enu_m=(ge, gn), cruise_speed_mps=cruise_mps),
+            mission=r(base.mission, goal_enu_m=(ge, gn), cruise_speed_mps=cruise_mps,
+                      cruise_alt_m=base.mission.cruise_alt_m if cruise_alt_m is None else cruise_alt_m),
             formation=r(base.formation, max_speed_mps=max(base.formation.max_speed_mps, cruise_mps + 5.0)),
             safety=r(base.safety, geofence_radius_m=max(base.safety.geofence_radius_m, dist * 1.2 + 500.0)))
     validate(cfg)
@@ -84,6 +101,7 @@ class FastSimBackend:
         self.obstacles_version = 0
         self._obstacles = {"version": 0, "polygons": [], "kinds": [], "circles": []}
         self.route_ll: list[list[float]] | None = None
+        self.stops_ll: list[list[float]] = []
         self.lock = threading.RLock()
         self.params = dict(DEFAULTS)
         self.speed = 4.0
@@ -122,45 +140,84 @@ class FastSimBackend:
             return Shielded(pol) if kind == "rl+shield" else pol
         raise ValueError(f"unknown avoidance {kind!r}")
 
-    def _world(self, p: dict, cfg: Config, frame: EnuFrame) -> World | None:
-        """Obstacle map, route and avoider for this mission (None in open sky)."""
-        if p.get("obstacles", "none") != "osm":
-            self._obstacles = {"version": self.obstacles_version + 1, "polygons": [], "kinds": [], "circles": []}
-            self.route_ll = None
-            return None
-        dist = math.hypot(*cfg.mission.goal_enu_m)
-        if dist > MAX_OBSTACLE_ROUTE_M:
-            raise ValueError(f"obstacle maps are available for routes up to {MAX_OBSTACLE_ROUTE_M / 1000:.0f} km "
-                             f"(this one is {dist / 1000:.1f} km)")
-        omap, counts, kinds = osm.to_obstacles(osm.fetch(*self._bbox(p)), frame)
-        route = plan_path(omap, (0.0, 0.0), cfg.mission.goal_enu_m, clearance_m=8.0, res_m=4.0, margin_m=150.0)
-        if route is None:
-            raise ValueError("no route around the buildings from home to the target; move one of them")
-        def ll(e: float, n: float) -> list[float]:
-            g = frame.to_geodetic((e, n, 0.0))
-            return [round(g.lat_deg, 7), round(g.lon_deg, 7)]
+    def _progress(self, text: str) -> None:
+        self.loading = text
 
-        self._obstacles = {"version": self.obstacles_version + 1, "kinds": kinds,
-                           "polygons": [[ll(x, y) for x, y in poly] for poly in omap.polygons],
-                           "circles": [ll(x, y) + [r] for x, y, r in omap.circles]}
-        self.route_ll = [ll(x, y) for x, y in route]
-        self._world_info = (counts, sum(math.dist(a, b) for a, b in zip(route, route[1:])))
-        return World(omap, self._avoider(p.get("avoider", "apf")), route)
+    @staticmethod
+    def _ll(frame: EnuFrame, e: float, n: float) -> list[float]:
+        g = frame.surface_point(e, n)
+        return [round(g.lat_deg, 7), round(g.lon_deg, 7)]
+
+    def _prepare(self, p: dict) -> dict:
+        """The slow part of starting a mission (map download, route planning, stops); touches no shared state
+        except the progress text, so it can run outside the lock."""
+        frame = EnuFrame(GeoPoint(p["home"][0], p["home"][1], 0.0))
+        ge, gn, _ = frame.to_enu(GeoPoint(p["target"][0], p["target"][1], 0.0))
+        dist = math.hypot(ge, gn)
+        osm_on = p.get("obstacles", "none") == "osm"
+        alt_mode = p.get("altitude", "auto")
+        if alt_mode == "auto":
+            alt_mode = "low" if osm_on and dist <= CORRIDOR_OVER_M else "normal"
+        cruise_alt = LOW_ALT_M if alt_mode == "low" else NORMAL_ALT_M
+        min_h = 0.0 if alt_mode == "low" else cruise_alt - 5.0
+        cfg = mission_config(self.base, int(p["n"]), p["home"], p["target"], float(p["cruise_mps"]), cruise_alt)
+        goal = cfg.mission.goal_enu_m
+        leg_m = max(1000.0, LEG_FRACTION * float(p["endurance_min"]) * 60.0 * float(p["cruise_mps"]))
+        omap, counts, kinds = ObstacleMap(), None, []
+        if osm_on:
+            if dist <= CORRIDOR_OVER_M:
+                self._progress("Downloading buildings and trees from OpenStreetMap")
+                data = osm.fetch(*self._bbox(p))
+            else:
+                boxes = osm.corridor_boxes(frame, goal, margin_deg=OSM_MARGIN_DEG)
+                data = osm.fetch_boxes(boxes, progress=lambda k, n: self._progress(
+                    f"Downloading buildings along the route: box {k} of {n}"))
+            omap, counts, kinds = osm.to_obstacles(data, frame, min_height_m=min_h)
+            self._progress("Planning the route around the buildings")
+            try:
+                route = plan_path(omap, (0.0, 0.0), goal, clearance_m=8.0, res_m=4.0, margin_m=150.0) \
+                    if dist <= CORRIDOR_OVER_M else \
+                    plan_long_route(omap, (0.0, 0.0), goal, clearance_m=8.0,
+                                    progress=lambda t: self._progress(f"Planning: {t}"))
+            except NoRouteError as exc:
+                hint = " Try the normal flight height (the drones then fly over houses and trees)" \
+                    if alt_mode == "low" else " Move the target or home a little"
+                raise ValueError(f"{exc}.{hint}") from exc
+            if route is None:
+                raise ValueError("no route around the buildings from home to the target; move one of them")
+            avoider = self._avoider(p.get("avoider", "apf"))
+        else:
+            route, avoider = [(0.0, 0.0), (float(goal[0]), float(goal[1]))], None
+        stops = place_stops(omap, route, leg_m) if dist > leg_m + 500.0 else []
+        world = World(omap, avoider, route, stops) if (osm_on or stops) else None
+        return {
+            "cfg": cfg, "frame": frame, "world": world, "counts": counts, "leg_m": leg_m, "alt_mode": alt_mode,
+            "route_m": sum(math.dist(a, b) for a, b in zip(route, route[1:])),
+            "obstacles": {"kinds": kinds, "polygons": [[self._ll(frame, x, y) for x, y in poly] for poly in omap.polygons],
+                          "circles": [self._ll(frame, x, y) + [r] for x, y, r in omap.circles]},
+            "route_ll": [self._ll(frame, x, y) for x, y in route] if world is not None else None,
+            "stops_ll": [self._ll(frame, x, y) for _, x, y in stops],
+        }
 
     def obstacles_payload(self) -> dict:
         with self.lock:
             return self._obstacles
 
     def _start(self, p: dict) -> None:
-        cfg = mission_config(self.base, int(p["n"]), p["home"], p["target"], float(p["cruise_mps"]))
+        try:
+            prep = self._prepare(p)
+        finally:
+            self.loading = None                        # progress text only lives while preparing
+        self._install(p, prep)
+
+    def _install(self, p: dict, prep: dict) -> None:
+        cfg, frame, world = prep["cfg"], prep["frame"], prep["world"]
         drain = 100.0 / (float(p["endurance_min"]) * 60.0)
-        frame = EnuFrame(GeoPoint(p["home"][0], p["home"][1], 0.0))
-        world = self._world(p, cfg, frame)
-        self.cfg = cfg
-        self.frame = frame
+        self.cfg, self.frame, self.world = cfg, frame, world
         self.obstacles_version += 1
-        self.world = world
-        self.sim = PureSim(cfg, seed=int(p["seed"]), drain_pct_per_s=drain,
+        self._obstacles = dict(prep["obstacles"], version=self.obstacles_version)
+        self.route_ll, self.stops_ll = prep["route_ll"], prep["stops_ll"]
+        self.sim = PureSim(cfg, seed=int(p["seed"]), drain_pct_per_s=drain, charge_pct_per_s=100.0 / SWAP_S,
                            dynamics=Dynamics(dist_sigma_mps=float(p["drift"])), world=world)
         self._hits_seen = 0
         self.fault_rng = random.Random(int(p["seed"]) * 7919)
@@ -169,6 +226,7 @@ class FastSimBackend:
         self._alive = {i: True for i in cfg.drone_ids}
         self._last_master: int | None = None
         self._last_phase: Phase | None = None
+        self._last_stop_note = (None, None)
         self._done = False
         self._stats = None
         self._heading = {i: math.degrees(math.atan2(cfg.mission.goal_enu_m[0], cfg.mission.goal_enu_m[1])) % 360.0
@@ -177,17 +235,19 @@ class FastSimBackend:
         dist = math.hypot(*cfg.mission.goal_enu_m)
         self._event("info", f"Mission ready: {len(cfg.drone_ids)} drones, route {dist / 1000:.2f} km, "
                             f"battery endurance {p['endurance_min']:.0f} min (seed {p['seed']})")
-        if world is not None:
-            counts, route_m = self._world_info
-            self._event("info", f"Obstacles from OpenStreetMap: {counts['buildings']} buildings, {counts['woods']} "
-                                f"woods/parks; leader route {route_m / 1000:.2f} km around them; avoidance: "
-                                f"{AVOIDERS[p.get('avoider', 'apf')]}")
+        if prep["counts"] is not None:
+            c = prep["counts"]
+            over = f"; {c['below']} lower ones ignored (the swarm flies over them at {cfg.mission.cruise_alt_m:.0f} m)" \
+                if c.get("below") else f" (flight height {cfg.mission.cruise_alt_m:.0f} m, below the rooftops)"
+            self._event("info", f"Obstacles from OpenStreetMap: {c['buildings']} buildings, {c['woods']} "
+                                f"woods/parks{over}; leader route {prep['route_m'] / 1000:.2f} km around them; "
+                                f"avoidance: {AVOIDERS[p.get('avoider', 'apf')]}")
             for i, d in self.sim.drones.items():
                 if world.omap.clearance(d.pos[0], d.pos[1], search_m=5.0) < 3.0:
                     self._event("fault", f"Drone {i} starts next to an obstacle; pick a more open home spot")
-        if dist / cfg.mission.cruise_speed_mps > 0.8 * float(p["endurance_min"]) * 60.0:
-            self._event("fault", "Warning: the route is longer than the batteries allow; drones will turn back "
-                                 "at 30 % battery")
+        if self.stops_ll:
+            self._event("info", f"{len(self.stops_ll)} charging stops, one every {prep['leg_m'] / 1000:.1f} km or so "
+                                f"(about half a battery per leg, {SWAP_S / 60:.0f}-minute battery swap)")
 
     def _event(self, kind: str, text: str) -> None:
         self.seq += 1
@@ -253,12 +313,18 @@ class FastSimBackend:
             self._event("info", "No master heard: drones hover while they elect a new one")
         self._last_master = m
         if m is not None:
-            ph = sim.agents[m].phase
+            ag = sim.agents[m]
+            ph = ag.phase
             if ph != self._last_phase and ph in PHASE_TEXT:
-                self._event("phase", PHASE_TEXT[ph])
+                if ph == Phase.LAND and ag.at_stop:
+                    self._event("phase", f"Landing at charging stop {ag.next_stop + 1} of {ag.stops_total}")
+                elif ph == Phase.TAKEOFF and ag.next_stop > 0:
+                    self._event("phase", f"Batteries swapped: taking off from stop {ag.next_stop} of {ag.stops_total}")
+                else:
+                    self._event("phase", PHASE_TEXT[ph])
             self._last_phase = ph
         alive = [i for i in sim.alive_ids()]
-        if alive and self._last_phase in (Phase.LAND, Phase.LANDED) and all(sim.drones[i].landed for i in alive):
+        if alive and any(sim.agents[i].mission_complete for i in alive) and all(sim.drones[i].landed for i in alive):
             self._done = True
             self._event("phase", "Mission complete: every drone still flying has landed")
         elif alive and all(sim.drones[i].landed and sim.role(i) == Role.RETIRED for i in alive) and sim.t > 60:
@@ -275,7 +341,7 @@ class FastSimBackend:
             drones = []
             for i, d in sim.drones.items():
                 ag = sim.agents[i]
-                g = self.frame.to_geodetic((d.pos[0], d.pos[1], 0.0))
+                g = self.frame.surface_point(d.pos[0], d.pos[1])
                 spd = math.hypot(d.vel[0], d.vel[1])
                 if spd > 0.4:
                     self._heading[i] = math.degrees(math.atan2(d.vel[0], d.vel[1])) % 360.0
@@ -312,18 +378,19 @@ class FastSimBackend:
                 "drones": drones, "events": list(self.events)[-60:], "faults": FAULTS,
                 "obstacles_version": self._obstacles["version"], "route": self.route_ll, "hits": len(sim.obstacle_hits),
                 "loading": self.loading, "avoiders": AVOIDERS, "policy_available": POLICY_PATH.exists(),
+                "stops": self.stops_ll, "next_stop": sim.agents[m].next_stop if m else None, "altitudes": ALTITUDES,
             }
 
-    def _fetch_then_start(self, p: dict) -> None:
+    def _prepare_then_start(self, p: dict) -> None:
         try:
-            osm.fetch(*self._bbox(p))                  # slow network part, outside the lock
+            prep = self._prepare(p)                    # slow: network and planning, outside the lock
             with self.lock:
-                self._start(p)
+                self._install(p, prep)
                 self.params = p
                 self.running = True
         except Exception as exc:  # noqa: BLE001 - report any download/planning failure on the page
             with self.lock:
-                self._event("fault", f"Could not load the obstacle map: {exc}")
+                self._event("fault", f"Could not prepare the mission: {exc}")
         finally:
             self.loading = None
 
@@ -343,27 +410,30 @@ class FastSimBackend:
             kind = c.get("cmd")
             if kind == "start":
                 p = dict(self.params)
-                for key in ("n", "home", "target", "cruise_mps", "endurance_min", "seed", "drift", "obstacles", "avoider"):
+                for key in ("n", "home", "target", "cruise_mps", "endurance_min", "seed", "drift", "obstacles", "avoider",
+                            "altitude"):
                     if key in c:
                         p[key] = c[key]
                 p["n"] = max(1, min(int(p["n"]), MAX_DRONES))
                 p["cruise_mps"] = max(1.0, min(float(p["cruise_mps"]), 12.0))
                 p["endurance_min"] = max(1.0, min(float(p["endurance_min"]), 10000.0))
-                if p.get("obstacles") not in ("none", "osm") or p.get("avoider") not in AVOIDERS:
-                    return {"ok": False, "msg": "unknown obstacles or avoidance setting"}
+                if p.get("obstacles") not in ("none", "osm") or p.get("avoider") not in AVOIDERS \
+                        or p.get("altitude", "auto") not in ALTITUDES:
+                    return {"ok": False, "msg": "unknown obstacles, avoidance or flight-height setting"}
                 if self.loading:
                     return {"ok": False, "msg": self.loading}
-                if p["obstacles"] == "osm":
-                    ge, gn, _ = EnuFrame(GeoPoint(p["home"][0], p["home"][1], 0.0)).to_enu(
-                        GeoPoint(p["target"][0], p["target"][1], 0.0))
-                    if math.hypot(ge, gn) > MAX_OBSTACLE_ROUTE_M:   # check before any download
-                        return {"ok": False, "msg": f"obstacle maps are available for routes up to "
-                                                    f"{MAX_OBSTACLE_ROUTE_M / 1000:.0f} km (this one is "
-                                                    f"{math.hypot(ge, gn) / 1000:.1f} km)"}
-                if p["obstacles"] == "osm" and not osm.cache_path(*self._bbox(p)).exists():
-                    self.loading = "Downloading buildings and trees from OpenStreetMap (can take a few minutes)"
-                    threading.Thread(target=self._fetch_then_start, args=(p,), daemon=True).start()
-                    return {"ok": True, "msg": self.loading}
+                ge, gn, _ = EnuFrame(GeoPoint(p["home"][0], p["home"][1], 0.0)).to_enu(
+                    GeoPoint(p["target"][0], p["target"][1], 0.0))
+                dist = math.hypot(ge, gn)
+                if dist > MAX_ROUTE_M:
+                    return {"ok": False, "msg": f"routes up to {MAX_ROUTE_M / 1000:.0f} km are supported "
+                                                f"(this one is {dist / 1000:.0f} km)"}
+                slow = p["obstacles"] == "osm" and (dist > CORRIDOR_OVER_M or not osm.cache_path(*self._bbox(p)).exists())
+                if slow:
+                    self.loading = "Preparing the mission (map data and route)"
+                    threading.Thread(target=self._prepare_then_start, args=(p,), daemon=True).start()
+                    return {"ok": True, "msg": "Preparing the mission: map download and route planning run in the "
+                                               "background; progress shows on the page"}
                 try:
                     self._start(p)
                 except (ValueError, RuntimeError) as exc:

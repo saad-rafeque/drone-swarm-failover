@@ -16,11 +16,16 @@ Obstacles (optional World): the master follows a route planned around buildings 
 (planner.py) instead of the straight leg; every drone adds its avoider's correction (avoidance.py:
 classical potential field or learned policy) before the safety layer; a drone going home plans its
 own route. Without a World the behaviour is exactly the open-sky one.
+
+Long routes (World.stops): at each charging stop the master lands the swarm (LAND), waits on the
+ground until every battery is nearly full (CHARGE), takes off vertically (TAKEOFF) and continues
+the route (CRUISE). A drone whose battery gets low on such a route lands where it is instead of
+flying home, which may be far behind.
 """
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import IntEnum
 
 from .avoidance import RAY_ANGLES, RAY_RANGE_M, AvoidInput, NoAvoidance, brake
@@ -46,6 +51,9 @@ EMERGENCY_DROP_MARGIN_M = 2.0  # emergency descent keeps formation speed until m
 LAYER_CHANGE_MAX_CORRECTION_MPS = 1.0  # horizontal P-term limit until vertically clear of the formation layer
 HEADING_RATE_DPS = 20.0     # the master turns the formation heading at most this fast along a route
 ROUTE_CLEARANCE_M = 8.0     # planned routes keep this far from every obstacle
+CHARGE_FULL_PCT = 95.0      # at a charging stop, take off again once every battery reaches this
+CHARGE_TIMEOUT_S = 1800.0   # ...or after this long, whatever the batteries say
+STOP_APPROACH_M = 25.0      # the master leaves the route follower and homes on the stop this far before it
 
 
 class FlightMode(IntEnum):
@@ -84,6 +92,7 @@ class World:
     omap: ObstacleMap
     avoider: object = None            # correction(AvoidInput) -> (dvx, dvy); None = no avoidance
     route: list[tuple[float, float]] | None = None
+    stops: list[tuple[float, float, float]] = field(default_factory=list)   # charging stops (s along route, x, y)
 
 
 class AgentCore:
@@ -92,6 +101,12 @@ class AgentCore:
         self.world = world
         self._route = PathFollower(world.route) if world is not None and world.route else None
         self._home_route: PathFollower | None = None
+        self._stops = list(world.stops) if world is not None and world.stops else []
+        self.next_stop = 0              # index of the next charging stop
+        self._stopping = False          # current LAND is at a charging stop, not at the goal
+        self._final = False             # reached the goal: the current LAND ends the mission
+        self._pos_xy = (home[0], home[1])
+        self._takeoff_xy = (home[0], home[1])   # vertical takeoff from here (home, or a charging stop)
         self.my_id = my_id
         self.home = home
         hb = cfg.heartbeat
@@ -126,10 +141,26 @@ class AgentCore:
     def on_heartbeat(self, hb: Heartbeat, now: float) -> None:
         self.election.on_heartbeat(hb, now)
 
+    @property
+    def mission_complete(self) -> bool:
+        """This drone led the swarm to the goal and the final landing has begun."""
+        return self._final and self.phase in (Phase.LAND, Phase.LANDED)
+
+    @property
+    def stops_total(self) -> int:
+        return len(self._stops)
+
+    @property
+    def at_stop(self) -> bool:
+        """The current landing / ground time is a charging stop, not the end of the mission."""
+        return self._stopping or self.phase == Phase.CHARGE
+
     def step(self, own: OwnState, now: float) -> tuple[Command, Heartbeat | None]:
         e = self.election
+        self._pos_xy = (own.pos[0], own.pos[1])
         low_battery = own.battery_pct <= self.cfg.battery.handover_pct
-        emergency = not own.gps_ok or own.battery_pct <= self.cfg.battery.critical_pct
+        emergency = not own.gps_ok or own.battery_pct <= self.cfg.battery.critical_pct \
+            or (low_battery and bool(self._stops) and not own.landed)
         if (low_battery or emergency) and not e.retiring:
             self._retire_vel = (own.vel[0], own.vel[1], 0.0)
             e.start_retire(now)
@@ -148,11 +179,14 @@ class AgentCore:
                 self._speed_cmd = norm_xy(own.vel)  # continue from the current speed, then ramp
                 self._speed_t = now
                 self._leg_start = None  # new leg from wherever this drone is
+                self._sync_route_state(own)
             self._master_phase(own, now)
         elif e.role == Role.FOLLOWER:
             info = e.master_info(now)
             if info is not None:
                 if info.hb.phase != self.phase:
+                    if info.hb.phase == Phase.TAKEOFF:
+                        self._takeoff_xy = (own.pos[0], own.pos[1])
                     self.phase, self.phase_since = info.hb.phase, now
                 self.heading = info.hb.heading
         self._was_master = e.role == Role.MASTER
@@ -163,8 +197,27 @@ class AgentCore:
         self.last_cmd = cmd
         return cmd, self._heartbeat(own, now)
 
+    def _sync_route_state(self, own: OwnState) -> None:
+        """A new leader works out where the swarm is along the route: progress, the next charging stop,
+        whether the current landing is at a stop or at the goal."""
+        if self._route is None:
+            return
+        s = self._route.relocate(own.pos[0], own.pos[1])
+        at = [k for k, (_, x, y) in enumerate(self._stops) if math.hypot(x - own.pos[0], y - own.pos[1]) <= 60.0]
+        if at and self.phase in (Phase.LAND, Phase.CHARGE):
+            self.next_stop, self._stopping = at[0], self.phase == Phase.LAND
+        elif at and self.phase == Phase.TAKEOFF:
+            self.next_stop = at[0] + 1
+        else:
+            self.next_stop = next((k for k, st in enumerate(self._stops) if st[0] > s + 1.0), len(self._stops))
+        goal_d = math.hypot(self.goal[0] - own.pos[0], self.goal[1] - own.pos[1])
+        if self.phase in (Phase.LAND, Phase.LANDED) and not self._stopping and goal_d <= 3 * self.cfg.mission.goal_radius_m:
+            self._final = True
+
     # ------------------------------------------------------------------ mission (master)
     def _set_phase(self, phase: Phase, now: float) -> None:
+        if phase == Phase.TAKEOFF:
+            self._takeoff_xy = self._pos_xy
         self.phase, self.phase_since = phase, now
 
     def _master_phase(self, own: OwnState, now: float) -> None:
@@ -173,7 +226,8 @@ class AgentCore:
         peers = [p.hb for p in e.alive_peers(now) if p.hb.role != Role.RETIRED]
         to_goal = sub(self.goal, own.pos)
         if self.phase in (Phase.IDLE, Phase.TAKEOFF):
-            self.heading = self._route.tangent(0.0) if self._route is not None else heading_of(to_goal[0], to_goal[1])
+            self.heading = self._route.tangent(self._route.s) if self._route is not None \
+                else heading_of(to_goal[0], to_goal[1])
         if self.phase == Phase.IDLE:
             ready = int(own.ready) + sum(1 for hb in peers if hb.has(Flag.READY))
             if ready >= self.cfg.swarm.num_drones or (own.ready and now - self.boot_time >= m.startup_timeout_s):
@@ -190,11 +244,26 @@ class AgentCore:
                 self._leg_start = (own.pos[0], own.pos[1])
                 if self._route is None:
                     self.heading = heading_of(to_goal[0], to_goal[1])
-            if norm_xy(to_goal) <= m.goal_radius_m:
+            if self.next_stop < len(self._stops):
+                _, sx, sy = self._stops[self.next_stop]
+                if math.hypot(sx - own.pos[0], sy - own.pos[1]) <= m.goal_radius_m:
+                    self._stopping = True            # land the swarm at the charging stop
+                    self._set_phase(Phase.LAND, now)
+            elif norm_xy(to_goal) <= m.goal_radius_m:
                 self._set_phase(Phase.HOLD, now)
         elif self.phase == Phase.HOLD:
             if now - self.phase_since >= m.hover_at_goal_s:
+                self._final = True
                 self._set_phase(Phase.LAND, now)
+        elif self.phase == Phase.LAND and self._stopping:
+            if own.landed and not any(hb.has(Flag.AIRBORNE) for hb in peers):
+                self._set_phase(Phase.CHARGE, now)
+        elif self.phase == Phase.CHARGE:
+            full = own.battery_pct >= CHARGE_FULL_PCT and all(hb.battery_pct >= CHARGE_FULL_PCT for hb in peers)
+            if full or now - self.phase_since >= CHARGE_TIMEOUT_S:
+                self.next_stop += 1
+                self._stopping = False
+                self._set_phase(Phase.TAKEOFF, now)
 
     # ------------------------------------------------------------------ commands
     def _command(self, own: OwnState, now: float) -> Command:
@@ -203,18 +272,25 @@ class AgentCore:
             return self._retire_command(own, now)
         if self.phase == Phase.IDLE:
             return Command(FlightMode.GROUND, ZERO, "idle")
+        if self.phase == Phase.CHARGE:
+            return Command(FlightMode.GROUND, ZERO, "charging")
         if self.phase in (Phase.LAND, Phase.LANDED):
             return Command(FlightMode.LAND, ZERO, "land")
 
         m, f = self.cfg.mission, self.cfg.formation
         target: Vec3 | None
         if self.phase == Phase.TAKEOFF:
-            target = (self.home[0], self.home[1], m.cruise_alt_m)
+            target = (self._takeoff_xy[0], self._takeoff_xy[1], m.cruise_alt_m)
             v, reason = self._goto(own.pos, target, HOLD_MAX_MPS), "takeoff"
         elif e.role == Role.MASTER:
             target = self.goal
             if self.phase == Phase.CRUISE:
-                v = self._follow_route(own.pos, now) if self._route is not None else self._cruise_to_goal(own.pos, now)
+                stop = self._stops[self.next_stop] if self.next_stop < len(self._stops) else None
+                if stop is not None and self._route is not None and self._route.s >= stop[0] - STOP_APPROACH_M:
+                    target = (stop[1], stop[2], m.cruise_alt_m)
+                    v = self._goto(own.pos, target, m.cruise_speed_mps)
+                else:
+                    v = self._follow_route(own.pos, now) if self._route is not None else self._cruise_to_goal(own.pos, now)
                 v, reason = self._avoid(own, v, None, now), "cruise"
             else:
                 v, reason = self._goto(own.pos, self.goal, HOLD_MAX_MPS), "hold"

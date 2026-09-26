@@ -169,7 +169,11 @@ class ObstacleMap:
         xs = x0 + (np.arange(nx) + 0.5) * res
         ys = y0 + (np.arange(ny) + 0.5) * res
         grid = np.zeros((ny, nx), dtype=bool)
-        for p, (bx0, by0, bx1, by1) in zip(self.polygons, self.poly_bbox):
+        x1_, y1_ = x0 + nx * res, y0 + ny * res
+        bb = self.poly_bbox
+        hit = np.nonzero((bb[:, 2] >= x0) & (bb[:, 0] <= x1_) & (bb[:, 3] >= y0) & (bb[:, 1] <= y1_))[0] if len(bb) else []
+        for k in hit:
+            p, (bx0, by0, bx1, by1) = self.polygons[k], bb[k]
             i0, i1 = np.searchsorted(xs, bx0), np.searchsorted(xs, bx1, side="right")
             j0, j1 = np.searchsorted(ys, by0), np.searchsorted(ys, by1, side="right")
             if i0 >= i1 or j0 >= j1:
@@ -183,7 +187,10 @@ class ObstacleMap:
                     continue
                 inside ^= ((b > gy) != (d > gy)) & (gx < (c - a) * (gy - b) / (d - b) + a)
             grid[j0:j1, i0:i1] |= inside
-        for cx, cy, r in self.circles:
+        c = self.circles
+        near = c[(c[:, 0] + c[:, 2] >= x0) & (c[:, 0] - c[:, 2] <= x1_) & (c[:, 1] + c[:, 2] >= y0)
+                 & (c[:, 1] - c[:, 2] <= y1_)] if len(c) else c
+        for cx, cy, r in near:
             i0, i1 = np.searchsorted(xs, cx - r), np.searchsorted(xs, cx + r, side="right")
             j0, j1 = np.searchsorted(ys, cy - r), np.searchsorted(ys, cy + r, side="right")
             if i0 >= i1 or j0 >= j1:

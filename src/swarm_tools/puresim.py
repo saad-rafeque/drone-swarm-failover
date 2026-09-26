@@ -140,13 +140,14 @@ class PureSim:
     def __init__(self, cfg: Config, *, seed: int = 0, latency_s: float = 0.0, jitter_s: float = 0.0,
                  loss: float = 0.0, dt: float = 0.05, boot_spread_s: float = 5.0,
                  drain_pct_per_s: float = 0.0, dynamics: Dynamics | None = None, world: World | None = None,
-                 crash_clearance_m: float = 0.6) -> None:
+                 crash_clearance_m: float = 0.6, charge_pct_per_s: float = 100.0 / 180.0) -> None:
         self.cfg = cfg
         self.rng = random.Random(seed)
         self.dt = dt
         self.t = 0.0
         self.dyn = dynamics or Dynamics()
         self.drain = drain_pct_per_s
+        self.charge = charge_pct_per_s        # at a charging stop (default: a 3-minute battery swap)
         self.half_angle = math.radians(cfg.formation.v_half_angle_deg)
         heading = heading_of(*cfg.mission.goal_enu_m)
         layout = initial_layout(cfg.drone_ids, heading, cfg.formation.spacing_m, self.half_angle)
@@ -246,6 +247,8 @@ class PureSim:
                 d.battery_pct = max(0.0, d.battery_pct - self.drain * self.dt)
                 if d.battery_pct <= 0.0:
                     self.kill(i)   # battery empty in the air: it drops
+            elif d.landed and self.agents[i].phase == Phase.CHARGE:
+                d.battery_pct = min(100.0, d.battery_pct + self.charge * self.dt)
         if self.world is not None and not self.world.omap.empty:
             for i in alive:
                 d = self.drones[i]

@@ -102,4 +102,7 @@ table.drones { width: 100%; border-collapse: collapse; font-size: 13px; }
   background: rgba(10, 16, 21, 0.78); border-radius: 4px; padding: 2px 4px; white-space: nowrap; }
 .pin { font: 700 12px/1 var(--display); color: #fff; border-radius: 6px; padding: 4px 6px; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
 .pin.home { background: #2d3b46; } .pin.target { background: #c0392b; }
+.stop { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 13px;
+  background: #e0a33a; color: #1a1300; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+.stop.done { background: #6b7b87; color: #e3eaef; opacity: 0.75; }
 @media (prefers-reduced-motion: reduce) { .drone-icon .rot { transition: none; } }

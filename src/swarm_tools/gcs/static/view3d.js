@@ -73,17 +73,44 @@
   const obstacleSource = new Cesium.CustomDataSource("obstacles");
   viewer.dataSources.add(obstacleSource);
   $("obst").addEventListener("change", (ev) => { obstacleSource.show = ev.target.checked; });
-  let obstaclesVersion = -1;
-  async function loadObstacles(v) {
+  let obstaclesVersion = -1, obstacleAll = [], drawnAt = null;
+  const NEAR_DEG = 0.02;          // long routes: draw only obstacles within ~2 km of the leader, refreshed as it moves
+  function drawObstacles(center) {
+    obstacleSource.entities.removeAll();
+    const near = obstacleAll.length <= 3000 || !center ? obstacleAll :
+      obstacleAll.filter((o) => Math.abs(o.lat - center[0]) < NEAR_DEG && Math.abs(o.lon - center[1]) < NEAR_DEG);
+    for (const o of near) {
+      obstacleSource.entities.add({ polygon: {
+        hierarchy: Cesium.Cartesian3.fromDegreesArray(o.poly.flatMap(([lat, lon]) => [lon, lat])),
+        material: Cesium.Color.fromCssColorString(o.kind === "wood" ? "#3fbf86" : "#ef6a5f").withAlpha(0.45),
+        classificationType: Cesium.ClassificationType.BOTH } });
+    }
+    drawnAt = center;
+  }
+  async function loadObstacles(v, center) {
     obstaclesVersion = v;
     const o = await (await fetch("/api/obstacles")).json();
-    obstacleSource.entities.removeAll();
-    o.polygons.forEach((poly, k) => obstacleSource.entities.add({ polygon: {
-      hierarchy: Cesium.Cartesian3.fromDegreesArray(poly.flatMap(([lat, lon]) => [lon, lat])),
-      material: Cesium.Color.fromCssColorString(o.kinds[k] === "wood" ? "#3fbf86" : "#ef6a5f").withAlpha(0.45),
-      classificationType: Cesium.ClassificationType.BOTH } }));
+    obstacleAll = o.polygons.map((poly, k) => ({ poly, kind: o.kinds[k], lat: poly[0][0], lon: poly[0][1] }));
+    drawObstacles(center);
   }
 
+  const stopSource = new Cesium.CustomDataSource("stops");
+  viewer.dataSources.add(stopSource);
+  let stopsKey = "";
+  function drawStops(s) {
+    const key = `${(s.stops || []).length}:${s.next_stop}`;
+    if (key === stopsKey) return;
+    stopsKey = key;
+    stopSource.entities.removeAll();
+    (s.stops || []).forEach(([lat, lon], k) => stopSource.entities.add({ position: Cesium.Cartesian3.fromDegrees(lon, lat),
+      point: { pixelSize: 9, color: Cesium.Color.fromCssColorString(s.next_stop != null && k < s.next_stop ? "#6b7b87" : "#e0a33a"),
+               outlineColor: Cesium.Color.WHITE, outlineWidth: 2, heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+               disableDepthTestDistance: Number.POSITIVE_INFINITY },
+      label: { text: `Stop ${k + 1}`, font: "500 12px Barlow, sans-serif", pixelOffset: new Cesium.Cartesian2(0, -16),
+               showBackground: true, heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+               distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 5000),
+               disableDepthTestDistance: Number.POSITIVE_INFINITY } }));
+  }
   let flown = false, lastRouteKey = "", state = null;
   function update(s) {
     state = s;
@@ -103,7 +130,13 @@
       const pts = s.route || [home, tgt];
       routeEnt.polyline.positions = Cesium.Cartesian3.fromDegreesArray(pts.flatMap(([lat, lon]) => [lon, lat]));
     }
-    if (s.obstacles_version !== obstaclesVersion) loadObstacles(s.obstacles_version).catch(() => {});
+    const lead = s.drones.find((d) => d.id === s.master) || s.drones[0];
+    const center = lead ? [lead.lat, lead.lon] : null;
+    if (s.obstacles_version !== obstaclesVersion) loadObstacles(s.obstacles_version, center).catch(() => {});
+    else if (obstacleAll.length > 3000 && center && (!drawnAt || Math.abs(center[0] - drawnAt[0]) + Math.abs(center[1] - drawnAt[1]) > NEAR_DEG / 2)) {
+      drawObstacles(center);
+    }
+    drawStops(s);
     for (const d of s.drones) {
       let e = drones.get(d.id);
       const role = d.role in COLORS ? d.role : "FOLLOWER";
