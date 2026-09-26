@@ -1,0 +1,5 @@
+Linux Ubuntu-IdeaPad 7.0.0-34-generic #34~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Sep  4 15:38:29 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+Model name:                              11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz
+               total        used        free      shared  buff/cache   available
+Mem:            7721        5091         540        1131        3576        2630
+b91f720
