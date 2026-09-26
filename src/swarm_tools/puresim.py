@@ -12,7 +12,7 @@ import math
 import random
 from dataclasses import dataclass, field
 
-from swarm_agent.agent_core import AgentCore, Command, FlightMode, OwnState
+from swarm_agent.agent_core import AgentCore, Command, FlightMode, OwnState, World
 from swarm_agent.config import Config
 from swarm_agent.formation import assign_slots, initial_layout, rms, slot_position
 from swarm_agent.geometry import ZERO, Vec3, dist, heading_of
@@ -139,7 +139,8 @@ class StepStats:
 class PureSim:
     def __init__(self, cfg: Config, *, seed: int = 0, latency_s: float = 0.0, jitter_s: float = 0.0,
                  loss: float = 0.0, dt: float = 0.05, boot_spread_s: float = 5.0,
-                 drain_pct_per_s: float = 0.0, dynamics: Dynamics | None = None) -> None:
+                 drain_pct_per_s: float = 0.0, dynamics: Dynamics | None = None, world: World | None = None,
+                 crash_clearance_m: float = 0.6) -> None:
         self.cfg = cfg
         self.rng = random.Random(seed)
         self.dt = dt
@@ -151,7 +152,15 @@ class PureSim:
         layout = initial_layout(cfg.drone_ids, heading, cfg.formation.spacing_m, self.half_angle)
         self.drones = {i: SimDrone(i, (e, n, 0.0)) for i, (e, n) in layout.items()}
         self.boot = {i: self.rng.uniform(0.0, boot_spread_s) for i in cfg.drone_ids}
-        self.agents = {i: AgentCore(cfg, i, self.drones[i].pos, self.boot[i]) for i in cfg.drone_ids}
+        self.world = world
+        self.crash_clearance_m = crash_clearance_m
+        self.obstacle_hits: list[tuple[float, int]] = []
+        if world is not None and world.route and len(world.route) > 1:
+            (x0, y0), (x1, y1) = world.route[0], world.route[1]
+            heading = heading_of(x1 - x0, y1 - y0)       # spawn the V facing the first leg of the route
+            layout = initial_layout(cfg.drone_ids, heading, cfg.formation.spacing_m, self.half_angle)
+            self.drones = {i: SimDrone(i, (e, n, 0.0)) for i, (e, n) in layout.items()}
+        self.agents = {i: AgentCore(cfg, i, self.drones[i].pos, self.boot[i], world) for i in cfg.drone_ids}
         self.net = Network(self.rng, latency_s, jitter_s, loss)
         self.cmds: dict[int, Command] = {}
         self.min_sep_seen = math.inf
@@ -237,6 +246,13 @@ class PureSim:
                 d.battery_pct = max(0.0, d.battery_pct - self.drain * self.dt)
                 if d.battery_pct <= 0.0:
                     self.kill(i)   # battery empty in the air: it drops
+        if self.world is not None and not self.world.omap.empty:
+            for i in alive:
+                d = self.drones[i]
+                if d.alive and not d.landed and d.pos[2] > 0.5 and \
+                        self.world.omap.clearance(d.pos[0], d.pos[1], search_m=5.0) < self.crash_clearance_m:
+                    self.obstacle_hits.append((round(t, 2), i))
+                    self.kill(i)   # hit a building or a tree: it drops
         for d in self.drones.values():
             if d.falling:
                 d.fall(self.dt)

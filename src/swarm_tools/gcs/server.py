@@ -4,6 +4,7 @@
   GET  /static/<f>    page assets (app.js, app.css)
   GET  /api/state     one JSON snapshot of the swarm
   GET  /api/stream    Server-Sent Events: a snapshot every 100 ms
+  GET  /api/obstacles buildings / woods of the current mission as lat-lon polygons
   POST /api/cmd       JSON command (start, pause, resume, reset, speed, fault, partition, heal)
 Bound to 127.0.0.1: only this laptop can open it.
 """
@@ -51,6 +52,8 @@ def make_handler(backend):
                 self._send(200, f.read_bytes(), TYPES[f.suffix])
             elif path == "/api/state":
                 self._json(backend.snapshot())
+            elif path == "/api/obstacles":
+                self._json(backend.obstacles_payload())
             elif path == "/api/stream":
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "text/event-stream")

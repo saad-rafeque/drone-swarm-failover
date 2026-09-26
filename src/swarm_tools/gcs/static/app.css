@@ -57,6 +57,8 @@ button.ghost:hover { background: #22303b; }
 .v { font-family: var(--mono); font-size: 16px; font-variant-numeric: tabular-nums; }
 .v small { font-size: 11.5px; color: var(--ink-3); }
 .v.ok { color: var(--ok); } .v.bad { color: var(--alert); }
+.readouts .wide { grid-column: span 2; }
+.v.small { font-size: 13px; }
 
 .tablewrap { overflow-x: auto; max-height: 330px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; }
 table.drones { width: 100%; border-collapse: collapse; font-size: 13px; }

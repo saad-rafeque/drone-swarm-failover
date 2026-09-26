@@ -1,0 +1,25 @@
+Sat Sep 26 04:01:58 PM PKT 2026
+Collecting gymnasium
+  Downloading gymnasium-1.3.0-py3-none-any.whl.metadata (10 kB)
+Collecting stable-baselines3
+  Downloading stable_baselines3-2.9.0-py3-none-any.whl.metadata (5.0 kB)
+Requirement already satisfied: numpy>=1.21.0 in /usr/lib/python3/dist-packages (from gymnasium) (1.26.4)
+Collecting cloudpickle>=1.2.0 (from gymnasium)
+  Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Requirement already satisfied: typing-extensions>=4.3.0 in /usr/lib/python3/dist-packages (from gymnasium) (4.10.0)
+Collecting farama-notifications>=0.0.1 (from gymnasium)
+  Downloading farama_notifications-0.0.6-py3-none-any.whl.metadata (729 bytes)
+Requirement already satisfied: torch<3.0,>=2.8 in ./.venv/lib/python3.12/site-packages (from stable-baselines3) (2.14.0+cpu)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch<3.0,>=2.8->stable-baselines3) (3.32.3)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch<3.0,>=2.8->stable-baselines3) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch<3.0,>=2.8->stable-baselines3) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch<3.0,>=2.8->stable-baselines3) (3.6.1)
+Requirement already satisfied: jinja2 in /usr/lib/python3/dist-packages (from torch<3.0,>=2.8->stable-baselines3) (3.1.2)
+Requirement already satisfied: fsspec>=0.8.5 in ./.venv/lib/python3.12/site-packages (from torch<3.0,>=2.8->stable-baselines3) (2026.7.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch<3.0,>=2.8->stable-baselines3) (1.3.0)
+Downloading gymnasium-1.3.0-py3-none-any.whl (953 kB)
+Downloading stable_baselines3-2.9.0-py3-none-any.whl (187 kB)
+Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Downloading farama_notifications-0.0.6-py3-none-any.whl (2.9 kB)
+Installing collected packages: farama-notifications, cloudpickle, gymnasium, stable-baselines3
+Successfully installed cloudpickle-3.1.2 farama-notifications-0.0.6 gymnasium-1.3.0 stable-baselines3-2.9.0

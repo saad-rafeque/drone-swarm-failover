@@ -1,0 +1,19 @@
+{'d0_m': 6.0, 'k_rep': 5.0, 'k_tan': 0.3, 'score': (3, 5, -0.5, -44.923), 'success': 3, 'crash_free': 5, 'crashes': 0.5, 'final_rms_m': 44.923}
+{'d0_m': 6.0, 'k_rep': 5.0, 'k_tan': 1.0, 'score': (4, 7, -0.6, -25.219), 'success': 4, 'crash_free': 7, 'crashes': 0.6, 'final_rms_m': 25.219}
+{'d0_m': 6.0, 'k_rep': 10.0, 'k_tan': 0.3, 'score': (4, 8, -0.2, -60.959), 'success': 4, 'crash_free': 8, 'crashes': 0.2, 'final_rms_m': 60.959}
+{'d0_m': 6.0, 'k_rep': 10.0, 'k_tan': 1.0, 'score': (5, 9, -0.1, -44.132999999999996), 'success': 5, 'crash_free': 9, 'crashes': 0.1, 'final_rms_m': 44.132999999999996}
+{'d0_m': 6.0, 'k_rep': 20.0, 'k_tan': 0.3, 'score': (4, 8, -0.2, -48.015), 'success': 4, 'crash_free': 8, 'crashes': 0.2, 'final_rms_m': 48.015}
+{'d0_m': 6.0, 'k_rep': 20.0, 'k_tan': 1.0, 'score': (4, 7, -0.4, -14.026), 'success': 4, 'crash_free': 7, 'crashes': 0.4, 'final_rms_m': 14.026}
+{'d0_m': 8.0, 'k_rep': 5.0, 'k_tan': 0.3, 'score': (4, 7, -0.3, -36.744), 'success': 4, 'crash_free': 7, 'crashes': 0.3, 'final_rms_m': 36.744}
+{'d0_m': 8.0, 'k_rep': 5.0, 'k_tan': 1.0, 'score': (3, 7, -0.3, -30.243000000000002), 'success': 3, 'crash_free': 7, 'crashes': 0.3, 'final_rms_m': 30.243000000000002}
+{'d0_m': 8.0, 'k_rep': 10.0, 'k_tan': 0.3, 'score': (4, 8, -0.2, -55.589), 'success': 4, 'crash_free': 8, 'crashes': 0.2, 'final_rms_m': 55.589}
+{'d0_m': 8.0, 'k_rep': 10.0, 'k_tan': 1.0, 'score': (4, 6, -0.4, -34.516999999999996), 'success': 4, 'crash_free': 6, 'crashes': 0.4, 'final_rms_m': 34.516999999999996}
+{'d0_m': 8.0, 'k_rep': 20.0, 'k_tan': 0.3, 'score': (4, 8, -0.3, -29.412), 'success': 4, 'crash_free': 8, 'crashes': 0.3, 'final_rms_m': 29.412}
+{'d0_m': 8.0, 'k_rep': 20.0, 'k_tan': 1.0, 'score': (4, 7, -0.3, -24.810000000000002), 'success': 4, 'crash_free': 7, 'crashes': 0.3, 'final_rms_m': 24.810000000000002}
+{'d0_m': 10.0, 'k_rep': 5.0, 'k_tan': 0.3, 'score': (4, 7, -0.3, -45.388999999999996), 'success': 4, 'crash_free': 7, 'crashes': 0.3, 'final_rms_m': 45.388999999999996}
+{'d0_m': 10.0, 'k_rep': 5.0, 'k_tan': 1.0, 'score': (4, 7, -0.5, -29.509999999999998), 'success': 4, 'crash_free': 7, 'crashes': 0.5, 'final_rms_m': 29.509999999999998}
+{'d0_m': 10.0, 'k_rep': 10.0, 'k_tan': 0.3, 'score': (4, 8, -0.2, -41.888999999999996), 'success': 4, 'crash_free': 8, 'crashes': 0.2, 'final_rms_m': 41.888999999999996}
+{'d0_m': 10.0, 'k_rep': 10.0, 'k_tan': 1.0, 'score': (5, 8, -0.2, -25.667), 'success': 5, 'crash_free': 8, 'crashes': 0.2, 'final_rms_m': 25.667}
+{'d0_m': 10.0, 'k_rep': 20.0, 'k_tan': 0.3, 'score': (4, 8, -0.2, -45.146), 'success': 4, 'crash_free': 8, 'crashes': 0.2, 'final_rms_m': 45.146}
+{'d0_m': 10.0, 'k_rep': 20.0, 'k_tan': 1.0, 'score': (6, 8, -0.4, -2.129), 'success': 6, 'crash_free': 8, 'crashes': 0.4, 'final_rms_m': 2.129}
+BEST {"d0_m": 10.0, "k_rep": 20.0, "k_tan": 1.0, "score": [6, 8, -0.4, -2.129], "success": 6, "crash_free": 8, "crashes": 0.4, "final_rms_m": 2.129}

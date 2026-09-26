@@ -51,6 +51,13 @@
         <label>Battery min<input id="endurance" type="number" min="1" step="1"></label>
         <label>Seed<input id="seed" type="number" min="0" step="1"></label>
       </div>
+      <div class="grid2">
+        <label>Obstacles<select id="obstacles">
+          <option value="none">None (open sky)</option>
+          <option value="osm">Real buildings &amp; trees (OpenStreetMap)</option>
+        </select></label>
+        <label>Avoidance<select id="avoider"></select></label>
+      </div>
       <p class="hint" id="route">&nbsp;</p>
       <div class="row">
         <button class="primary" id="start" type="button">Start mission</button>
@@ -77,6 +84,8 @@
         <div><span class="label">Formation error</span><span class="v" id="r_rms">&mdash;</span></div>
         <div><span class="label">Closest pair</span><span class="v" id="r_sep">&mdash;</span></div>
         <div><span class="label">Distance left</span><span class="v" id="r_left">&mdash;</span></div>
+        <div><span class="label">Obstacle hits</span><span class="v" id="r_hits">&mdash;</span></div>
+        <div class="wide"><span class="label">Avoidance</span><span class="v small" id="r_avoid">&mdash;</span></div>
       </div>
     </section>
 

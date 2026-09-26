@@ -45,6 +45,25 @@
   const tgtM = L.marker([0, 0], { icon: pin("target", "TARGET"), interactive: false, keyboard: false }).addTo(map);
   const routeL = L.polyline([], { color: "#ffffff", weight: 2, opacity: 0.75, dashArray: "6 7" }).addTo(map);
   const trailRenderer = L.canvas({ padding: 0.3 });   // one canvas for all trails (100 drones stay smooth)
+  const obstacleRenderer = L.canvas({ padding: 0.5 });
+  const obstacleLayer = L.layerGroup().addTo(map);
+  const plannedL = L.polyline([], { color: "#ffd166", weight: 3, opacity: 0.9 }).addTo(map);
+  let obstaclesVersion = -1, routeKey = "";
+  async function loadObstacles(version) {
+    obstaclesVersion = version;
+    try {
+      const o = await (await fetch("/api/obstacles")).json();
+      obstacleLayer.clearLayers();
+      o.polygons.forEach((poly, k) => {
+        const wood = o.kinds[k] === "wood";
+        L.polygon(poly, { renderer: obstacleRenderer, interactive: false, weight: 1,
+          color: wood ? "#5fd39a" : "#ff8f7a", fillColor: wood ? "#3fbf86" : "#ef6a5f", fillOpacity: wood ? 0.25 : 0.4 })
+          .addTo(obstacleLayer);
+      });
+      o.circles.forEach(([lat, lon, r]) => L.circle([lat, lon], { radius: r, renderer: obstacleRenderer, interactive: false,
+        weight: 1, color: "#5fd39a", fillColor: "#3fbf86", fillOpacity: 0.4 }).addTo(obstacleLayer));
+    } catch (e) { obstaclesVersion = -1; }
+  }
 
   function droneColor(d) {
     if (d.role === "DOWN") return COLORS.DOWN;
@@ -71,6 +90,9 @@
   function updateMap(s) {
     const home = s.params.home, tgt = s.params.target;
     homeM.setLatLng(home); tgtM.setLatLng(tgt); routeL.setLatLngs([home, tgt]);
+    if (s.obstacles_version !== obstaclesVersion) loadObstacles(s.obstacles_version);
+    const rk = s.route ? `${s.route.length}:${s.route[0]}:${s.route[s.route.length - 1]}` : "";
+    if (rk !== routeKey) { plannedL.setLatLngs(s.route || []); routeKey = rk; routeL.setStyle({ opacity: s.route ? 0.3 : 0.75 }); }
     if (!fitted) { map.fitBounds(L.latLngBounds([home, tgt]).pad(0.25)); fitted = true; }
     const showTrails = $("trails").checked;
     const many = s.drones.length > 30;   // big swarms: trail only the leader and drones that left formation
@@ -142,6 +164,7 @@
     const set = (id, v) => { if (document.activeElement !== $(id)) $(id).value = v; };
     set("home_lat", p.home[0]); set("home_lon", p.home[1]); set("tgt_lat", p.target[0]); set("tgt_lon", p.target[1]);
     set("n", p.n); set("cruise", p.cruise_mps); set("endurance", p.endurance_min); set("seed", p.seed);
+    set("obstacles", p.obstacles || "none"); set("avoider", p.avoider || "apf");
     routeHint();
   }
   ["home_lat", "home_lon", "tgt_lat", "tgt_lon", "cruise", "endurance"].forEach((id) => $(id).addEventListener("input", routeHint));
@@ -200,6 +223,11 @@
     sep.textContent = s.min_sep == null ? "—" : `${s.min_sep.toFixed(1)} m`;
     sep.className = "v " + (s.min_sep == null ? "" : s.min_sep >= 5 ? "ok" : "bad");
     $("r_left").innerHTML = s.dist_left == null ? "—" : `${(s.dist_left / 1000).toFixed(2)} km <small>ETA ${fmtTime(s.eta)}</small>`;
+    const hits = $("r_hits");
+    hits.textContent = s.route ? String(s.hits) : "—";
+    hits.className = "v " + (s.route ? (s.hits ? "bad" : "ok") : "");
+    $("r_avoid").textContent = s.route ? s.avoiders[s.params.avoider] : "No obstacles (open sky)";
+    if (s.loading) $("route").textContent = s.loading + "…";
   }
 
   function updateEvents(s) {
@@ -283,6 +311,7 @@
   $("start").addEventListener("click", async () => {
     const r = await cmd({ cmd: "start", n: Number($("n").value), cruise_mps: Number($("cruise").value),
       endurance_min: Number($("endurance").value), seed: Number($("seed").value),
+      obstacles: $("obstacles").value, avoider: $("avoider").value,
       home: [Number($("home_lat").value), Number($("home_lon").value)], target: [Number($("tgt_lat").value), Number($("tgt_lon").value)] });
     if (r.ok) { fitted = false; zoomToSwarm = true; clearSwarm(); }
   });
@@ -327,6 +356,11 @@
       state = JSON.parse(ev.data);
       if (!faultsFilled) {
         $("fault_type").innerHTML = Object.entries(state.faults).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+        $("avoider").innerHTML = Object.entries(state.avoiders).map(([k, v]) => {
+          const off = k.startsWith("rl") && !state.policy_available;
+          return `<option value="${k}"${off ? " disabled" : ""}>${v}${off ? " (not trained yet)" : ""}</option>`;
+        }).join("");
+        $("avoider").value = state.params.avoider || "apf";
         faultsFilled = true;
       }
       if (!drawPending) { drawPending = true; requestAnimationFrame(render); }
