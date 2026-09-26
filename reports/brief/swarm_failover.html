@@ -1,0 +1,430 @@
+<title>Swarm Failover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #eef2f4; --surface: #ffffff; --ink: #13202a; --ink-2: #475763; --ink-3: #6b7b87;
+    --line: #d2dbe1; --accent: #2767b3; --accent-tint: #e2ecf8; --ok: #17804f; --ok-tint: #e0f2e8;
+    --warn: #8f5b00; --warn-tint: #f8ecd6; --alert: #b9372f; --alert-tint: #f9e3e1;
+    --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0e151b; --surface: #141e26; --ink: #e3eaef; --ink-2: #a9b7c1; --ink-3: #7f8f9b;
+      --line: #283642; --accent: #5e9ff0; --accent-tint: #16283a; --ok: #45c28b; --ok-tint: #12291f;
+      --warn: #e3a63c; --warn-tint: #2d2312; --alert: #f0746b; --alert-tint: #321a19;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #0e151b; --surface: #141e26; --ink: #e3eaef; --ink-2: #a9b7c1; --ink-3: #7f8f9b;
+    --line: #283642; --accent: #5e9ff0; --accent-tint: #16283a; --ok: #45c28b; --ok-tint: #12291f;
+    --warn: #e3a63c; --warn-tint: #2d2312; --alert: #f0746b; --alert-tint: #321a19;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--ground); color: var(--ink); font: 400 16.5px/1.6 var(--body); }
+  .page { max-width: 860px; margin: 0 auto; padding-inline: 20px; padding-block: 36px 72px; display: grid; gap: 56px; }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+  h1 { font-weight: 700; font-size: clamp(44px, 9vw, 72px); line-height: 0.95; letter-spacing: 0.005em; }
+  h2 { font-weight: 600; font-size: 30px; line-height: 1.1; }
+  h3 { font-weight: 600; font-size: 20px; line-height: 1.2; }
+  p { margin: 0; max-width: 66ch; }
+  a { color: var(--accent); }
+  .eyebrow { font: 500 12.5px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+  section { display: grid; gap: 18px; }
+  .sub { color: var(--ink-2); }
+  code, .mono { font-family: var(--mono); font-size: 0.88em; }
+
+  /* header */
+  .top { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 28px; align-items: end; }
+  .top-text { display: grid; gap: 14px; }
+  .lede { font-size: 20px; line-height: 1.5; color: var(--ink-2); }
+  .vglyph { width: 100%; max-width: 250px; height: auto; color: var(--ink-2); }
+  .vglyph text { font-size: 11px; font-weight: 500; }
+  .g-muted { fill: var(--ink-3); } .g-alert { fill: var(--alert); } .g-accent { fill: var(--accent); }
+  @media (max-width: 640px) { .top { grid-template-columns: minmax(0, 1fr); } .vglyph { max-width: 220px; } }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-block: 1px solid var(--line); }
+  .facts div { padding: 14px 16px 14px 0; display: grid; gap: 2px; align-content: start; }
+  .facts div + div { padding-left: 16px; border-left: 1px solid var(--line); }
+  .facts dt { font: 500 12px/1.3 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+  .facts dd { margin: 0; font: 600 38px/1.05 var(--display); font-variant-numeric: tabular-nums; }
+  .facts dd small { font: 500 15px/1 var(--body); color: var(--ink-3); margin-left: 4px; }
+  @media (max-width: 640px) {
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .facts div:nth-child(3) { padding-left: 0; border-left: 0; }
+    .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  }
+
+  /* figures */
+  figure { margin: 0; display: grid; gap: 10px; }
+  figcaption { font-size: 14.5px; color: var(--ink-2); max-width: 70ch; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .scroll svg { display: block; width: 100%; min-width: 600px; height: auto; }
+  svg text { font-family: var(--mono); }
+  .grid { stroke: var(--line); stroke-width: 1; }
+  .tick { fill: var(--ink-3); font-size: 12px; }
+  .axlab { fill: var(--ink-2); font-size: 12px; }
+  .ref { stroke: var(--ink-3); stroke-width: 1.2; stroke-dasharray: 5 5; }
+  .reflab { fill: var(--ink-3); font-size: 11.5px; }
+  .s-lead { fill: none; stroke: var(--accent); stroke-width: 2.4; }
+  .s-form { fill: none; stroke: var(--ok); stroke-width: 2; }
+  .m-lead { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+  .m-form { fill: var(--surface); stroke: var(--ok); stroke-width: 2; }
+  .vlab { font-size: 12.5px; font-weight: 500; }
+  .vlab.lead { fill: var(--accent); } .vlab.form { fill: var(--ok); }
+  .lead-line { stroke: var(--accent); stroke-width: 1; opacity: 0.6; }
+  td.today { font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .key { width: 14px; height: 14px; display: inline-block; }
+  .key.lead { border-radius: 50%; background: var(--accent); }
+  .key.form { border: 2px solid var(--ok); }
+
+  /* architecture diagram */
+  .arch .band { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+  .arch .col { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+  .arch .box { fill: var(--ground); stroke: var(--line); stroke-width: 1; }
+  .arch .box.agent { fill: var(--accent-tint); stroke: var(--accent); }
+  .arch .t1 { fill: var(--ink); font: 600 15px var(--display); letter-spacing: 0.02em; }
+  .arch .t2 { fill: var(--ink-2); font: 400 12.5px var(--body); }
+  .arch .tband { fill: var(--accent); font: 600 15px var(--display); letter-spacing: 0.02em; }
+  .arch .link { stroke: var(--accent); stroke-width: 1.6; fill: none; }
+  .arch .wire { stroke: var(--ink-3); stroke-width: 1.4; fill: none; }
+  .arch .tools { fill: none; stroke: var(--ink-3); stroke-width: 1.2; stroke-dasharray: 5 5; }
+  .arch .note { fill: var(--ink-3); font: 400 12.5px var(--body); }
+  .arch .master { fill: var(--accent); font: 600 12px var(--mono); }
+  .arch .dots { fill: var(--ink-3); font: 700 22px var(--display); }
+
+  /* tables */
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); }
+  .tbl { border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+  th { text-align: left; font: 600 13px/1.25 var(--display); letter-spacing: 0.06em; text-transform: uppercase;
+       color: var(--ink-3); padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: bottom; }
+  td { padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+  tr:first-child td { border-top: 0; }
+  td.num, th.num { text-align: right; font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td:first-child { font-weight: 500; }
+  .chip { display: inline-block; font: 500 12.5px/1 var(--mono); padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+  .chip.ok { color: var(--ok); background: var(--ok-tint); }
+  .chip.bad { color: var(--alert); background: var(--alert-tint); }
+  .chip.warn { color: var(--warn); background: var(--warn-tint); }
+  .chip.next { color: var(--accent); background: var(--accent-tint); }
+  .chip.no { color: var(--ink-2); background: var(--ground); border: 1px solid var(--line); }
+  .rl td:first-child { width: 34%; }
+  .rl td:nth-child(2) { width: 1%; white-space: nowrap; }
+
+  /* roadmap */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 7px; }
+  .steps li { position: relative; padding: 0 0 18px 24px; display: grid; gap: 3px; }
+  .steps li::before { content: ""; position: absolute; left: -9px; top: 5px; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--surface); border: 2px solid var(--ink-3); }
+  .steps li.done::before { background: var(--ok); border-color: var(--ok); }
+  .steps li.now::before { background: var(--accent); border-color: var(--accent); }
+  .steps .st { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .steps .st b { font-weight: 600; }
+  .steps p { color: var(--ink-2); font-size: 15px; }
+
+  .limits { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 70ch; }
+  .limits li::marker { color: var(--warn); }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  @media (max-width: 700px) { .two { grid-template-columns: minmax(0, 1fr); } }
+  .pitch { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; font-size: 18px; line-height: 1.55; max-width: 68ch; }
+  footer { font-size: 13.5px; color: var(--ink-3); display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 18px; }
+</style>
+
+<div class="page">
+  <header class="top">
+    <div class="top-text">
+      <p class="eyebrow">Drone swarm research &middot; simulation stage &middot; 26 September 2026</p>
+      <h1>Swarm Failover</h1>
+      <p class="lede">A group of quadcopters that keeps flying its mission when the leader fails. Every drone runs the same
+        code. If the leader crashes, loses its radio or runs low on battery, the next drone takes over within about two
+        seconds and the swarm carries on to the target.</p>
+    </div>
+    <svg class="vglyph" viewBox="0 0 250 170" role="img" aria-labelledby="vg-t">
+      <title id="vg-t">A V formation seen from above: the leader at the tip is crossed out and the next drone takes over</title>
+      <defs>
+        <g id="quad">
+          <line x1="-7" y1="-7" x2="7" y2="7" stroke="currentColor" stroke-width="2"/>
+          <line x1="7" y1="-7" x2="-7" y2="7" stroke="currentColor" stroke-width="2"/>
+          <circle cx="-7" cy="-7" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="7" cy="-7" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="-7" cy="7" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="7" cy="7" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="-3.2" y="-4" width="6.4" height="8" rx="2" fill="currentColor"/>
+        </g>
+      </defs>
+      <line x1="125" y1="8" x2="125" y2="22" style="stroke: var(--ink-3)" stroke-width="1.4" stroke-dasharray="3 3"/>
+      <path d="M121 12 L125 5 L129 12" fill="none" style="stroke: var(--ink-3)" stroke-width="1.4"/>
+      <text class="g-muted" x="134" y="14">to target</text>
+      <use href="#quad" x="125" y="38" style="color: var(--line)"/>
+      <path d="M115 28 L135 48 M135 28 L115 48" style="stroke: var(--alert)" stroke-width="3" stroke-linecap="round"/>
+      <text class="g-alert" x="146" y="42">1 fails</text>
+      <circle cx="101" cy="62" r="15" fill="none" style="stroke: var(--accent)" stroke-width="2"/>
+      <use href="#quad" x="101" y="62" style="color: var(--accent)"/>
+      <text class="g-accent" x="4" y="58">2 takes</text>
+      <text class="g-accent" x="4" y="71">over</text>
+      <use href="#quad" x="149" y="62"/>
+      <use href="#quad" x="77" y="86"/>
+      <use href="#quad" x="173" y="86"/>
+      <use href="#quad" x="53" y="110"/>
+      <use href="#quad" x="197" y="110"/>
+      <use href="#quad" x="29" y="134"/>
+      <use href="#quad" x="221" y="134"/>
+      <text class="g-muted" x="125" y="164" text-anchor="middle">10 m between neighbours</text>
+    </svg>
+  </header>
+
+  <dl class="facts" aria-label="Key numbers">
+    <div><dt>PX4 drones on one laptop</dt><dd>10</dd></div>
+    <div><dt>New leader after a crash</dt><dd>1.7<small>s</small></dd></div>
+    <div><dt>Swarm sizes tested</dt><dd>1&ndash;100</dd></div>
+    <div><dt>Real drones flown</dt><dd>0<small>so far</small></dd></div>
+  </dl>
+
+  <section aria-labelledby="h-why">
+    <h2 id="h-why">Why build it</h2>
+    <p>In many drone groups one leader, or one ground station, makes the decisions. When it fails, the whole
+      mission fails with it. This project removes that single point of failure. There is no central
+      controller: each drone decides its own role from the messages it hears, so the group survives
+      the loss of any member, including the leader.</p>
+    <p>Failures are expensive to test on real aircraft, so everything is built and proven in simulation first,
+      with the same code that will later run on the drones. The simulator doubles as a training ground for
+      reinforcement learning, which is the research goal of the project.</p>
+    <p class="sub">Civilian uses: search and rescue over large areas, flood and disaster mapping, crop surveys,
+      power-line and pipeline inspection, and light shows. Weapons, payloads and targeting are out of scope.</p>
+  </section>
+
+  <section aria-labelledby="h-how">
+    <h2 id="h-how">How it works</h2>
+    <p>Each drone carries three layers. The <b>swarm agent</b> (the project's code) chooses the leader, keeps the
+      drone in its slot of the V, and enforces the safety rules: at least 5&nbsp;m between drones and a geofence.
+      <b>MAVROS</b> translates its commands into MAVLink, the standard drone protocol, and the <b>PX4
+      autopilot</b> flies the aircraft. The agents talk to each other only through a small heartbeat message
+      broadcast five times a second.</p>
+    <figure>
+      <div class="scroll panel">
+        <svg class="arch" viewBox="0 0 760 360" role="img" aria-labelledby="arch-t">
+          <title id="arch-t">Three drones, each with a swarm agent, MAVROS and a PX4 autopilot, linked by a shared heartbeat radio. Test tools sit apart and are used only in simulation.</title>
+          <rect class="band" x="20" y="10" width="720" height="44" rx="8"/>
+          <text class="tband" x="380" y="30" text-anchor="middle">RADIO &middot; heartbeat of 45 bytes (10 drones), 5 times a second, every drone hears every drone</text>
+          <text class="t2" x="380" y="46" text-anchor="middle">position &middot; velocity &middot; battery &middot; role &middot; term &middot; who is in the formation</text>
+          <g><line class="link" x1="130" y1="54" x2="130" y2="76"/><line class="link" x1="380" y1="54" x2="380" y2="76"/><line class="link" x1="630" y1="54" x2="630" y2="76"/></g>
+          <g transform="translate(20 76)">
+            <rect class="col" width="220" height="222" rx="8"/>
+            <text class="t1" x="14" y="24">Drone 1</text><text class="master" x="206" y="24" text-anchor="end">LEADER</text>
+            <rect class="box agent" x="12" y="36" width="196" height="54" rx="6"/>
+            <text class="t1" x="24" y="58">Swarm agent</text><text class="t2" x="24" y="77">leader &middot; formation &middot; safety</text>
+            <rect class="box" x="12" y="98" width="196" height="46" rx="6"/>
+            <text class="t1" x="24" y="119">MAVROS</text><text class="t2" x="24" y="135">MAVLink bridge</text>
+            <line class="wire" x1="110" y1="144" x2="110" y2="160"/><text class="note" x="118" y="156">UDP &rarr; serial</text>
+            <rect class="box" x="12" y="160" width="196" height="50" rx="6"/>
+            <text class="t1" x="24" y="181">PX4 autopilot</text><text class="t2" x="24" y="199">simulated &rarr; Pixhawk 6C</text>
+          </g>
+          <g transform="translate(270 76)">
+            <rect class="col" width="220" height="222" rx="8"/>
+            <text class="t1" x="14" y="24">Drone 2</text><text class="t2" x="206" y="24" text-anchor="end">follower</text>
+            <rect class="box agent" x="12" y="36" width="196" height="54" rx="6"/>
+            <text class="t1" x="24" y="58">Swarm agent</text><text class="t2" x="24" y="77">same code on every drone</text>
+            <rect class="box" x="12" y="98" width="196" height="46" rx="6"/>
+            <text class="t1" x="24" y="119">MAVROS</text>
+            <line class="wire" x1="110" y1="144" x2="110" y2="160"/>
+            <rect class="box" x="12" y="160" width="196" height="50" rx="6"/>
+            <text class="t1" x="24" y="181">PX4 autopilot</text>
+          </g>
+          <text class="dots" x="505" y="192" text-anchor="middle">&middot;&middot;&middot;</text>
+          <g transform="translate(520 76)">
+            <rect class="col" width="220" height="222" rx="8"/>
+            <text class="t1" x="14" y="24">Drone N</text><text class="t2" x="206" y="24" text-anchor="end">follower</text>
+            <rect class="box agent" x="12" y="36" width="196" height="54" rx="6"/>
+            <text class="t1" x="24" y="58">Swarm agent</text>
+            <rect class="box" x="12" y="98" width="196" height="46" rx="6"/>
+            <text class="t1" x="24" y="119">MAVROS</text>
+            <line class="wire" x1="110" y1="144" x2="110" y2="160"/>
+            <rect class="box" x="12" y="160" width="196" height="50" rx="6"/>
+            <text class="t1" x="24" y="181">PX4 autopilot</text>
+          </g>
+          <rect class="tools" x="20" y="314" width="720" height="36" rx="8"/>
+          <text class="note" x="380" y="337" text-anchor="middle">Test tools, simulation only: launcher &middot; radio emulator &middot; fault injector &middot; logger &middot; live map</text>
+        </svg>
+      </div>
+      <figcaption>Nothing controls the swarm from outside. Moving a drone to real hardware changes its autopilot connection
+        and swaps the radio emulator for a real radio; the agent code stays the same.</figcaption>
+    </figure>
+    <div class="two">
+      <div>
+        <h3>Choosing a leader</h3>
+        <p class="sub">The lowest-numbered healthy drone leads. If nobody hears the leader for 1.5&nbsp;s, the next one
+          claims the job with a higher &ldquo;term&rdquo; number, so after any radio split heals there is exactly one
+          leader. A leader with a low battery hands over on purpose and flies home.</p>
+      </div>
+      <div>
+        <h3>Keeping formation</h3>
+        <p class="sub">Followers take slots on two arms of a V, 10&nbsp;m apart, turned to the leader&rsquo;s heading.
+          Each follows the leader&rsquo;s velocity plus a correction toward its slot, and a repulsion term pushes
+          drones apart when any two come within 7.5&nbsp;m.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-proof">
+    <h2 id="h-proof">What has been proven</h2>
+    <p>Every row has a pass/fail rule written before the test, raw logs in the repository, and a re-run from a clean
+      shell. All of it is simulation.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Stage</th><th>Test</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>One drone</td><td>Real PX4 autopilot in simulation, through MAVROS: arm, climb to 10&nbsp;m, hover, land</td>
+            <td><span class="chip ok">passed</span> 135&nbsp;MB RAM</td></tr>
+          <tr><td>Ten drones</td><td>10 PX4 autopilots on one laptop (i3, 8&nbsp;GB): all take off, hover 30&nbsp;s and land</td>
+            <td><span class="chip ok">passed</span> 1.07&nbsp;GB RAM, 77&nbsp;% CPU in total</td></tr>
+          <tr><td>Swarm logic</td><td>100 automated tests; 1,000 random runs with crashes, radio loss, delays and splits</td>
+            <td><span class="chip ok">passed</span> exactly one leader in 1,000 of 1,000</td></tr>
+          <tr><td>Formation flight</td><td>10 PX4 drones fly 1&nbsp;km in a V and land at the target, 4 clean runs</td>
+            <td><span class="chip ok">passed</span> error &le; 1.56&nbsp;m (limit 2), gap &ge; 8.0&nbsp;m (limit 5)</td></tr>
+          <tr><td>Swarm size</td><td>1 to 100 drones in the fast simulator, leader killed mid-flight; 24 runs</td>
+            <td><span class="chip ok">passed</span> all landed, one leader each time</td></tr>
+          <tr><td>Faults on PX4</td><td>Leader killed, radio lost, low battery, follower lost, radio split; 10 trials each</td>
+            <td><span class="chip next">next</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-scale">
+    <h2 id="h-scale">Does it scale?</h2>
+    <p>The number of drones is one setting. To check that nothing else is tied to ten, the same 1&nbsp;km mission was
+      flown in the fast simulator with 1 to 100 drones, three runs each, killing the leader 90&nbsp;s in. It runs the
+      real agent code on simplified flight physics.</p>
+    <figure>
+      <div class="scroll panel"><svg viewBox="0 0 720 260" role="img" aria-labelledby="cf-t"><title id="cf-t">Time to a new leader and to a restored formation, for 2 to 100 drones</title><line class="grid" x1="64" x2="690" y1="206.0" y2="206.0"/><text class="tick" x="54" y="210.0" text-anchor="end">0</text><line class="grid" x1="64" x2="690" y1="170.8" y2="170.8"/><text class="tick" x="54" y="174.8" text-anchor="end">3</text><line class="grid" x1="64" x2="690" y1="135.5" y2="135.5"/><text class="tick" x="54" y="139.5" text-anchor="end">6</text><line class="grid" x1="64" x2="690" y1="100.2" y2="100.2"/><text class="tick" x="54" y="104.2" text-anchor="end">9</text><line class="grid" x1="64" x2="690" y1="65.0" y2="65.0"/><text class="tick" x="54" y="69.0" text-anchor="end">12</text><line class="grid" x1="64" x2="690" y1="29.8" y2="29.8"/><text class="tick" x="54" y="33.8" text-anchor="end">15</text><line class="ref" x1="64" x2="690" y1="170.8" y2="170.8"/><text class="reflab" x="690" y="164.8" text-anchor="end">goal: new leader within 3 s</text><line class="ref" x1="64" x2="690" y1="29.8" y2="29.8"/><text class="reflab" x="690" y="23.8" text-anchor="end">goal: formation back within 15 s</text><text class="tick" x="64.0" y="226" text-anchor="middle">2</text><text class="tick" x="168.3" y="226" text-anchor="middle">3</text><text class="tick" x="272.7" y="226" text-anchor="middle">5</text><text class="tick" x="377.0" y="226" text-anchor="middle">10</text><text class="tick" x="481.3" y="226" text-anchor="middle">20</text><text class="tick" x="585.7" y="226" text-anchor="middle">50</text><text class="tick" x="690.0" y="226" text-anchor="middle">100</text><text class="axlab" x="377" y="256" text-anchor="middle">drones in the swarm</text><text class="axlab" x="14" y="112" text-anchor="middle" transform="rotate(-90 14 112)">seconds</text><polyline class="s-form" points="168.3,150.2 272.7,151.9 377.0,153.1 481.3,151.9 585.7,147.8 690.0,103.2"/><polyline class="s-lead" points="64.0,187.2 168.3,186.0 272.7,186.0 377.0,186.0 481.3,186.0 585.7,185.4 690.0,185.4"/><rect class="m-form" x="163.8" y="145.7" width="9" height="9"/><rect class="m-form" x="268.2" y="147.4" width="9" height="9"/><rect class="m-form" x="372.5" y="148.6" width="9" height="9"/><rect class="m-form" x="476.8" y="147.4" width="9" height="9"/><rect class="m-form" x="581.2" y="143.3" width="9" height="9"/><rect class="m-form" x="685.5" y="98.7" width="9" height="9"/><circle class="m-lead" cx="64.0" cy="187.2" r="5"/><circle class="m-lead" cx="168.3" cy="186.0" r="5"/><circle class="m-lead" cx="272.7" cy="186.0" r="5"/><circle class="m-lead" cx="377.0" cy="186.0" r="5"/><circle class="m-lead" cx="481.3" cy="186.0" r="5"/><circle class="m-lead" cx="585.7" cy="185.4" r="5"/><circle class="m-lead" cx="690.0" cy="185.4" r="5"/><text class="vlab lead" x="680.0" y="203.4" text-anchor="end">1.75 s</text><text class="vlab form" x="680.0" y="93.2" text-anchor="end">8.8 s</text></svg></div>
+      <div class="legend">
+        <span><i class="key lead"></i>every drone agrees on the new leader</span>
+        <span><i class="key form"></i>formation back within 2&nbsp;m</span>
+      </div>
+      <figcaption>Seconds after the leader is killed; median of three runs per size. Taking over is driven by the 1.5&nbsp;s silence timeout, so it stays flat as
+        the swarm grows. Re-forming takes longer at 100 drones (8.8&nbsp;s) because every drone on one arm of the V shifts one slot.</figcaption>
+    </figure>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Drones</th><th class="num">New leader (s)</th><th class="num">Formation back (s)</th>
+          <th class="num">Closest pair (m)</th><th>Mission</th><th class="num">Sim speed</th><th class="num">Heartbeat bytes</th></tr></thead>
+        <tbody><tr><td>1</td><td class="num">&ndash;</td><td class="num">&ndash;</td><td class="num">&ndash;</td><td><span class="chip ok">3/3 landed</span></td><td class="num">2460&times;</td><td class="num">44</td></tr><tr><td>2</td><td class="num">1.60</td><td class="num">&ndash;</td><td class="num">10.0</td><td><span class="chip ok">3/3 landed</span></td><td class="num">1506&times;</td><td class="num">44</td></tr><tr><td>3</td><td class="num">1.70</td><td class="num">4.8</td><td class="num">9.5</td><td><span class="chip ok">3/3 landed</span></td><td class="num">818&times;</td><td class="num">44</td></tr><tr><td>5</td><td class="num">1.70</td><td class="num">4.6</td><td class="num">9.5</td><td><span class="chip ok">3/3 landed</span></td><td class="num">427&times;</td><td class="num">44</td></tr><tr><td>10</td><td class="num">1.70</td><td class="num">4.5</td><td class="num">9.5</td><td><span class="chip ok">3/3 landed</span></td><td class="num">162&times;</td><td class="num">45</td></tr><tr><td>20</td><td class="num">1.70</td><td class="num">4.6</td><td class="num">9.5</td><td><span class="chip ok">3/3 landed</span></td><td class="num">57&times;</td><td class="num">46</td></tr><tr><td>50</td><td class="num">1.75</td><td class="num">5.0</td><td class="num">9.5</td><td><span class="chip ok">3/3 landed</span></td><td class="num">11&times;</td><td class="num">50</td></tr><tr><td>100</td><td class="num">1.75</td><td class="num">8.8</td><td class="num">9.5</td><td><span class="chip ok">3/3 landed</span></td><td class="num">3&times;</td><td class="num">56</td></tr></tbody>
+      </table>
+    </div>
+    <p class="sub">Clean radio, no wind. The same test with a harder radio (10&nbsp;% of messages lost, 150&nbsp;ms delay)
+      and wind-like drift, 9 runs:</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Drones</th><th class="num">New leader (s)</th><th class="num">Formation back (s)</th>
+          <th class="num">Closest pair (m)</th><th class="num">Most leaders at once</th><th>Mission</th></tr></thead>
+        <tbody><tr><td>10</td><td class="num">2.35</td><td class="num">4.8</td><td class="num">9.2</td><td class="num">1</td><td><span class="chip ok">3/3 landed</span></td></tr><tr><td>50</td><td class="num">2.55</td><td class="num">5.7</td><td class="num">8.7</td><td class="num">1</td><td><span class="chip ok">3/3 landed</span></td></tr><tr><td>100</td><td class="num">2.75</td><td class="num">9.2</td><td class="num">8.1</td><td class="num">1</td><td><span class="chip ok">3/3 landed</span></td></tr></tbody>
+      </table>
+    </div>
+    <h3>Where the limits really are</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Limit</th><th>Today</th><th>Why, and the way past it</th></tr></thead>
+        <tbody>
+          <tr><td>Swarm logic</td><td class="today">250 drones</td><td>PX4 system IDs run 1&ndash;250. The heartbeat grows by one byte per 8 drones.</td></tr>
+          <tr><td>PX4 simulation on this laptop</td><td class="today">10 drones</td><td>The CPU is 77&nbsp;% busy at 10, and PX4&rsquo;s default port plan covers 10 instances. A bigger computer or a cloud machine runs more.</td></tr>
+          <tr><td>Fast simulator</td><td class="today">162&times; real time at 10, 3&times; at 100</td><td>Every drone checks every other drone, so cost grows with the square of the swarm size.</td></tr>
+          <tr><td>Radio</td><td class="today">&asymp;&nbsp;34 drones per default SiK channel</td><td>All-to-all heartbeats need more airtime as the swarm grows (chart below). Bigger swarms need a mesh network or small squads.</td></tr>
+          <tr><td>Shape</td><td class="today">one V for everyone</td><td>A single V of 100 drones has arms about 490&nbsp;m long, and the last drones land 490&nbsp;m from the target. Large swarms should fly as squads of about ten, each with its own leader.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figure>
+      <div class="scroll panel"><svg viewBox="0 0 720 250" role="img" aria-labelledby="cr-t"><title id="cr-t">Radio data needed for heartbeats as the swarm grows, against telemetry radio air rates</title><line class="grid" x1="64" x2="690" y1="196.0" y2="196.0"/><text class="tick" x="54" y="200.0" text-anchor="end">0</text><line class="grid" x1="64" x2="690" y1="161.8" y2="161.8"/><text class="tick" x="54" y="165.8" text-anchor="end">50</text><line class="grid" x1="64" x2="690" y1="127.5" y2="127.5"/><text class="tick" x="54" y="131.5" text-anchor="end">100</text><line class="grid" x1="64" x2="690" y1="93.3" y2="93.3"/><text class="tick" x="54" y="97.3" text-anchor="end">150</text><line class="grid" x1="64" x2="690" y1="59.1" y2="59.1"/><text class="tick" x="54" y="63.1" text-anchor="end">200</text><line class="grid" x1="64" x2="690" y1="24.8" y2="24.8"/><text class="tick" x="54" y="28.8" text-anchor="end">250</text><text class="tick" x="64.0" y="216" text-anchor="middle">0</text><text class="tick" x="189.2" y="216" text-anchor="middle">20</text><text class="tick" x="314.4" y="216" text-anchor="middle">40</text><text class="tick" x="439.6" y="216" text-anchor="middle">60</text><text class="tick" x="564.8" y="216" text-anchor="middle">80</text><text class="tick" x="690.0" y="216" text-anchor="middle">100</text><line class="ref" x1="64" x2="690" y1="152.2" y2="152.2"/><text class="reflab" x="690" y="146.2" text-anchor="end">SiK telemetry radio, default air rate: 64 kbit/s</text><line class="ref" x1="64" x2="690" y1="24.8" y2="24.8"/><text class="reflab" x="72" y="18.8">SiK radio, highest air rate: 250 kbit/s</text><polyline class="s-lead" points="70.3,194.8 76.5,193.6 82.8,192.4 89.0,191.2 95.3,190.0 101.6,188.8 107.8,187.6 114.1,186.1 120.3,184.9 126.6,183.7 132.9,182.4 139.1,181.2 145.4,180.0 151.6,178.7 157.9,177.5 164.2,175.8 170.4,174.6 176.7,173.3 182.9,172.1 189.2,170.8 195.5,169.5 201.7,168.3 208.0,167.0 214.2,165.1 220.5,163.8 226.8,162.5 233.0,161.2 239.3,160.0 245.5,158.7 251.8,157.4 258.1,156.1 264.3,153.9 270.6,152.6 276.8,151.3 283.1,150.0 289.4,148.7 295.6,147.4 301.9,146.1 308.1,144.7 314.4,142.3 320.7,141.0 326.9,139.6 333.2,138.3 339.4,137.0 345.7,135.6 352.0,134.3 358.2,132.9 364.5,130.3 370.7,128.9 377.0,127.5 383.3,126.2 389.5,124.8 395.8,123.4 402.0,122.1 408.3,120.7 414.6,117.8 420.8,116.4 427.1,115.0 433.3,113.6 439.6,112.2 445.9,110.8 452.1,109.4 458.4,108.0 464.6,104.9 470.9,103.4 477.2,102.0 483.4,100.6 489.7,99.2 495.9,97.7 502.2,96.3 508.5,94.9 514.7,91.5 521.0,90.0 527.2,88.6 533.5,87.1 539.8,85.7 546.0,84.2 552.3,82.8 558.5,81.3 564.8,77.7 571.1,76.2 577.3,74.7 583.6,73.3 589.8,71.8 596.1,70.3 602.4,68.8 608.6,67.3 614.9,63.5 621.1,62.0 627.4,60.4 633.7,58.9 639.9,57.4 646.2,55.9 652.4,54.4 658.7,52.9 665.0,48.8 671.2,47.2 677.5,45.7 683.7,44.2 690.0,42.6"/><line class="lead-line" x1="126.6" y1="176.7" x2="126.6" y2="125.7"/><text class="vlab lead" x="122.6" y="119.7">10 drones: 18 kbit/s</text><text class="vlab lead" x="678.0" y="40.6" text-anchor="end">100 drones: 224 kbit/s</text><circle class="m-lead" cx="126.6" cy="183.7" r="5"/><circle class="m-lead" cx="690.0" cy="42.6" r="5"/><text class="axlab" x="377" y="246" text-anchor="middle">drones in the swarm</text><text class="axlab" x="14" y="107" text-anchor="middle" transform="rotate(-90 14 107)">kbit/s</text></svg></div>
+      <figcaption>Heartbeat data only, before any radio framing. SiK air rates from the ArduPilot radio documentation, which
+        also notes that usable throughput is about 90&nbsp;% of the air rate, and half that with error correction on.</figcaption>
+    </figure>
+  </section>
+
+  <section aria-labelledby="h-rl">
+    <h2 id="h-rl">Where reinforcement learning fits</h2>
+    <p>Reinforcement learning is <b>not in the system yet</b>. What exists is what it needs first: a fast training
+      ground, a working classical controller to beat, and fixed measurements to judge both. The plan is to use it only
+      where it can plausibly win, and to keep hard safety rules outside the learned part.</p>
+    <div class="tbl rl">
+      <table>
+        <thead><tr><th>Part of the system</th><th>Use RL?</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Avoiding buildings and trees in formation</td><td><span class="chip next">yes, next</span></td>
+            <td>Cluttered, changing scenes are where learned policies can beat hand-tuned rules. Obstacles will come from OpenStreetMap buildings and woods along real routes.</td></tr>
+          <tr><td>Drone-to-drone avoidance when the radio is patchy</td><td><span class="chip next">yes, next</span></td>
+            <td>The known weak spot today (see limitations): drones that cannot hear each other cannot be pushed apart by the current rules.</td></tr>
+          <tr><td>Re-forming after losses, battery-aware routes</td><td><span class="chip warn">maybe, later</span></td>
+            <td>Measurable gains are possible; worth trying once obstacle avoidance works.</td></tr>
+          <tr><td>Holding the V in open sky</td><td><span class="chip no">little gain</span></td>
+            <td>The classical controller already holds it within 2&nbsp;m on PX4.</td></tr>
+          <tr><td>Choosing the leader</td><td><span class="chip no">no</span></td>
+            <td>Must be predictable and provable: one leader, always. A learned policy cannot guarantee that.</td></tr>
+          <tr><td>Motor and attitude control</td><td><span class="chip no">no</span></td>
+            <td>PX4 already does this well and is widely flight-proven.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub">Planned method: every drone runs the same small neural network. It sees distances to nearby obstacles and
+      drones plus the direction to its slot, and outputs a correction on top of the classical command, trained with PPO on
+      the laptop CPU. The 5&nbsp;m separation rule and the geofence stay on as a hard safety layer. Both controllers fly
+      the same unseen routes; success rate, collisions, closest approach, formation error and time to target decide.
+      If RL does not beat the classical controller, the report will say so.</p>
+  </section>
+
+  <section aria-labelledby="h-road">
+    <h2 id="h-road">Road to real drones</h2>
+    <ol class="steps">
+      <li class="done"><div class="st"><b>Swarm logic and tests</b><span class="chip ok">done</span></div>
+        <p>Leader election, formation, safety; 1,000 random fault runs.</p></li>
+      <li class="done"><div class="st"><b>Ten PX4 drones in formation</b><span class="chip ok">flown</span></div>
+        <p>1&nbsp;km V flights with the real autopilot in simulation; formal report pending.</p></li>
+      <li class="done"><div class="st"><b>Live map and fault buttons</b><span class="chip ok">done</span></div>
+        <p>Real GPS targets, per-drone crash, battery, GPS and radio faults, repeatable runs, 1&ndash;100 drones.</p></li>
+      <li class="now"><div class="st"><b>RL for obstacle avoidance</b><span class="chip next">next</span></div>
+        <p>Obstacle world, classical baseline, trained policy, fair comparison.</p></li>
+      <li><div class="st"><b>Fault trials on PX4, then bad-radio trials</b></div>
+        <p>Ten trials per fault; then 50&ndash;300&nbsp;ms delay and 0&ndash;30&nbsp;% loss, with no false leader changes at 10&nbsp;% loss or less.</p></li>
+      <li><div class="st"><b>Hardware readiness</b></div>
+        <p>A telemetry-radio stand-in test, a flight test plan with go/no-go checklist and kill-switch procedure.</p></li>
+      <li><div class="st"><b>Hardware</b></div>
+        <p>A small companion computer on each drone wired to its Pixhawk 6C, a radio link for heartbeats, a bench test with
+          propellers off, then one real drone with nine simulated ones, then three real drones in an open field with
+          safety pilots.</p></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-limits">
+    <h2 id="h-limits">Known limitations</h2>
+    <ul class="limits">
+      <li>No real drone has flown this code yet. The Pixhawk 6C cannot run it alone; each drone needs a companion computer.</li>
+      <li>When the radio splits the swarm into groups whose drones are mixed together in the air, or random links drop,
+        drones that cannot hear each other came closer than 5&nbsp;m in 143 of 1,000 random runs of the fast simulator.
+        This must be fixed before real flight.</li>
+      <li>Simulated GPS is near perfect. Real GPS drifts by metres, so real flights need RTK GPS or wider spacing.</li>
+      <li>The fast simulator uses simplified physics; PX4 simulation uses the real autopilot with simple aircraft physics
+        and no real wind.</li>
+      <li>Heartbeats go from every drone to every drone, so radio load grows with swarm size.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-built">
+    <h2 id="h-built">How it was built</h2>
+    <p class="pitch">Python 3.12, ROS&nbsp;2 Jazzy, MAVROS 2.15 and PX4 v1.18 (release candidate) in its built-in simulator, on one laptop
+      without a GPU. The work follows seven phases, each with written pass/fail criteria, saved logs and a clean
+      re-run before it counts. Every result
+      above comes from logged test runs.</p>
+  </section>
+
+  <footer>
+    <span>Evidence in the project repository: <span class="mono">reports/PHASE_0.md</span> to <span class="mono">PHASE_2.md</span>,
+      <span class="mono">reports/logs/phase_3/</span>, <span class="mono">reports/logs/scaling/</span>.</span>
+    <span>Sources: PX4 documentation (docs.px4.io) and PX4 source for system IDs; ArduPilot SiK radio documentation for air rates.</span>
+  </footer>
+</div>
