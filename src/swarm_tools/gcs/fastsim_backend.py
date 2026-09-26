@@ -36,6 +36,7 @@ DEFAULTS = {
     "cruise_mps": 5.0, "endurance_min": 25.0, "seed": 1, "drift": 0.15,
 }
 MIN_ROUTE_M = 50.0
+MAX_DRONES = 100      # the logic allows 250 (PX4 system IDs); above ~100 the fast sim runs slower than real time
 
 
 def mission_config(base: Config, n: int, home: list[float], target: list[float], cruise_mps: float) -> Config:
@@ -238,7 +239,7 @@ class FastSimBackend:
                 for key in ("n", "home", "target", "cruise_mps", "endurance_min", "seed", "drift"):
                     if key in c:
                         p[key] = c[key]
-                p["n"] = max(1, min(int(p["n"]), 30))
+                p["n"] = max(1, min(int(p["n"]), MAX_DRONES))
                 p["cruise_mps"] = max(1.0, min(float(p["cruise_mps"]), 12.0))
                 p["endurance_min"] = max(1.0, min(float(p["endurance_min"]), 10000.0))
                 try:

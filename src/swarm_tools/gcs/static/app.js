@@ -11,16 +11,19 @@
     retired_on_ground: "Landed", emergency_drop: "Emergency descent", emergency_land: "Emergency landing",
     falling: "Falling", crashed: "Crashed",
   };
+  const OFF_FORMATION = new Set(["transit", "orphan", "climb_to_join", "retire_climb", "retire_transit", "retire_land",
+                                  "emergency_drop", "emergency_land"]);
   const PHASE = { IDLE: "On ground", TAKEOFF: "Takeoff", CRUISE: "Cruise", HOLD: "At target", LAND: "Landing", LANDED: "Landed" };
   const HISTORY_S = 240;
-  const FOLLOW_ZOOM = 19;          // ~0.25 m per pixel here: 10 m slots are ~40 px apart
+  const FOLLOW_ZOOM = 19;          // closest zoom when following: ~0.25 m per pixel, 10 m slots ~40 px apart
   let zoomToSwarm = true;
 
   let state = null, drawPending = false, lastT = -1, lastEventSeq = -1, paramsKey = "", pickWhat = null;
   let lastPan = 0, lastChart = 0, fitted = false;
   const selected = new Set();
   const drones = new Map();       // id -> {marker, trail, key}
-  const history = new Map();      // id -> [[t, alt], ...]
+  const rowEls = new Map();       // id -> cached table cells
+  const history = new Map();      // id -> [[t, alt, color], ...]
 
   // ---------------------------------------------------------------- map
   const map = L.map("map", { zoomControl: true });
@@ -32,12 +35,16 @@
   L.control.layers({ Satellite: satellite, Streets: streets }, null, { position: "topright" }).addTo(map);
   L.control.scale({ imperial: false }).addTo(map);
   map.setView([33.71, 73.03], 14);
-  const zoomClass = () => map.getContainer().classList.toggle("farzoom", map.getZoom() < 17);
+  const zoomClass = () => {
+    const c = map.getContainer().classList, z = map.getZoom();
+    c.toggle("farzoom", z < 17); c.toggle("veryfar", z < 15);
+  };
   map.on("zoomend", zoomClass); zoomClass();
   const pin = (cls, text) => L.divIcon({ className: "", html: `<div class="pin ${cls}">${text}</div>`, iconSize: [64, 24], iconAnchor: [20, 30] });
   const homeM = L.marker([0, 0], { icon: pin("home", "HOME"), interactive: false, keyboard: false }).addTo(map);
   const tgtM = L.marker([0, 0], { icon: pin("target", "TARGET"), interactive: false, keyboard: false }).addTo(map);
   const routeL = L.polyline([], { color: "#ffffff", weight: 2, opacity: 0.75, dashArray: "6 7" }).addTo(map);
+  const trailRenderer = L.canvas({ padding: 0.3 });   // one canvas for all trails (100 drones stay smooth)
 
   function droneColor(d) {
     if (d.role === "DOWN") return COLORS.DOWN;
@@ -66,13 +73,14 @@
     homeM.setLatLng(home); tgtM.setLatLng(tgt); routeL.setLatLngs([home, tgt]);
     if (!fitted) { map.fitBounds(L.latLngBounds([home, tgt]).pad(0.25)); fitted = true; }
     const showTrails = $("trails").checked;
-    let cx = 0, cy = 0, cn = 0;
+    const many = s.drones.length > 30;   // big swarms: trail only the leader and drones that left formation
+    let cx = 0, cy = 0, cn = 0, s0 = 90, n0 = -90, w0 = 180, e0 = -180;
     for (const d of s.drones) {
       const color = droneColor(d), key = color + d.role;
       let e = drones.get(d.id);
       if (!e) {
         e = { marker: L.marker([d.lat, d.lon], { icon: droneIcon(d, color), keyboard: false }).addTo(map),
-              trail: L.polyline([], { color, weight: 2, opacity: 0.55 }).addTo(map), key };
+              trail: L.polyline([], { color, weight: 2, opacity: 0.55, renderer: trailRenderer }).addTo(map), key };
         drones.set(d.id, e);
       } else if (e.key !== key) {
         e.marker.setIcon(droneIcon(d, color)); e.trail.setStyle({ color }); e.key = key;
@@ -85,19 +93,23 @@
         const tag = el.querySelector(".tag");
         if (tag) tag.textContent = `${d.id} · ${d.alt.toFixed(0)} m`;
       }
-      if (showTrails && d.role !== "DOWN") {
+      if (d.role === "MASTER" || OFF_FORMATION.has(d.status)) e.keepTrail = true;
+      if (showTrails && d.role !== "DOWN" && (!many || e.keepTrail)) {
         const pts = e.trail.getLatLngs(), last = pts[pts.length - 1];
         if (!last || Math.abs(last.lat - d.lat) + Math.abs(last.lng - d.lon) > 2e-6) {
           e.trail.addLatLng([d.lat, d.lon]);
           if (pts.length > 900) e.trail.setLatLngs(pts.slice(-800));
         }
       }
-      if (d.role !== "DOWN" && !d.landed) { cx += d.lat; cy += d.lon; cn++; }
+      if (d.role !== "DOWN" && !d.landed) {
+        cx += d.lat; cy += d.lon; cn++;
+        s0 = Math.min(s0, d.lat); n0 = Math.max(n0, d.lat); w0 = Math.min(w0, d.lon); e0 = Math.max(e0, d.lon);
+      }
     }
     if (!showTrails) drones.forEach((e) => e.trail.setLatLngs([]));
     const now = performance.now();
     if ($("follow").checked && cn && now - lastPan > 500 && !pickWhat) {
-      if (zoomToSwarm) { map.setView([cx / cn, cy / cn], FOLLOW_ZOOM); zoomToSwarm = false; }
+      if (zoomToSwarm) { map.fitBounds([[s0, w0], [n0, e0]], { maxZoom: FOLLOW_ZOOM, padding: [60, 60] }); zoomToSwarm = false; }
       else map.panTo([cx / cn, cy / cn], { animate: true, duration: 0.4 });
       lastPan = now;
     }
@@ -132,13 +144,12 @@
     set("n", p.n); set("cruise", p.cruise_mps); set("endurance", p.endurance_min); set("seed", p.seed);
     routeHint();
   }
-  for (let n = 3; n <= 15; n++) $("n").insertAdjacentHTML("beforeend", `<option value="${n}">${n}</option>`);
   ["home_lat", "home_lon", "tgt_lat", "tgt_lon", "cruise", "endurance"].forEach((id) => $(id).addEventListener("input", routeHint));
 
   function buildRows(s) {
     const tb = $("rows");
-    if (tb.children.length === s.drones.length) return;
-    tb.innerHTML = "";
+    if (rowEls.size === s.drones.length) return;
+    tb.innerHTML = ""; rowEls.clear();
     for (const d of s.drones) {
       const tr = document.createElement("tr");
       tr.dataset.id = d.id;
@@ -150,24 +161,26 @@
         tr.classList.toggle("sel", ev.target.checked);
       });
       tb.appendChild(tr);
+      const q = (sel) => tr.querySelector(sel);
+      rowEls.set(d.id, { tr, sw: q(".sw"), role: q(".role"), alt: q(".alt"), spd: q(".spd"), bar: q(".batt b"),
+                         pct: q(".batt span"), doing: q(".doing") });
     }
   }
   function updateRows(s) {
     buildRows(s);
     for (const d of s.drones) {
-      const tr = $("rows").querySelector(`tr[data-id="${d.id}"]`);
-      if (!tr) continue;
-      tr.classList.toggle("down", d.role === "DOWN");
-      tr.querySelector(".sw").style.background = droneColor(d);
+      const r = rowEls.get(d.id);
+      if (!r) continue;
+      r.tr.classList.toggle("down", d.role === "DOWN");
+      r.sw.style.background = droneColor(d);
       const flags = (d.gps_ok ? "" : " · no GPS") + (d.radio_ok ? "" : " · radio cut");
-      tr.querySelector(".role").textContent = d.role === "MASTER" ? "Master" : d.role === "RETIRED" ? "Left" : d.role === "DOWN" ? "Down" : "Follower";
-      tr.querySelector(".alt").textContent = d.alt.toFixed(1);
-      tr.querySelector(".spd").textContent = d.speed.toFixed(1);
-      const b = tr.querySelector(".batt b");
-      b.style.width = `${Math.max(0, Math.min(100, d.battery))}%`;
-      b.style.background = d.battery <= 10 ? "var(--alert)" : d.battery <= 30 ? "var(--warn)" : "var(--ok)";
-      tr.querySelector(".batt span").textContent = `${d.battery.toFixed(0)}%`;
-      tr.querySelector(".doing").textContent = (DOING[d.status] || d.status) + flags;
+      r.role.textContent = d.role === "MASTER" ? "Master" : d.role === "RETIRED" ? "Left" : d.role === "DOWN" ? "Down" : "Follower";
+      r.alt.textContent = d.alt.toFixed(1);
+      r.spd.textContent = d.speed.toFixed(1);
+      r.bar.style.width = `${Math.max(0, Math.min(100, d.battery))}%`;
+      r.bar.style.background = d.battery <= 10 ? "var(--alert)" : d.battery <= 30 ? "var(--warn)" : "var(--ok)";
+      r.pct.textContent = `${d.battery.toFixed(0)}%`;
+      r.doing.textContent = (DOING[d.status] || d.status) + flags;
     }
   }
 
@@ -222,12 +235,14 @@
     });
     ctx.fillText("m", 4, T + 4);
     ctx.fillText(`last ${HISTORY_S / 60} min`, R - 78, h - 4);
-    history.forEach((pts) => {
-      if (pts.length < 2) return;
-      ctx.lineWidth = 1.6;
-      for (let k = 1; k < pts.length; k++) {
-        ctx.strokeStyle = pts[k][2];
-        ctx.beginPath(); ctx.moveTo(X(pts[k - 1][0]), Y(pts[k - 1][1])); ctx.lineTo(X(pts[k][0]), Y(pts[k][1])); ctx.stroke();
+    ctx.lineWidth = 1.6;
+    history.forEach((pts) => {          // one stroke per run of the same colour
+      let k = 1;
+      while (k < pts.length) {
+        const color = pts[k][2];
+        ctx.strokeStyle = color; ctx.beginPath(); ctx.moveTo(X(pts[k - 1][0]), Y(pts[k - 1][1]));
+        while (k < pts.length && pts[k][2] === color) { ctx.lineTo(X(pts[k][0]), Y(pts[k][1])); k++; }
+        ctx.stroke();
       }
     });
   }
@@ -261,15 +276,19 @@
       return j;
     } catch (e) { toast("Ground control is not responding (is scripts/gcs.py running?)"); return { ok: false }; }
   }
+  function clearSwarm() {
+    selected.clear(); rowEls.clear(); $("rows").innerHTML = ""; $("sel_all").checked = false;
+    drones.forEach((e) => { map.removeLayer(e.marker); map.removeLayer(e.trail); }); drones.clear(); history.clear();
+  }
   $("start").addEventListener("click", async () => {
     const r = await cmd({ cmd: "start", n: Number($("n").value), cruise_mps: Number($("cruise").value),
       endurance_min: Number($("endurance").value), seed: Number($("seed").value),
       home: [Number($("home_lat").value), Number($("home_lon").value)], target: [Number($("tgt_lat").value), Number($("tgt_lon").value)] });
-    if (r.ok) { fitted = false; zoomToSwarm = true; selected.clear(); $("rows").innerHTML = ""; drones.forEach((e) => { map.removeLayer(e.marker); map.removeLayer(e.trail); }); drones.clear(); history.clear(); }
+    if (r.ok) { fitted = false; zoomToSwarm = true; clearSwarm(); }
   });
   $("reset").addEventListener("click", async () => {
     const r = await cmd({ cmd: "reset" });
-    if (r.ok) { selected.clear(); $("rows").innerHTML = ""; drones.forEach((e) => { map.removeLayer(e.marker); map.removeLayer(e.trail); }); drones.clear(); history.clear(); }
+    if (r.ok) { zoomToSwarm = true; clearSwarm(); }
   });
   $("pause").addEventListener("click", () => cmd({ cmd: state && state.running ? "pause" : "resume" }));
   document.querySelectorAll(".speeds button").forEach((b) => b.addEventListener("click", () => cmd({ cmd: "speed", value: Number(b.dataset.speed) })));
