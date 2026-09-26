@@ -1,0 +1,83 @@
+{
+  "args": {
+    "steps": 6000000,
+    "run": "reports/logs/rl/run1",
+    "n_sims": 3,
+    "seed": 1,
+    "eval_every": 500000,
+    "eval_scenarios": 8,
+    "drones": 10
+  },
+  "sim": {
+    "n_drones": 10,
+    "spacing_m": 10.0,
+    "half_angle_rad": 0.7853981633974483,
+    "cruise_mps": 5.0,
+    "gain": 1.0,
+    "max_corr_mps": 3.0,
+    "max_speed_mps": 10.0,
+    "min_sep_m": 5.0,
+    "rep_factor": 1.5,
+    "rep_gain_mps": 3.0,
+    "dt": 0.05,
+    "control_every": 2,
+    "tau_s": 0.35,
+    "max_acc": 4.0,
+    "drift_sigma_mps": 0.15,
+    "drift_tau_s": 3.0,
+    "crash_clearance_m": 0.6,
+    "collide_m": 1.0,
+    "leader_clearance_m": 8.0,
+    "route_m": [
+      300.0,
+      600.0
+    ],
+    "corridor_half_m": 150.0,
+    "keep_clear_m": 70.0,
+    "building_density": [
+      0.0,
+      2.0
+    ],
+    "tree_density": [
+      0.0,
+      1.0
+    ],
+    "trees_per_cluster": [
+      3,
+      13
+    ],
+    "settle_s": 15.0,
+    "heading_rate_dps": 20.0,
+    "end_on_crash": true
+  },
+  "ppo": {
+    "n_steps": 512,
+    "batch_size": 2304,
+    "n_epochs": 5,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.0,
+    "max_grad_norm": 0.5
+  },
+  "policy": {
+    "net_arch": [
+      128,
+      128
+    ],
+    "activation": "tanh",
+    "log_std_init": -1.0
+  },
+  "eval_density": {
+    "building_density": [
+      1.0,
+      1.0
+    ],
+    "tree_density": [
+      0.5,
+      0.5
+    ]
+  },
+  "torch": "2.14.0+cpu"
+}

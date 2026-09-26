@@ -1,0 +1,12 @@
+{"steps": 500013, "wall_s": 42.2, "success": 0, "crash_free": 0, "restored": 8, "n": 8, "crashes": 3.25, "sep_violation_s": 0.0, "mean_err_m": 0.6925, "final_rms_m": 0.6725}
+{"steps": 1000026, "wall_s": 28.6, "success": 0, "crash_free": 0, "restored": 8, "n": 8, "crashes": 2.5, "sep_violation_s": 0.0, "mean_err_m": 0.9612499999999999, "final_rms_m": 1.02625}
+{"steps": 1500012, "wall_s": 39.6, "success": 2, "crash_free": 2, "restored": 8, "n": 8, "crashes": 1.5, "sep_violation_s": 0.0, "mean_err_m": 0.7475, "final_rms_m": 0.5375000000000001}
+{"steps": 2000025, "wall_s": 30.5, "success": 3, "crash_free": 3, "restored": 8, "n": 8, "crashes": 1.0, "sep_violation_s": 0.0, "mean_err_m": 0.72375, "final_rms_m": 0.42125}
+{"steps": 2500011, "wall_s": 27.6, "success": 2, "crash_free": 2, "restored": 8, "n": 8, "crashes": 1.625, "sep_violation_s": 0.0, "mean_err_m": 0.68625, "final_rms_m": 0.46625}
+{"steps": 3000024, "wall_s": 26.7, "success": 3, "crash_free": 3, "restored": 8, "n": 8, "crashes": 0.875, "sep_violation_s": 0.0, "mean_err_m": 0.8200000000000001, "final_rms_m": 0.38375000000000004}
+{"steps": 3500010, "wall_s": 26.7, "success": 2, "crash_free": 2, "restored": 8, "n": 8, "crashes": 1.375, "sep_violation_s": 0.0, "mean_err_m": 0.9662499999999999, "final_rms_m": 0.6775}
+{"steps": 4000023, "wall_s": 26.8, "success": 2, "crash_free": 2, "restored": 8, "n": 8, "crashes": 1.75, "sep_violation_s": 0.0, "mean_err_m": 0.6425000000000001, "final_rms_m": 0.43374999999999997}
+{"steps": 4500009, "wall_s": 26.9, "success": 2, "crash_free": 2, "restored": 8, "n": 8, "crashes": 1.25, "sep_violation_s": 0.0, "mean_err_m": 0.7575, "final_rms_m": 0.4275}
+{"steps": 5000022, "wall_s": 26.9, "success": 3, "crash_free": 3, "restored": 8, "n": 8, "crashes": 0.875, "sep_violation_s": 0.48125, "mean_err_m": 0.7, "final_rms_m": 0.38}
+{"steps": 5500008, "wall_s": 26.9, "success": 4, "crash_free": 4, "restored": 8, "n": 8, "crashes": 0.75, "sep_violation_s": 0.78125, "mean_err_m": 0.70625, "final_rms_m": 0.37}
+{"steps": 6000021, "wall_s": 27.2, "success": 5, "crash_free": 5, "restored": 8, "n": 8, "crashes": 0.5, "sep_violation_s": 0.2625, "mean_err_m": 1.27875, "final_rms_m": 0.6375}

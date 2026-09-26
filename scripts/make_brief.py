@@ -5,6 +5,7 @@ Usage: PYTHONPATH=src python3 scripts/make_brief.py reports/brief/swarm_failover
 The output is a page body for an online page viewer (no <html>/<head> wrapper).
 """
 import json
+import math
 import statistics as st
 import sys
 from collections import defaultdict
@@ -132,12 +133,87 @@ facts = {
 }
 print(json.dumps(facts))
 
+# ---------------------------------------------------------------- RL results (held-out synthetic + real route)
+RL = REPO / "reports/logs/rl"
+rl_sum = json.loads((RL / "eval/summary.json").read_text())
+METHODS = [("none", "No avoidance", "b-none"), ("none+shield", "Brake only", "b-brake"),
+           ("apf", "Classical", "b-apf"), ("rl", "RL", "b-rl"), ("rl+shield", "RL + brake", "b-rlb")]
+LEVELS = [("low", "Few obstacles"), ("medium", "Medium"), ("high", "Dense")]
+W3, H3, L3, R3, T3, B3 = 720, 270, 56, 704, 22, 222
+Y3 = lambda v: B3 - v / 100.0 * (B3 - T3)  # noqa: E731
+p3 = []
+for v in (0, 25, 50, 75, 100):
+    p3.append(f'<line class="grid" x1="{L3}" x2="{R3}" y1="{Y3(v):.1f}" y2="{Y3(v):.1f}"/>'
+              f'<text class="tick" x="{L3 - 10}" y="{Y3(v) + 4:.1f}" text-anchor="end">{v}%</text>')
+gw = (R3 - L3) / len(LEVELS)
+bw = gw * 0.78 / len(METHODS)
+for gi, (lv, lvname) in enumerate(LEVELS):
+    x0 = L3 + gi * gw + gw * 0.11
+    for mi, (m, _, cls) in enumerate(METHODS):
+        rate = 100.0 * rl_sum["summary"][f"{lv}/{m}"]["success_rate"]
+        x = x0 + mi * bw
+        p3.append(f'<rect class="{cls}" x="{x + 1:.1f}" y="{Y3(rate):.1f}" width="{bw - 2:.1f}" height="{B3 - Y3(rate):.1f}"/>'
+                  f'<text class="bar-v" x="{x + bw / 2:.1f}" y="{Y3(rate) - 5:.1f}" text-anchor="middle">{rate:.0f}</text>')
+    p3.append(f'<text class="tick" x="{L3 + gi * gw + gw / 2:.1f}" y="{B3 + 22}" text-anchor="middle">{lvname}</text>')
+p3.append(f'<text class="axlab" x="14" y="{(T3 + B3) / 2:.0f}" text-anchor="middle" '
+          f'transform="rotate(-90 14 {(T3 + B3) / 2:.0f})">missions fully successful</text>')
+chart_rl = (f'<svg viewBox="0 0 {W3} {H3}" role="img" aria-labelledby="crl-t"><title id="crl-t">Share of held-out missions '
+            f'with no crash and the formation restored, per obstacle density and method</title>' + "".join(p3) + "</svg>")
+legend_rl = "".join(f'<span><i class="key {cls}"></i>{name}</span>' for _, name, cls in METHODS)
+rows_rl = []
+for m, name, cls in METHODS:
+    g = {lv: rl_sum["summary"][f"{lv}/{m}"] for lv, _ in LEVELS}
+    rows_rl.append(
+        f'<tr><td><span class="sw {cls}"></span>{name}</td>'
+        + "".join(f'<td class="num">{g[lv]["success"]}/{g[lv]["episodes"]}</td>' for lv, _ in LEVELS)
+        + f'<td class="num">{g["medium"]["crashes_per_episode"]:.2f}</td><td class="num">{g["medium"]["stuck_per_episode"]:.2f}</td>'
+        + f'<td class="num">{min(g[lv]["min_sep_m"] for lv, _ in LEVELS):.1f}</td></tr>')
+table_rl = "".join(rows_rl)
+eps = [json.loads(l) for l in (RL / "eval/episodes.jsonl").read_text().splitlines() if l.strip()]
+ok = {(r["level"], r["method"], r["seed"]): r["success"] for r in eps}
+
+
+def mcnemar(level: str, a: str, b: str) -> tuple[int, int, float]:
+    seeds = sorted({r["seed"] for r in eps if r["level"] == level})
+    x = sum(ok[(level, a, t)] and not ok[(level, b, t)] for t in seeds)
+    y = sum(ok[(level, b, t)] and not ok[(level, a, t)] for t in seeds)
+    n, k = x + y, min(x, y)
+    return x, y, (min(1.0, 2 * sum(math.comb(n, i) for i in range(k + 1)) / 2 ** n) if n else 1.0)
+
+
+paired = []
+for lv, lvname in LEVELS:
+    x, y, pv = mcnemar(lv, "rl+shield", "apf")
+    paired.append(f"{lvname.lower()}: {x} routes only RL + brake completed, {y} only classical (p&nbsp;=&nbsp;{pv:.3f})")
+rl_paired = "; ".join(paired)
+train_ev = [json.loads(l) for l in (RL / "run1/eval.jsonl").read_text().splitlines() if l.strip()]
+route_rows = [json.loads(l) for l in (RL / "route_eval/episodes.jsonl").read_text().splitlines()] \
+    if (RL / "route_eval/episodes.jsonl").exists() else []
+RMETH = [("none", "No avoidance"), ("apf", "Classical (tuned)"), ("apf-default", "Classical (default)"),
+         ("rl", "RL"), ("rl+shield", "RL + brake")]
+route_html = []
+for m, name in RMETH:
+    cells = [f"<td>{name}</td>"]
+    for kill in (False, True):
+        g = [r for r in route_rows if r["method"] == m and r["kill_leader"] == kill]
+        if not g:
+            cells += ["<td class='num'>&ndash;</td>"] * 2
+            continue
+        hits = sum(r["hits"] for r in g)
+        clean = sum(r["hits"] == 0 for r in g)
+        cells += [f'<td class="num">{hits}</td>', f'<td class="num">{clean}/{len(g)}</td>']
+    route_html.append("<tr>" + "".join(cells) + "</tr>")
+table_route = "".join(route_html)
+route_n = max((r["seed"] for r in route_rows), default=0)
+
 page = (Path(__file__).parent / "brief_template.html").read_text()
 for k, v in {"CHART_FAILOVER": chart_failover, "CHART_RADIO": chart_radio, "TABLE_CLEAN": table_clean,
              "TABLE_RADIO": table_radio, "FO_ALL": f"{facts['fo_all']:.1f}", "FO100": f"{facts['fo100']:.2f}",
              "RR100": f"{facts['rr100']:.1f}", "SP100": f"{facts['sp100']:.0f}", "SP10": f"{facts['sp10']:.0f}",
              "FAR100": f"{facts['far100']:.0f}", "RUNS": str(facts["runs"]), "RUNS_RADIO": str(facts["runs_radio"]),
-             "CROSS": str(cross)}.items():
+             "CROSS": str(cross), "CHART_RL": chart_rl, "LEGEND_RL": legend_rl, "TABLE_RL": table_rl, "RL_PAIRED": rl_paired,
+             "TABLE_ROUTE": table_route, "ROUTE_N": str(route_n), "TRAIN_LAST": f"{train_ev[-1]['success']} of {train_ev[-1]['n']}",
+             "TRAIN_FIRST_STEP": f"{train_ev[0]['steps'] / 1e6:.1f}"}.items():
     page = page.replace("{{" + k + "}}", v)
 assert "{{" not in page, page[page.index("{{"):page.index("{{") + 40]
 OUT.parent.mkdir(parents=True, exist_ok=True)
