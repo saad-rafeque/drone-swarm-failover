@@ -9,3 +9,4 @@ build/
 install/
 log/
 .sim/
+kaggle/swarm-rl-code.zip
