@@ -15,6 +15,7 @@
     ["Phase 1 report", "/reports/PHASE_1.md"],
     ["Phase 2 report", "/reports/PHASE_2.md"],
     ["Phase 3 report", "/reports/PHASE_3.md"],
+    ["Phase 4 report (not completed)", "/reports/PHASE_4.md"],
     ["Scaling test", "/reports/SCALING.md"],
   ];
   const list = document.getElementById("doclist"), view = document.getElementById("docview");

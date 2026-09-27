@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 NAMES = {"F1": "F1 leader killed", "F2": "F2 leader's radio lost", "F3": "F3 leader low battery",
          "F4": "F4 follower killed", "F5": "F5 radio split, healed"}
+SHORT = {"F1": "F1\nleader killed", "F2": "F2\nradio lost", "F3": "F3\nlow battery", "F5": "F5\nsplit, healed"}
 COLORS = {"F1": "#b9372f", "F2": "#7a4fb3", "F3": "#c98a14", "F4": "#2767b3", "F5": "#17804f"}
 LIMITS = {"F1": (3.0, 4.0), "F2": (3.0, 4.0), "F3": (1.0, 1.0), "F5": (3.0, 3.0)}   # (median, worst) in s
 
@@ -44,18 +45,17 @@ def main() -> None:
         ax1.plot([k - 0.38, k + 0.38], [lim_med, lim_med], color="#333", lw=1, ls="--")
         if lim_worst != lim_med:
             ax1.plot([k - 0.38, k + 0.38], [lim_worst, lim_worst], color="#333", lw=1, ls=":")
-    ax1.set_xticks(range(len(faults)), [NAMES[f].replace(" ", "\n", 1) for f in faults], fontsize=8)
+    ax1.set_xticks(range(len(faults)), [SHORT[f] for f in faults], fontsize=8)
     ax1.set_ylabel("seconds")
     ax1.set_ylim(bottom=0)
-    ax1.set_title("New leader after the fault (F5: single leader after the heal)", fontsize=10)
+    ax1.set_title("New leader after the fault (F5: after the heal)\nbar: median, dashed: limit for the median, "
+                  "dotted: limit for the worst", fontsize=9)
     ax1.grid(axis="y", alpha=0.3)
-    ax1.text(0.99, 0.98, "thick: median   dashed: limit for the median   dotted: limit for the worst",
-             transform=ax1.transAxes, ha="right", va="top", fontsize=7, color="#555")
 
     for r in trials:
         f = r["fault"]
-        ref = r.get("t_heal_s") if f == "F5" else r.get("t_fault_s")
-        path = base / r["trial"] / "formation_rms.csv"
+        ref = r.get("t_heal_s") if f == "F5" else r.get("t_trigger_s") if f == "F3" else r.get("t_fault_s")
+        path = Path(r["dir"]) / "formation_rms.csv" if "dir" in r else base / r["trial"] / "formation_rms.csv"
         if ref is None or not path.exists():
             continue
         rows = [(float(x["t_s"]) - ref, float(x["rms_m"])) for x in csv.DictReader(open(path, encoding="utf-8"))]
@@ -68,7 +68,7 @@ def main() -> None:
     ax2.axhline(2.0, color="#333", lw=1, ls="--")
     ax2.axvline(0.0, color="#333", lw=0.8)
     ax2.axvline(15.0, color="#333", lw=0.8, ls=":")
-    ax2.set_xlabel("seconds after the fault (F5: after the heal)")
+    ax2.set_xlabel("seconds after the fault (F3: after the battery trigger, F5: after the heal)")
     ax2.set_ylabel("formation RMS error (m)")
     ax2.set_title("Formation error around the fault (dashed: 2 m limit, dotted: 15 s)", fontsize=10)
     ax2.grid(alpha=0.3)

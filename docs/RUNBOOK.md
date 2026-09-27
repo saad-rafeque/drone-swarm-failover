@@ -62,7 +62,7 @@ last events are listed at the top right.
 | 1: N drones hover | `scripts/ros_env.sh python3 scripts/phase1_scale_test.py --n 10` | `reports/logs/phase_1/n10/` |
 | 3: formation mission | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir reports/logs/phase_3/run1` | run folder: `states.jsonl`, `metrics.json`, ... |
 | 3: acceptance batch (3 runs + 3 clean-shell cross-checks) | `bash scripts/phase3_runs.sh` | `reports/logs/phase_3/` |
-| 4: fault trials (not run yet, ~5 h) | `bash scripts/phase4_runs.sh 1 10` then `python3 scripts/phase4_metrics.py --out table.json <trial dirs>` | `reports/logs/phase_4/` |
+| 4: fault trials (not completed; needs a stronger computer or `N=5`, ~7 h) | `bash scripts/phase4_all.sh 1`, then `python3 scripts/phase4_metrics.py --out ... --md ... reports/logs/phase_4/F?_t*` and `python3 scripts/plot_phase4.py` | `reports/logs/phase_4/`; how-to: `reports/PHASE_4.md` |
 | Metrics / plots of a run | `python3 scripts/metrics.py <run_dir>`; `python3 scripts/plot_mission.py <run_dir> out.png` | |
 | Replay page from a run | `python3 scripts/make_replay.py <run_dir> scripts/replay_template.html reports/replay/swarm_replay.html` | open in the app: PX4 flights |
 | Logs as CSV | `PYTHONPATH=src python3 -c "from swarm_tools.logfmt import jsonl_to_csv; jsonl_to_csv('<run>/states.jsonl', '<run>/states.csv')"` | |

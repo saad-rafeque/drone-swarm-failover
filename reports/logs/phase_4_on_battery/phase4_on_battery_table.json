@@ -1,13 +1,13 @@
 {
   "per_fault": {
     "F1": {
-      "trials": 2,
-      "handover_median_s": 2.168,
+      "trials": 3,
+      "handover_median_s": 2.187,
       "handover_worst_s": 2.234,
-      "handover_measured": 2,
-      "recovery_median_s": 7.82,
+      "handover_measured": 3,
+      "recovery_median_s": 7.54,
       "recovery_worst_s": 8.11,
-      "recovered_within_15s": 2,
+      "recovered_within_15s": 3,
       "min_sep_m": 7.407,
       "goal_reached": 2
     },
@@ -88,6 +88,20 @@
       "max_rms_after_m": 7.499
     },
     {
+      "trial": "F1_t3",
+      "dir": "reports/logs/phase_4_on_battery/F1_t3",
+      "fault": "F1",
+      "t_fault_s": 110.97,
+      "master_before": 1,
+      "target": 1,
+      "min_sep_m": 8.452,
+      "goal_reached": false,
+      "handover_s": 2.187,
+      "new_master": 2,
+      "recovery_s": 7.43,
+      "max_rms_after_m": 19.66
+    },
+    {
       "trial": "F2_t1",
       "dir": "reports/logs/phase_4_on_battery/F2_t1",
       "fault": "F2",
@@ -114,6 +128,11 @@
       "new_master": 2,
       "recovery_s": 8.51,
       "max_rms_after_m": 7.507
+    },
+    {
+      "trial": "F2_t3",
+      "fault": "F2",
+      "error": "JSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
     },
     {
       "trial": "F3_t1",

@@ -1,0 +1,15 @@
+[INFO] [launch]: All log files can be found below /home/saad-rafique/.ros/log/2026-09-27-14-52-18-064118-Ubuntu-IdeaPad-18326
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [link_emulator-1]: process started with pid [18329]
+[INFO] [swarm_logger-2]: process started with pid [18330]
+[INFO] [swarm_agent_1-3]: process started with pid [18331]
+[INFO] [swarm_agent_2-4]: process started with pid [18332]
+[INFO] [swarm_agent_3-5]: process started with pid [18333]
+[INFO] [swarm_agent_4-6]: process started with pid [18334]
+[INFO] [swarm_agent_5-7]: process started with pid [18335]
+[INFO] [swarm_agent_6-8]: process started with pid [18336]
+[INFO] [swarm_agent_7-9]: process started with pid [18337]
+[INFO] [swarm_agent_8-10]: process started with pid [18338]
+[INFO] [swarm_agent_9-11]: process started with pid [18339]
+[INFO] [swarm_agent_10-12]: process started with pid [18340]
+[ERROR] [swarm_agent_1-3]: process has died [pid 18331, exit code -9, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 1 --num-drones 10'].

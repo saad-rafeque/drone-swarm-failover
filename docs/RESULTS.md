@@ -18,7 +18,9 @@ Everything here is simulation. Each number points at the file it came from.
 | 1,000 random runs with crashes, radio loss, delays and splits | exactly one leader after convergence in 1,000 of 1,000; median convergence 0.145 s after the last fault (p95 2.12 s, max 2.72 s) | `reports/PHASE_2.md` |
 | Known weak spot | 143 of those 1,000 runs had two drones closer than 5 m; every one contained a random radio split or random link drops (drones that cannot hear each other cannot be pushed apart) | `reports/PHASE_2.md` |
 
-Fault types, 10 drones, 20 runs each (fast simulator; the PX4 version is Phase 4, not run):
+Fault types, 10 drones, 20 runs each (fast simulator). On PX4, Phase 4 was started and stopped (this
+laptop is too weak for the 55-trial batch); its indicative results agree, except that F5's formation took
+about 17 s to recover after the heal (`reports/PHASE_4.md`):
 
 | Fault | New leader agreed (median / worst) | Formation back under 2 m | Closest pair | Goal reached |
 |---|---|---|---|---|

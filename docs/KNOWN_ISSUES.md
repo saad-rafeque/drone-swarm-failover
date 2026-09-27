@@ -4,7 +4,7 @@
 
 | Item | State | What it takes |
 |---|---|---|
-| Phase 4: fault trials on PX4 (leader killed, radio lost, low battery, follower killed, radio split; 10 trials each) | scripts ready, not run | ~5 h of laptop time: `bash scripts/phase4_runs.sh 1 10`; the same faults already pass in the fast simulator (`docs/RESULTS.md`) |
+| Phase 4: fault trials on PX4 (leader killed, radio lost, low battery, follower killed, radio split; 10 trials each) | started twice on 27 September 2026, stopped by the owner: this laptop saturates with 10 PX4 drones (indicative results: all takeovers within limits; F5 formation recovery ~17 s against 15 s) | `bash scripts/phase4_all.sh 1` on a machine with 8+ cores (~7 h), or `N=5` on this laptop; step by step in `reports/PHASE_4.md` |
 | Phase 5: radio realism sweep (50/150/300 ms x 0/10/30 % loss) | not started | a sweep driver around `scripts/run_mission.py` with the link emulator settings; several hours |
 | Phase 6: mixed-reality readiness (1 real + N simulated drones, telemetry-radio stand-in, flight test plan, go/no-go checklist) | not started | profiles in `config/profiles/`, a UDP proxy that limits bandwidth, `FLIGHT_TEST_PLAN.md` |
 | Other formations (line, column, echelon, diamond, squads) and their comparison | not started | generalise `formation.py` beyond the V; compare formation error, failover and obstacle results |

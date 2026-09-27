@@ -186,6 +186,8 @@ def main() -> None:
     args = ap.parse_args()
     rows = []
     for d in args.dirs:
+        if not Path(d).is_dir():
+            continue                              # e.g. the F1_t1.out console files next to the trial folders
         try:
             rows.append(trial(Path(d)))
         except (FileNotFoundError, StopIteration, KeyError, ValueError) as exc:

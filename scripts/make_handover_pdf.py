@@ -34,8 +34,9 @@ SECTIONS = [
     ("p1", "Appendix B - Phase 1 report", "reports/PHASE_1.md"),
     ("p2", "Appendix C - Phase 2 report", "reports/PHASE_2.md"),
     ("p3", "Appendix D - Phase 3 report", "reports/PHASE_3.md"),
-    ("scaling", "Appendix E - Scaling test", "reports/SCALING.md"),
-    ("spec", "Appendix F - Project specification", "docs/SPECIFICATION.md"),
+    ("p4", "Appendix E - Phase 4 report (not completed)", "reports/PHASE_4.md"),
+    ("scaling", "Appendix F - Scaling test", "reports/SCALING.md"),
+    ("spec", "Appendix G - Project specification", "docs/SPECIFICATION.md"),
 ]
 FIGURES = [
     ("reports/gcs_3d_view.jpg", "The 3D view of the ground-control app: ten drones in V formation over F-9 Park, Islamabad "

@@ -1,0 +1,31 @@
+{
+  "per_fault": {
+    "F1": {
+      "trials": 1,
+      "handover_median_s": 1.624,
+      "handover_worst_s": 1.624,
+      "handover_measured": 1,
+      "recovery_median_s": 5.71,
+      "recovery_worst_s": 5.71,
+      "recovered_within_15s": 1,
+      "min_sep_m": 7.904,
+      "goal_reached": 0
+    }
+  },
+  "trials": [
+    {
+      "trial": "F1_t1",
+      "dir": "reports/logs/phase_4/F1_t1",
+      "fault": "F1",
+      "t_fault_s": 75.99,
+      "master_before": 1,
+      "target": 1,
+      "min_sep_m": 7.904,
+      "goal_reached": false,
+      "handover_s": 1.624,
+      "new_master": 2,
+      "recovery_s": 5.71,
+      "max_rms_after_m": 7.574
+    }
+  ]
+}

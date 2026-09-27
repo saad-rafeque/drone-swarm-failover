@@ -36,7 +36,7 @@ scope (see `docs/SPECIFICATION.md`).
 | City-to-city routes, charging stops | working in the fast simulator; 12 km route completed end to end | `docs/RESULTS.md`, `reports/logs/long_route/` |
 | Islamabad → Lahore run (272.55 km, 65 charging stops) | **stopped on purpose** after 76 km: 18 stops used, 10/10 drones flying, 0 hits | `docs/RESULTS.md`, `reports/logs/long_route/` |
 | Ground-control app (2-D map, 3-D view, faults, results, docs) | working | `docs/RUNBOOK.md` |
-| Phase 4 — fault trials on PX4 | **not run** (scripts ready, ~5 h) | `docs/KNOWN_ISSUES.md` |
+| Phase 4 — fault trials on PX4 | **started, stopped by the owner** (laptop too weak; indicative results and a full how-to) | `reports/PHASE_4.md` |
 | Phase 5 — radio realism sweep | **not run** | `docs/KNOWN_ISSUES.md` |
 | Phase 6 — mixed reality, flight test plan | **not done** | `docs/KNOWN_ISSUES.md` |
 | Longer RL training on Kaggle | kit ready and checked, **not run** (step-by-step guide) | `docs/KAGGLE.md` |
