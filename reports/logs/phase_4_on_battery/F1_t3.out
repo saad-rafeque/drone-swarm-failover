@@ -1,0 +1,36 @@
+{
+ "time_to_goal_s": null,
+ "formation_rms_cruise_m": {
+  "mean": 0.892,
+  "p95": 1.38,
+  "max": 19.66,
+  "samples": 1325,
+  "t_of_max_s": 204.8
+ },
+ "min_separation_m": 8.452,
+ "min_separation_pair": [
+  6,
+  4
+ ],
+ "goal_reached_all": false,
+ "max_simultaneous_masters": 4,
+ "master_changes": [
+  [
+   20.9,
+   1,
+   1
+  ],
+  [
+   113.2,
+   2,
+   2
+  ],
+  [
+   204.8,
+   3,
+   3
+  ]
+ ]
+}
+ 
+{"result": "WATCHER_STALLED", "mission_wall_s": 221.4, "t_sim_ready_s": 20.7}

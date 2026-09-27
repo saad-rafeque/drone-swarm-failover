@@ -7,16 +7,33 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT" || exit 1
 FIRST="${1:-1}"; LAST="${2:-10}"; SUB="${3:-phase_4}"; N="${N:-10}"
 mkdir -p "reports/logs/$SUB"
+ac_online() {
+  for f in /sys/class/power_supply/*/online; do
+    [ "$(cat "$(dirname "$f")/type" 2>/dev/null)" = "Mains" ] && [ "$(cat "$f")" = "1" ] && return 0
+  done
+  return 1
+}
+power_ok() { ac_online && [ "$(powerprofilesctl get 2>/dev/null)" != "power-saver" ]; }
+wait_for_ac() {   # on battery or in power-saver mode the CPU is throttled and saturates with 10 drones
+  power_ok && return
+  echo "=== waiting for the charger and a Balanced/Performance power mode $(date --iso-8601=seconds)"
+  until power_ok; do sleep 60; done
+  echo "=== power ok $(date --iso-8601=seconds)"
+  sleep 30
+}
 for r in $(seq "$FIRST" "$LAST"); do
   for f in F1 F2 F3 F4 F5; do
     d="reports/logs/$SUB/${f}_t${r}"
     if grep -q '"result": "COMPLETED"' "$d/run_summary.json" 2>/dev/null; then
       echo "=== $f round $r already done"; continue
     fi
-    echo "=== $f round $r start $(date --iso-8601=seconds)"
+    wait_for_ac
+    echo "=== $f round $r start $(date --iso-8601=seconds) (power profile: $(powerprofilesctl get 2>/dev/null || echo unknown))"
     scripts/ros_env.sh python3 scripts/run_mission.py --n "$N" --run-dir "$d" --fault "$f" --fault-seed "$r" \
       > "$d.out" 2>&1
-    echo "=== $f round $r exit $? $(date --iso-8601=seconds)"
+    rc=$?
+    [ -f "$d/states.jsonl" ] && gzip -f "$d/states.jsonl"   # ~16 MB -> ~1.5 MB; the metric scripts read .gz
+    echo "=== $f round $r exit $rc $(date --iso-8601=seconds)"
   done
 done
 echo "=== all done $(date --iso-8601=seconds)"

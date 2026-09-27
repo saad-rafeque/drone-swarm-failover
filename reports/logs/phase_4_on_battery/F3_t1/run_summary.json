@@ -1,0 +1,123 @@
+{
+  "n": 10,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_4/F3_t1",
+  "fault": "F3",
+  "loss_pct": null,
+  "latency_ms": null,
+  "jitter_ms": null,
+  "available_mb_before": 4333,
+  "t_sim_ready_s": 20.3,
+  "result": "COMPLETED",
+  "mission_wall_s": 434.8,
+  "killed": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 96.4,
+    "mavros": 1006.5
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 99.9,
+      "max": 100.0,
+      "min": 99.4
+    },
+    "cpu_px4_pct_core": {
+      "mean": 108.1,
+      "max": 117.3,
+      "min": 93.3
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 97.4,
+      "max": 108.9,
+      "min": 80.9
+    },
+    "cpu_agents_pct_core": {
+      "mean": 114.2,
+      "max": 129.4,
+      "min": 89.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 35.2,
+      "max": 41.9,
+      "min": 27.0
+    },
+    "rss_agents_mb": {
+      "mean": 1024.8,
+      "max": 1025.0,
+      "min": 1024.0
+    },
+    "mem_available_mb": {
+      "mean": 3109.4,
+      "max": 3161,
+      "min": 3002
+    },
+    "load1": {
+      "mean": 64.8,
+      "max": 73.5,
+      "min": 58.0
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 99.9,
+      "max": 100.0,
+      "min": 99.3
+    },
+    "cpu_px4_pct_core": {
+      "mean": 103.5,
+      "max": 129.6,
+      "min": 86.2
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 127.9,
+      "max": 223.4,
+      "min": 83.4
+    },
+    "cpu_agents_pct_core": {
+      "mean": 98.9,
+      "max": 158.0,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 27.1,
+      "max": 39.3,
+      "min": 8.0
+    },
+    "rss_agents_mb": {
+      "mean": 587.4,
+      "max": 1023.5,
+      "min": 0.0
+    },
+    "mem_available_mb": {
+      "mean": 3376.7,
+      "max": 3794,
+      "min": 3082
+    },
+    "load1": {
+      "mean": 58.8,
+      "max": 67.7,
+      "min": 54.3
+    }
+  },
+  "fault_detail": {
+    "kind": "F3",
+    "seed": 1,
+    "delay_after_cruise_s": 46.12,
+    "t_fault": 1790495375.516,
+    "master_before": 1,
+    "target": 1,
+    "px4_param_rc": 0,
+    "px4_param_out": "SIM_BAT_MIN_PCT: curr: 50.0000 -> new: 20.0000"
+  }
+}

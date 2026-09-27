@@ -11,7 +11,7 @@ Per trial (a run_dir containing fault_events.jsonl, states.jsonl, metrics.json):
                 < 2 m for 5 s, counted from the worst RMS within 30 s after the reference (0 if the RMS
                 never reached 2 m)
   min_sep_m, goal_reached (metrics.json), retiree_home (F3: old master landed within 5 m of home)
-Usage: python3 scripts/phase4_metrics.py --out table.json <trial_dir> [<trial_dir> ...]
+Usage: python3 scripts/phase4_metrics.py --out table.json [--md table.md] <trial_dir> [<trial_dir> ...]
 """
 from __future__ import annotations
 
@@ -19,14 +19,19 @@ import argparse
 import csv
 import json
 import statistics
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 RMS_LIMIT_M = 2.0
 STAY_S = 5.0
 
 
 def load_states(d: Path) -> list[dict]:
-    return [json.loads(l) for l in open(d / "states.jsonl", encoding="utf-8") if l.strip()]
+    from metrics import open_states          # reads states.jsonl or states.jsonl.gz
+    with open_states(d) as fh:
+        return [json.loads(l) for l in fh if l.strip()]
 
 
 def trial(d: Path) -> dict:
@@ -38,7 +43,7 @@ def trial(d: Path) -> dict:
     states = load_states(d)
     t0 = min(s["t"] for s in states)
     metrics = json.loads((d / "metrics.json").read_text())
-    out = {"trial": d.name, "fault": kind, "t_fault_s": round(t_fault - t0, 2), "master_before": m0,
+    out = {"trial": d.name, "dir": str(d), "fault": kind, "t_fault_s": round(t_fault - t0, 2), "master_before": m0,
            "target": fault.get("target"), "min_sep_m": metrics.get("min_separation_m"),
            "goal_reached": metrics.get("goal_reached_all")}
     killed = {fault["target"]} if kind in ("F1", "F4") else set()
@@ -139,9 +144,44 @@ def summarize(rows: list[dict]) -> dict:
     return table
 
 
+LIMITS = {"F1": "3.0 / 4.0", "F2": "3.0 / 4.0", "F3": "1.0", "F4": "no change", "F5": "3.0 (after heal)"}
+
+
+def fmt(v, digits: int = 2) -> str:
+    return "-" if v is None else f"{v:.{digits}f}"
+
+
+def markdown(table: dict, rows: list[dict]) -> str:
+    """Per-fault and per-trial tables for reports/PHASE_4.md (numbers straight from the logs)."""
+    out = ["| Fault | Trials | New leader median / worst (s) | Limit (s) | Formation < 2 m median / worst (s) | "
+           "Recovered within 15 s | Closest pair (m) | Goal reached | Other |", "|---|---|---|---|---|---|---|---|---|"]
+    for f, t in table.items():
+        other = ""
+        if f == "F3":
+            other = f"old leader landed at home: {t['retiree_home']}/{t['trials']}"
+        if f == "F4":
+            other = f"leader changed: {t['master_changed']}/{t['trials']}"
+        ho = "no change" if f == "F4" else f"{fmt(t['handover_median_s'])} / {fmt(t['handover_worst_s'])}"
+        out.append(f"| {f} | {t['trials']} | {ho} | {LIMITS.get(f, '')} | {fmt(t['recovery_median_s'])} / "
+                   f"{fmt(t['recovery_worst_s'])} | {t['recovered_within_15s']}/{t['trials']} | {fmt(t['min_sep_m'])} | "
+                   f"{t['goal_reached']}/{t['trials']} | {other} |")
+    out += ["", "| Trial | Leader before | Target | Fault at (s) | New leader (s) | New leader id | Formation < 2 m (s) | "
+            "Max RMS after (m) | Closest pair (m) | Goal |", "|---|---|---|---|---|---|---|---|---|---|"]
+    for r in sorted(rows, key=lambda r: (r["fault"], int(r["trial"].split("_t")[-1]) if "_t" in r["trial"] else 0)):
+        if "error" in r:
+            out.append(f"| {r['trial']} | error: {r['error'][:60]} | | | | | | | | |")
+            continue
+        out.append(f"| {r['trial']} | {r['master_before']} | {r.get('target') if r.get('target') is not None else '-'} | "
+                   f"{fmt(r['t_fault_s'], 1)} | {fmt(r.get('handover_s'))} | {r.get('new_master', '-')} | "
+                   f"{fmt(r.get('recovery_s'))} | {fmt(r.get('max_rms_after_m'))} | {fmt(r['min_sep_m'])} | "
+                   f"{'yes' if r['goal_reached'] else 'no'} |")
+    return "\n".join(out) + "\n"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--md", help="also write the tables as Markdown")
     ap.add_argument("dirs", nargs="+")
     args = ap.parse_args()
     rows = []
@@ -152,6 +192,8 @@ def main() -> None:
             rows.append({"trial": Path(d).name, "fault": Path(d).name.split("_")[0], "error": repr(exc)})
     table = summarize([r for r in rows if "error" not in r])
     Path(args.out).write_text(json.dumps({"per_fault": table, "trials": rows}, indent=2) + "\n")
+    if args.md:
+        Path(args.md).write_text(markdown(table, rows))
     print(json.dumps(table, indent=1))
 
 

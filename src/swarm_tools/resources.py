@@ -10,6 +10,31 @@ from pathlib import Path
 
 import psutil
 
+POWER_SUPPLY = Path("/sys/class/power_supply")
+
+
+def power_state() -> dict:
+    """Charger, battery and CPU clock right now. A laptop on battery drops to a power-saving profile and a
+    low clock, which saturates the CPU with 10 PX4 drones (Phase 4, 27 September 2026) - record it."""
+    out: dict = {"ac_online": None, "battery_pct": None, "battery_status": None, "profile": None, "cpu_mhz": None}
+    for d in sorted(POWER_SUPPLY.glob("*")) if POWER_SUPPLY.exists() else []:
+        kind = (d / "type").read_text().strip() if (d / "type").exists() else ""
+        if kind == "Mains" and (d / "online").exists():
+            out["ac_online"] = (d / "online").read_text().strip() == "1"
+        elif kind == "Battery" and (d / "capacity").exists():
+            out["battery_pct"] = int((d / "capacity").read_text().strip())
+            out["battery_status"] = (d / "status").read_text().strip() if (d / "status").exists() else None
+    try:
+        import subprocess
+        out["profile"] = subprocess.run(["powerprofilesctl", "get"], capture_output=True, text=True,
+                                        timeout=5).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        pass
+    mhz = [float(l.split(":")[1]) for l in Path("/proc/cpuinfo").read_text().splitlines() if l.startswith("cpu MHz")]
+    out["cpu_mhz"] = round(sum(mhz) / len(mhz)) if mhz else None
+    return out
+
+
 GROUPS = {
     "px4": lambda p: p.info["name"] == "px4",
     "mavros": lambda p: p.info["name"] == "mavros_node",

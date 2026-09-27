@@ -1,0 +1,3 @@
+{"t": 1790496246.305, "kind": "F5", "action": "cruise_detected"}
+{"t": 1790496292.64, "kind": "F5", "action": "fault", "seed": 1, "delay_after_cruise_s": 46.12, "t_fault": 1790496292.639, "master_before": 1, "groups": [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]], "heal_after_s": 18.47}
+{"t": 1790496311.167, "kind": "F5", "action": "heal"}

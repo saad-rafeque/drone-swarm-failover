@@ -33,9 +33,18 @@ GOAL_SLOT_TOL_M = 60.0
 HOME_TOL_M = 5.0
 
 
+def open_states(run_dir: Path):
+    """states.jsonl, or states.jsonl.gz once the batch has compressed it (Phase 4 onwards)."""
+    plain = run_dir / "states.jsonl"
+    if plain.exists():
+        return open(plain, encoding="utf-8")
+    import gzip
+    return gzip.open(run_dir / "states.jsonl.gz", "rt", encoding="utf-8")
+
+
 def load(run_dir: Path) -> dict[int, list[dict]]:
     by_id: dict[int, list[dict]] = {}
-    with open(run_dir / "states.jsonl", encoding="utf-8") as fh:
+    with open_states(run_dir) as fh:
         for line in fh:
             line = line.strip()
             if not line:

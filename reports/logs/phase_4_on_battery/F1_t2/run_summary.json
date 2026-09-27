@@ -1,0 +1,123 @@
+{
+  "n": 10,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_4/F1_t2",
+  "fault": "F1",
+  "loss_pct": null,
+  "latency_ms": null,
+  "jitter_ms": null,
+  "available_mb_before": 4430,
+  "t_sim_ready_s": 21.3,
+  "result": "COMPLETED",
+  "mission_wall_s": 435.9,
+  "killed": [
+    1
+  ],
+  "peak_rss_vmhwm_mb": {
+    "px4": 86.2,
+    "mavros": 903.8
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 99.9,
+      "max": 100.0,
+      "min": 99.6
+    },
+    "cpu_px4_pct_core": {
+      "mean": 102.3,
+      "max": 113.6,
+      "min": 84.1
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 94.9,
+      "max": 117.1,
+      "min": 76.1
+    },
+    "cpu_agents_pct_core": {
+      "mean": 113.5,
+      "max": 133.2,
+      "min": 79.4
+    },
+    "cpu_tools_pct_core": {
+      "mean": 36.4,
+      "max": 46.6,
+      "min": 22.8
+    },
+    "rss_agents_mb": {
+      "mean": 958.5,
+      "max": 1023.5,
+      "min": 918.2
+    },
+    "mem_available_mb": {
+      "mean": 3047.4,
+      "max": 3214,
+      "min": 2878
+    },
+    "load1": {
+      "mean": 57.1,
+      "max": 64.6,
+      "min": 48.5
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 100.0,
+      "max": 100.0,
+      "min": 99.8
+    },
+    "cpu_px4_pct_core": {
+      "mean": 103.6,
+      "max": 137.5,
+      "min": 77.3
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 119.6,
+      "max": 208.8,
+      "min": 71.9
+    },
+    "cpu_agents_pct_core": {
+      "mean": 88.1,
+      "max": 156.1,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 27.5,
+      "max": 73.6,
+      "min": 7.1
+    },
+    "rss_agents_mb": {
+      "mean": 523.9,
+      "max": 1016.2,
+      "min": 0.0
+    },
+    "mem_available_mb": {
+      "mean": 3323.1,
+      "max": 3776,
+      "min": 2901
+    },
+    "load1": {
+      "mean": 38.6,
+      "max": 54.5,
+      "min": 31.9
+    }
+  },
+  "fault_detail": {
+    "kind": "F1",
+    "seed": 2,
+    "delay_after_cruise_s": 144.72,
+    "t_fault": 1790496926.987,
+    "master_before": 1,
+    "target": 1
+  }
+}

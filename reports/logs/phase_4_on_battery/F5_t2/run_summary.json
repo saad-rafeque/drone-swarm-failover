@@ -1,0 +1,138 @@
+{
+  "n": 10,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_4/F5_t2",
+  "fault": "F5",
+  "loss_pct": null,
+  "latency_ms": null,
+  "jitter_ms": null,
+  "available_mb_before": 4335,
+  "t_sim_ready_s": 19.6,
+  "result": "COMPLETED",
+  "mission_wall_s": 442.7,
+  "killed": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 96.2,
+    "mavros": 1006.1
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 99.9,
+      "max": 100.0,
+      "min": 99.5
+    },
+    "cpu_px4_pct_core": {
+      "mean": 104.5,
+      "max": 113.8,
+      "min": 91.7
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 96.1,
+      "max": 127.1,
+      "min": 82.6
+    },
+    "cpu_agents_pct_core": {
+      "mean": 114.6,
+      "max": 130.6,
+      "min": 87.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 35.4,
+      "max": 46.9,
+      "min": 25.1
+    },
+    "rss_agents_mb": {
+      "mean": 1023.8,
+      "max": 1023.9,
+      "min": 1022.6
+    },
+    "mem_available_mb": {
+      "mean": 2990.1,
+      "max": 3051,
+      "min": 2901
+    },
+    "load1": {
+      "mean": 60.0,
+      "max": 66.3,
+      "min": 54.5
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 99.8,
+      "max": 100.0,
+      "min": 98.0
+    },
+    "cpu_px4_pct_core": {
+      "mean": 98.1,
+      "max": 143.2,
+      "min": 83.1
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 132.4,
+      "max": 212.6,
+      "min": 83.0
+    },
+    "cpu_agents_pct_core": {
+      "mean": 101.4,
+      "max": 160.1,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 27.3,
+      "max": 59.9,
+      "min": 6.3
+    },
+    "rss_agents_mb": {
+      "mean": 633.2,
+      "max": 1022.1,
+      "min": 0.0
+    },
+    "mem_available_mb": {
+      "mean": 3247.1,
+      "max": 3694,
+      "min": 2998
+    },
+    "load1": {
+      "mean": 54.6,
+      "max": 66.3,
+      "min": 47.9
+    }
+  },
+  "fault_detail": {
+    "kind": "F5",
+    "seed": 2,
+    "delay_after_cruise_s": 144.72,
+    "t_fault": 1790498823.208,
+    "master_before": 1,
+    "groups": [
+      [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    ],
+    "heal_after_s": 19.48,
+    "t_heal": 1790498842.767
+  }
+}

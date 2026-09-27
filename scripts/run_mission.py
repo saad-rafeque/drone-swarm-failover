@@ -38,7 +38,7 @@ from swarm_agent.config import default_config_path, load_config  # noqa: E402
 from swarm_agent.formation import initial_layout  # noqa: E402
 from swarm_agent.geometry import EnuFrame, GeoPoint, heading_of  # noqa: E402
 from swarm_tools.mavros_link import MavrosLink  # noqa: E402
-from swarm_tools.resources import ResourceMonitor  # noqa: E402
+from swarm_tools.resources import ResourceMonitor, power_state  # noqa: E402
 from swarm_tools.sim_launch import SimLauncher, kill_orphans, namespace_of  # noqa: E402
 
 MIN_AVAILABLE_MB = 800
@@ -84,6 +84,8 @@ def main() -> int:
     ap.add_argument("--jitter-ms", type=float, default=None)
     ap.add_argument("--fault", default="", help="Phase 4 fault spec (see scripts/faults.py)")
     ap.add_argument("--fault-seed", type=int, default=0)
+    ap.add_argument("--allow-battery", action="store_true",
+                    help="run even when the laptop is not on its charger (results then are not comparable)")
     args = ap.parse_args()
 
     cfg = load_config(default_config_path()).with_num_drones(args.n)
@@ -100,6 +102,11 @@ def main() -> int:
     if avail < MIN_AVAILABLE_MB:
         print("ABORT: available memory below 800 MB (rule 6)")
         return 2
+    summary["power_before"] = power_state()
+    if summary["power_before"]["ac_online"] is False and not args.allow_battery:
+        print("ABORT: the laptop is on battery; its power-saving profile saturates the CPU with 10 drones "
+              "(use --allow-battery to run anyway)")
+        return 3
     kill_orphans()
 
     frame = EnuFrame(cfg.origin_geo)
@@ -188,6 +195,7 @@ def main() -> int:
     finally:
         label["v"] = "shutdown"
         summary["peak_rss_vmhwm_mb"] = {k: round(v, 1) for k, v in sim.peak_rss_mb().items()}
+        summary["power_after"] = power_state()
         if launch is not None and launch.poll() is None:
             os.killpg(launch.pid, signal.SIGINT)
             try:
