@@ -1,4 +1,4 @@
-# Long RL training on Kaggle — the complete guide
+# Kaggle training guide: long RL training on a GPU
 
 **Status (27 September 2026): everything is ready, nothing has been run on Kaggle yet.** The kit
 has only been tested on this laptop with tiny settings (a few hundred training steps on the CPU, 16

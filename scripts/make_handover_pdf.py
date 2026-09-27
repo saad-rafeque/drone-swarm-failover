@@ -22,14 +22,14 @@ import markdown
 
 ROOT = Path(__file__).resolve().parents[1]
 SECTIONS = [
-    ("start", "Start here", "README.md"),
-    ("how", "How it works", "docs/ARCHITECTURE.md"),
+    ("start", "Overview", "README.md"),
+    ("how", "Architecture", "docs/ARCHITECTURE.md"),
     ("results", "Results", "docs/RESULTS.md"),
     ("figures", "Key figures", None),
-    ("run", "How to install and run everything", "docs/RUNBOOK.md"),
-    ("decisions", "Decisions and why", "docs/DECISIONS.md"),
-    ("issues", "Known issues, what is not done, next steps", "docs/KNOWN_ISSUES.md"),
-    ("kaggle", "Long RL training on Kaggle", "docs/KAGGLE.md"),
+    ("run", "Installation and operation", "docs/RUNBOOK.md"),
+    ("decisions", "Design decisions", "docs/DECISIONS.md"),
+    ("issues", "Known issues, open work and roadmap", "docs/KNOWN_ISSUES.md"),
+    ("kaggle", "Kaggle training guide", "docs/KAGGLE_GUIDE.md"),
     ("p0", "Appendix A - Phase 0 report", "reports/PHASE_0.md"),
     ("p1", "Appendix B - Phase 1 report", "reports/PHASE_1.md"),
     ("p2", "Appendix C - Phase 2 report", "reports/PHASE_2.md"),

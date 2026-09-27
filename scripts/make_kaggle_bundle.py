@@ -2,7 +2,7 @@
 """Pack the code Kaggle needs (src, scripts, config, cached map data) into kaggle/swarm-rl-code.zip.
 
 Upload that zip to Kaggle as a private dataset named swarm-rl-code, then run kaggle/train_swarm_rl.ipynb
-(full steps: docs/KAGGLE.md).
+(full steps: docs/KAGGLE_GUIDE.md).
 
 Secrets never go into the zip: files with ".local." in the name (config/map_keys.local.yaml holds your
 Mapbox and Cesium tokens) are skipped, and the build stops if any packed file still contains one of the

@@ -14,7 +14,7 @@ Everything here is simulation. Each number points at the file it came from.
 
 | What | Result | Evidence |
 |---|---|---|
-| Unit tests | 130 pass, 4 skipped without ROS / PyTorch (with PyTorch: 133 pass, 2 skipped) | `python3 -m pytest` |
+| Unit tests | 131 pass, 4 skipped without ROS / PyTorch (with PyTorch: 134 pass, 2 skipped) | `python3 -m pytest` |
 | 1,000 random runs with crashes, radio loss, delays and splits | exactly one leader after convergence in 1,000 of 1,000; median convergence 0.145 s after the last fault (p95 2.12 s, max 2.72 s) | `reports/PHASE_2.md` |
 | Known weak spot | 143 of those 1,000 runs had two drones closer than 5 m; every one contained a random radio split or random link drops (drones that cannot hear each other cannot be pushed apart) | `reports/PHASE_2.md` |
 
@@ -97,6 +97,7 @@ as RL + brake. Evidence of that run: `reports/logs/rl/route_eval/`.
 |---|---|---|
 | Islamabad F-9 Park -> Rawalpindi Saddar (33.5973, 73.0479), 12.01 km | normal height (30 m; the 266 OSM buildings and woods are all below 25 m), RL + brake, 2 charging stops | 10/10 drones landed at the target after 2,795 simulated seconds, no hits, both stops used; formation error while cruising max 1.42 m (mean 0.93 m); closest pair 8.53 m |
 | same route | low height (16 m; all 253 buildings and 13 woods are obstacles), RL + brake, 3 stops | leader route 13.51 km around them; mission completed after 3,131 s; drones 7, 9 and 10 hit buildings (7 of 10 landed); closest pair 5.67 m |
+| Islamabad -> Lahore, 272.55 km | normal height, 38 buildings of 25 m or more from OSM, RL + brake, 65 charging stops | stopped on purpose after 76.0 km: 18 of 65 stops used, 10/10 drones flying, no hits (below) |
 
 Both 12 km runs were repeated on 27 September 2026 with the current code (`scripts/run_route.py`)
 and gave the same outcome as the first runs of 26 September (2,794.6 s and 10 landed; 3 hits by the
@@ -105,7 +106,6 @@ wall, crawling at 0.5-3 m/s and falling 100-1,250 m behind the formation, before
 building; this is why the formation error while cruising was above 50 m for 446 of 2,704 s (mean
 47 m, max 534 m) although the rest of the V held. Evidence: `reports/logs/long_route/rawalpindi_12km_auto.json`,
 `rawalpindi_12km_low.json`.
-| Islamabad -> Lahore, 272.55 km | normal height, 38 buildings of 25 m or more from OSM, RL + brake, 65 charging stops | stopped on purpose after 76.0 km: 18 of 65 stops used, 10/10 drones flying, no hits (below) |
 
 ### Islamabad -> Lahore (stopped early on purpose)
 Set-up: 10 drones from F-9 Park, Islamabad (33.7036, 73.0231) to Lahore (31.5204, 74.3587), seed 1,

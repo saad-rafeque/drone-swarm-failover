@@ -1,4 +1,4 @@
-# Known issues, what is not done, and next steps
+# Known issues, open work and roadmap
 
 ## Not done (from the original plan in `docs/SPECIFICATION.md`)
 
@@ -8,7 +8,7 @@
 | Phase 5: radio realism sweep (50/150/300 ms x 0/10/30 % loss) | not started | a sweep driver around `scripts/run_mission.py` with the link emulator settings; several hours |
 | Phase 6: mixed-reality readiness (1 real + N simulated drones, telemetry-radio stand-in, flight test plan, go/no-go checklist) | not started | profiles in `config/profiles/`, a UDP proxy that limits bandwidth, `FLIGHT_TEST_PLAN.md` |
 | Other formations (line, column, echelon, diamond, squads) and their comparison | not started | generalise `formation.py` beyond the V; compare formation error, failover and obstacle results |
-| Longer RL training, several seeds | kit ready and checked on 27 September 2026, **not run** | one ~11-hour Kaggle GPU session per seed, step by step in `docs/KAGGLE.md` |
+| Longer RL training, several seeds | kit ready and checked on 27 September 2026, **not run** | one ~11-hour Kaggle GPU session per seed, step by step in `docs/KAGGLE_GUIDE.md` |
 | Islamabad -> Lahore run to the end | stopped on purpose at 76 km (18 of 65 stops, 10/10 drones, 0 hits) | `PYTHONPATH=src python3 scripts/run_route.py --target 31.5204 74.3587 --out reports/logs/long_route/lahore.json` (no browser, about 30-60 min), or in the app |
 
 ## Known limitations
@@ -83,13 +83,14 @@ the `px4_sitl_sih` target); move to a stable PX4 release for the real drones and
 - Terrain heights (for example Mapbox Terrain-DEM or Copernicus) so the swarm keeps its height
   above hills such as the Margalla range.
 
-## Housekeeping (not done)
-- **No backup.** The repository has no Git remote: the only copy of the code, the logs and the history
-  is on this laptop, which lost power twice on 27 September 2026. Push it to a private remote (for
-  example a private GitHub repository) or copy the folder to an external drive. Git-ignored files are
-  not in the history and need their own copy if wanted: `config/map_keys.local.yaml` (keys),
-  `.venv/`, `kaggle/swarm-rl-code.zip` (rebuilt by a script) and the `Swarm Control` launcher (rebuilt
-  by `scripts/install_launcher.sh`).
+## Housekeeping
+- **Backup: done on 27 September 2026.** The repository, with its full history and tags, is on GitHub
+  as a private repository (`saad-rafeque/drone-swarm-failover`). The laptop pushes with a deploy key
+  that works for this one repository only (`~/.ssh/drone_swarm_failover_deploy`, selected by the local
+  Git setting `core.sshCommand`); if the laptop is lost, delete that key under the repository's
+  Settings -> Deploy keys. Git-ignored files are not on GitHub and need their own copy if wanted:
+  `config/map_keys.local.yaml` (keys), `.venv/`, `kaggle/swarm-rl-code.zip` (rebuilt by a script) and
+  the `Swarm Control` launcher (rebuilt by `scripts/install_launcher.sh`).
 - **No licence file.** Choose a licence before sharing the code outside the team. Third-party data keep
   their own terms: OpenStreetMap data (ODbL, attribution), Mapbox and Cesium ion / Google tiles (their
   terms of service, shown as credits in the app).

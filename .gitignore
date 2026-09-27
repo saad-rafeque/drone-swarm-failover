@@ -11,8 +11,15 @@ log/
 .sim/
 kaggle/swarm-rl-code.zip
 
-# local map service keys (never commit)
+# local map service keys and any other private or machine-local file (never commit)
 config/map_keys.local.yaml
+*.local.*
+.env
+.env.*
+kaggle.json
+*.pem
+id_rsa*
+id_ed25519*
 
 # compiled launcher (built by scripts/install_launcher.sh)
 /Swarm Control

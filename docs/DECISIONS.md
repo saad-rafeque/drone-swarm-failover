@@ -1,4 +1,4 @@
-# Decisions and why
+# Design decisions
 
 The decisions that shape the system, what was chosen, and the reason. Where a decision came from a
 measured problem, the evidence is named.

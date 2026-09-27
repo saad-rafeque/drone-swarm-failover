@@ -1,4 +1,4 @@
-# How to install and run everything
+# Runbook: installation and operation
 
 All commands run from the repository root. The path of this repository contains a space
 (`drone swarm`): quote it in shells, and note that PX4 itself cannot run from such a path, so its
@@ -34,10 +34,11 @@ Check the environment: `scripts/env_audit.sh`. Before any PX4 run: `free -m` sho
 
 | Task | Command |
 |---|---|
-| Open the ground-control app | double-click **Swarm Control** in the project folder or on the desktop (or **Start Swarm Control.sh**: right-click → Run as a Program), or `python3 scripts/gcs.py` and open http://localhost:8080 |
+| Open the ground-control app | double-click **Swarm Control** in the project folder or on the desktop (or **start_swarm_control.sh**: right-click → Run as a Program), or `python3 scripts/gcs.py` and open http://localhost:8080 |
 | Stop it (when started by a launcher) | `scripts/stop_swarm.sh` |
 | Install the launchers (once per machine, and again after moving the folder) | `bash scripts/install_launcher.sh`: desktop and menu icon, and the **Swarm Control** program in the folder (needs `gcc`; the program is not in git, so a fresh copy of the repository needs this once) |
-| Run all tests | `python3 -m pytest` (130 pass, 4 skip without ROS/PyTorch); with PyTorch: `PYTHONPATH=src .venv/bin/python -m pytest` (133 pass, 2 skip) |
+| Run all tests | `python3 -m pytest` (131 pass, 4 skip without ROS/PyTorch); with PyTorch: `PYTHONPATH=src .venv/bin/python -m pytest` (134 pass, 2 skip) |
+| Save changes to GitHub (private repository `saad-rafeque/drone-swarm-failover`) | `git status`, then `git add <files>`, `git commit -m "<message>"` and `git push` (the laptop's deploy key is used automatically; see `docs/KNOWN_ISSUES.md`, Housekeeping) |
 
 In the app: choose home and target (type or pick on the map), number of drones (1-100), obstacles
 (none or real buildings), avoidance, flight height; Start; change the speed; use the fault buttons
@@ -94,7 +95,7 @@ instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refu
 | Fair comparison, 90 unseen courses | `PYTHONPATH=src python3 scripts/rl_eval.py --policy models/avoid_policy.npz --episodes 30 --jobs 3` | ~9 min |
 | Real map, full agent code | `PYTHONPATH=src python3 scripts/rl_eval_route.py --policy models/avoid_policy.npz --seeds 5 --jobs 3` | ~8 min |
 | Use a policy in the app | copy its `best_policy.npz` to `models/avoid_policy.npz` | |
-| Long training on a GPU | step by step in `docs/KAGGLE.md` | ~11 h per seed on Kaggle |
+| Long training on a GPU | step by step in `docs/KAGGLE_GUIDE.md` | ~11 h per seed on Kaggle |
 | Learning curve of a Kaggle run | `python3 scripts/plot_rl_training.py reports/logs/rl/kaggle_seed1 --out reports/rl_training_kaggle_seed1.png` | seconds |
 
 ## 6. Documents
@@ -119,7 +120,7 @@ instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refu
 | 3D view says "Cesium key needed" | paste the Cesium ion token into `config/map_keys.local.yaml` and reload |
 | 3D view dark or blurred for a few seconds after opening | the terrain tiles are still loading; wait, the camera glides in on its own |
 | 3D view slow, laptop fan loud | switch off Photorealistic and Sun shadows; close the 3D tab during long simulations |
-| Double-clicking `Start Swarm Control.sh` opens a text editor | right-click → Run as a Program, or use the **Swarm Control** program next to it |
+| Double-clicking `start_swarm_control.sh` opens a text editor | right-click → Run as a Program, or use the **Swarm Control** program next to it |
 | The desktop or menu icon does nothing after the folder was moved | the icon stores the folder's path: run `bash scripts/install_launcher.sh` again (the **Swarm Control** program inside the folder finds its own place and keeps working) |
 | Satellite map is Esri, not Mapbox | no Mapbox token in `config/map_keys.local.yaml`, or the server was still starting (reload) |
 | RL options greyed out in the app | `models/avoid_policy.npz` is missing |

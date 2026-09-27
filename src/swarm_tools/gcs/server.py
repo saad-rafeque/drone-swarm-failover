@@ -34,7 +34,10 @@ SHARED = {"/reports/": REPO / "reports", "/docs/": REPO / "docs"}   # read-only 
 
 
 def shared_file(path: str) -> Path | None:
-    """A file under reports/ or docs/ (or README.md) for a /reports/... or /docs/... URL; None if outside."""
+    """A file under reports/ or docs/ (or README.md) for a /reports/... or /docs/... URL; None if outside.
+    A /docs/<path>.md URL that is not in docs/ is looked up from the repository root, so the README's links to
+    CHANGELOG.md or scripts/README.md open in the Docs page too (Markdown only; never hidden folders
+    or *.local.* files)."""
     if path == "/docs/README.md":
         return REPO / "README.md"
     for prefix, root in SHARED.items():
@@ -42,6 +45,12 @@ def shared_file(path: str) -> Path | None:
             f = (root / path[len(prefix):]).resolve()
             if f.is_file() and f.suffix in TYPES and root.resolve() in f.parents:
                 return f
+    if path.startswith("/docs/") and path.endswith(".md"):
+        repo = REPO.resolve()
+        f = (repo / path[len("/docs/"):]).resolve()
+        if f.is_file() and repo in f.parents and ".local." not in f.name and \
+                not any(part.startswith(".") for part in f.relative_to(repo).parts):
+            return f
     return None
 
 

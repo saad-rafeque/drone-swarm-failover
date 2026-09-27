@@ -108,3 +108,14 @@ def test_city_to_city_open_sky_gets_charging_stops(cfg):
     run(b, 60.0)
     s = b.snapshot()
     assert s["phase"] == "CRUISE" and s["next_stop"] == 0 and s["alive"] == 5
+
+
+def test_docs_urls_open_repository_markdown_but_never_other_files():
+    from swarm_tools.gcs.server import REPO, shared_file
+    assert shared_file("/docs/README.md") == REPO / "README.md"
+    assert shared_file("/docs/RUNBOOK.md") == (REPO / "docs" / "RUNBOOK.md").resolve()
+    assert shared_file("/docs/CHANGELOG.md") == (REPO / "CHANGELOG.md").resolve()    # linked from the README
+    assert shared_file("/reports/PHASE_0.md") == (REPO / "reports" / "PHASE_0.md").resolve()
+    for url in ("/docs/../config/map_keys.local.yaml", "/docs/config/map_keys.example.yaml", "/docs/../../etc/passwd",
+                "/docs/../README.md.local.md", "/docs/.git/config", "/docs/.pytest_cache/README.md", "/docs/src/swarm_tools/gcs/server.py"):
+        assert shared_file(url) is None, url

@@ -1,0 +1,6 @@
+# Evidence logs, generated pages and cached map data: excluded from GitHub's language statistics and
+# collapsed in diffs, so both describe the source code.
+reports/logs/** linguist-generated=true
+reports/brief/** linguist-generated=true
+reports/replay/** linguist-generated=true
+data/osm/** linguist-generated=true
