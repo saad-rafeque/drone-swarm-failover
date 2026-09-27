@@ -222,6 +222,14 @@ class SwarmAgentNode(Node):
                      retire=core.retire_stage, handover_to=e.handover_to)
             if e.role.name == "MASTER":
                 d["members"] = sorted(e.members(self.now()))
+            # exact moments for the Phase 4 metrics (scripts/phase4_metrics.py): when this drone last became
+            # master, and when its battery handover started (the first "retire" event)
+            claims = [ev.t for ev in e.events if ev.kind == "claim"]
+            if claims:
+                d["claim_t"] = round(claims[-1], 3)
+            retire_t = next((ev.t for ev in e.events if ev.kind == "retire"), None)
+            if retire_t is not None:
+                d["retire_t"] = round(retire_t, 3)
         if cmd is not None:
             d.update(reason=cmd.reason, cmd=[round(x, 3) for x in cmd.vel], cmd_mode=cmd.mode.name)
         self.state_pub.publish(String(data=json.dumps(d, separators=(",", ":"))))

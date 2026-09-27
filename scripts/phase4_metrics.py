@@ -7,7 +7,9 @@ Per trial (a run_dir containing fault_events.jsonl, states.jsonl, metrics.json):
                 F3:    battery trigger (old master's retire_t) -> successor's claim_t
                 F5:    heal -> every live drone follows one single master (convergence)
                 F4:    none; master_changed must be False
-  recovery_s    reference (fault; heal for F5) -> formation RMS < 2 m and staying < 2 m for 5 s
+  recovery_s    reference (fault; battery trigger for F3; heal for F5) -> formation RMS < 2 m and staying
+                < 2 m for 5 s, counted from the worst RMS within 30 s after the reference (0 if the RMS
+                never reached 2 m)
   min_sep_m, goal_reached (metrics.json), retiree_home (F3: old master landed within 5 m of home)
 Usage: python3 scripts/phase4_metrics.py --out table.json <trial_dir> [<trial_dir> ...]
 """
@@ -31,7 +33,8 @@ def trial(d: Path) -> dict:
     ev = [json.loads(l) for l in open(d / "fault_events.jsonl", encoding="utf-8") if l.strip()]
     fault = next(e for e in ev if e.get("action") == "fault")
     heal = next((e for e in ev if e.get("action") == "heal"), None)
-    kind, t_fault, m0 = fault["kind"], fault["t"], fault["master_before"]
+    # the moment the fault started (before the kill commands ran); "t" is when the event line was written after them
+    kind, t_fault, m0 = fault["kind"], fault.get("t_fault", fault["t"]), fault["master_before"]
     states = load_states(d)
     t0 = min(s["t"] for s in states)
     metrics = json.loads((d / "metrics.json").read_text())
@@ -87,11 +90,19 @@ def trial(d: Path) -> dict:
             t += 0.05
         if conv is not None:
             out["handover_s"] = round(conv - t_heal, 3)
-    ref = heal["t"] if kind == "F5" and heal is not None else t_fault
+    ref = t_fault
+    if kind == "F5" and heal is not None:
+        ref = heal["t"]
+    elif kind == "F3" and out.get("t_trigger_s") is not None:
+        ref = out["t_trigger_s"] + t0              # the formation changes at the battery trigger, not at the injection
     rows = [(float(r["t_s"]) + t0, float(r["rms_m"])) for r in csv.DictReader(open(d / "formation_rms.csv", encoding="utf-8"))]
     after = [(t, v) for t, v in rows if t >= ref]
+    window = [(t, v) for t, v in after if t <= ref + 30.0]
+    start = max(window, key=lambda x: x[1])[0] if window and max(v for _, v in window) >= RMS_LIMIT_M else ref
     rec = None
     for k, (t, v) in enumerate(after):
+        if t < start:
+            continue
         if v < RMS_LIMIT_M and all(w < RMS_LIMIT_M for tt, w in after[k:] if tt <= t + STAY_S) and \
                 after[-1][0] >= t + STAY_S:
             rec = t
