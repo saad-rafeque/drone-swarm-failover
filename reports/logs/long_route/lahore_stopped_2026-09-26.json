@@ -1,0 +1,22 @@
+{
+  "what": "Islamabad (F-9 Park) -> Lahore mission in the ground-control app's fast simulator, stopped before the end on the owner's request",
+  "source": "Values read from the running app (GET http://localhost:8080/api/state) during the session of 26 September 2026 and copied here on 27 September 2026 from that session's recorded command output. The app does not write log files, so this file is the record.",
+  "start_command": {"cmd": "start", "n": 10, "home": [33.7036, 73.0231], "target": [31.5204, 74.3587], "obstacles": "osm",
+                    "avoider": "rl+shield", "altitude": "auto", "seed": 1, "cruise_mps": 5.0, "endurance_min": 25.0, "drift": 0.15},
+  "setup_events": [
+    "Mission ready: 10 drones, route 272.55 km, battery endurance 25 min (seed 1)",
+    "Obstacles from OpenStreetMap: 38 buildings, 0 woods/parks; 680 lower ones ignored (the swarm flies over them at 30 m); leader route 272.58 km around them; avoidance: RL policy + brake",
+    "65 charging stops, one every 4.1 km or so (about half a battery per leg, 3-minute battery swap)"
+  ],
+  "map_data": "tall-buildings-only Overpass query in 14 boxes of 20 km along the route (auto height -> normal, 30 m), cached in data/osm/",
+  "progress_checks": [
+    {"t_s": 2116.5, "stops_done": 2, "alive": 10, "hits": 0},
+    {"t_s": 4142.6, "stops_done": 4, "alive": 10, "hits": 0},
+    {"t_s": 7168.8, "stops_done": 7, "alive": 10, "hits": 0},
+    {"t_s": 14155.6, "stops_done": 14, "dist_left_km": 213.1, "alive": 10, "hits": 0, "actual_speed_x": 37.9}
+  ],
+  "when_stopped": {"t_s": 18088.1, "stops_done": 18, "stops_total": 65, "dist_total_km": 272.55, "dist_left_km": 196.6,
+                   "covered_km": 76.0, "alive": 10, "total": 10, "hits": 0, "phase": "CRUISE", "leader": 1},
+  "speed_notes": "about 16.5x real time after the 10 Hz avoider speed-up, rising to about 38x later in the run (speed setting Max)",
+  "not_measured": "formation error and closest pair over the whole run (the app shows them live only); the remaining 196.6 km and 47 stops"
+}

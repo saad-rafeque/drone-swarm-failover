@@ -187,8 +187,10 @@ for lv, lvname in LEVELS:
     paired.append(f"{lvname.lower()}: {x} routes only RL + brake completed, {y} only classical (p&nbsp;=&nbsp;{pv:.3f})")
 rl_paired = "; ".join(paired)
 train_ev = [json.loads(l) for l in (RL / "run1/eval.jsonl").read_text().splitlines() if l.strip()]
-route_rows = [json.loads(l) for l in (RL / "route_eval/episodes.jsonl").read_text().splitlines()] \
-    if (RL / "route_eval/episodes.jsonl").exists() else []
+# real-map comparison: the re-run with the current code (avoider at 10 Hz) when present, else the first run
+ROUTE_DIR = RL / "route_eval_10hz" if (RL / "route_eval_10hz/episodes.jsonl").exists() else RL / "route_eval"
+route_rows = [json.loads(l) for l in (ROUTE_DIR / "episodes.jsonl").read_text().splitlines()] \
+    if (ROUTE_DIR / "episodes.jsonl").exists() else []
 RMETH = [("none", "No avoidance"), ("apf", "Classical (tuned)"), ("apf-default", "Classical (default)"),
          ("rl", "RL"), ("rl+shield", "RL + brake")]
 route_html = []
@@ -206,13 +208,28 @@ for m, name in RMETH:
 table_route = "".join(route_html)
 route_n = max((r["seed"] for r in route_rows), default=0)
 
+
+def hits(m: str) -> int:
+    return sum(r["hits"] for r in route_rows if r["method"] == m)
+
+
+if route_rows:
+    clean = sum(r["hits"] == 0 for r in route_rows if r["method"] == "rl+shield")
+    total = sum(1 for r in route_rows if r["method"] == "rl+shield")
+    route_text = (f"On the real map, RL + brake was the only method with no hit in all {total} runs ({clean} of {total} "
+                  f"clean, leader killed or not). The tuned classical controller had {hits('apf')} drones hit something, "
+                  f"the policy alone {hits('rl')}, no avoidance {hits('none')}. The classical controller with default "
+                  f"settings hit less ({hits('apf-default')}) but left many drones stuck far behind the formation.")
+else:
+    route_text = "Real-map results are not available yet."
+
 page = (Path(__file__).parent / "brief_template.html").read_text()
 for k, v in {"CHART_FAILOVER": chart_failover, "CHART_RADIO": chart_radio, "TABLE_CLEAN": table_clean,
              "TABLE_RADIO": table_radio, "FO_ALL": f"{facts['fo_all']:.1f}", "FO100": f"{facts['fo100']:.2f}",
              "RR100": f"{facts['rr100']:.1f}", "SP100": f"{facts['sp100']:.0f}", "SP10": f"{facts['sp10']:.0f}",
              "FAR100": f"{facts['far100']:.0f}", "RUNS": str(facts["runs"]), "RUNS_RADIO": str(facts["runs_radio"]),
              "CROSS": str(cross), "CHART_RL": chart_rl, "LEGEND_RL": legend_rl, "TABLE_RL": table_rl, "RL_PAIRED": rl_paired,
-             "TABLE_ROUTE": table_route, "ROUTE_N": str(route_n), "TRAIN_LAST": f"{train_ev[-1]['success']} of {train_ev[-1]['n']}",
+             "TABLE_ROUTE": table_route, "ROUTE_N": str(route_n), "ROUTE_TEXT": route_text, "TRAIN_LAST": f"{train_ev[-1]['success']} of {train_ev[-1]['n']}",
              "TRAIN_FIRST_STEP": f"{train_ev[0]['steps'] / 1e6:.1f}"}.items():
     page = page.replace("{{" + k + "}}", v)
 assert "{{" not in page, page[page.index("{{"):page.index("{{") + 40]

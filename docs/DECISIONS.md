@@ -1,0 +1,36 @@
+# Decisions and why
+
+The decisions that shape the system, what was chosen, and the reason. Where a decision came from a
+measured problem, the evidence is named.
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | **No central controller.** Every drone runs the same agent and decides its role from heartbeats. | The goal is surviving the loss of any drone, including the leader; the same code must later run on each real drone (`docs/SPECIFICATION.md` section 6). |
+| 2 | **MAVROS (MAVLink) per drone, not uXRCE-DDS.** | Real drones will talk over low-bandwidth MAVLink telemetry radios; switching a drone from simulated to real should only change its connection URL. |
+| 3 | **PX4 SIH, headless, v1.18.0-rc1.** | Runs 10 drones on an 8 GB laptop without Gazebo; `px4_sitl_sih` exists from v1.18 (not in v1.17). |
+| 4 | **Lean MAVROS plugin list + per-namespace remaps of /tf, /tf_static, /parameter_events.** | The default plugin set shared `/parameter_events` across all drones: 5 drones took 99.7 % CPU; lean plugins cut MAVROS CPU per instance from 65.7 % to 4.7 % (`reports/PHASE_1.md`). |
+| 5 | **One shared ENU frame from each drone's GPS, never MAVROS local frames.** | Each MAVROS local frame starts where that drone powered on; comparing them would silently corrupt formation and separation. |
+| 6 | **Lowest alive eligible ID leads; term counter; MASTER_OK blocks claims; no pre-emption; first election waits for the fleet.** | Deterministic and testable: exactly one leader after any split heals (1,000/1,000 runs). Waiting for the fleet at startup fixed drone 3 sometimes leading. Learned methods are not used here on purpose (decision 17). |
+| 7 | **Heartbeat as a compact binary message (43-byte header + member mask).** | Fits telemetry radios: 18 kbit/s for 10 drones at 5 Hz. The mask was 64-bit (63 drones max) and became variable-length to allow up to 250 drones (PX4's system-ID limit). |
+| 8 | **Parity arms (even left, odd right) instead of alternating slots.** | With alternating slots a single loss swapped every later drone across the formation (moves up to 64 m); parity arms only slide the drones behind the loss (`reports/PHASE_2.md`). |
+| 9 | **Transit layer (6 m below) for long moves, orphan layer (8 m above) for drones the leader cannot hear.** | Crossing paths after a radio split healed caused close passes; vertical separation removes them. |
+| 10 | **Leader flies a fixed-heading leg with cross-track correction and a speed ramp.** | Re-aiming at the goal made the leader wander and the V rotate; the ramp removed a formation-error spike at the start of cruise (`reports/PHASE_3.md`). |
+| 11 | **Emergency landing drops below the formation while keeping its speed.** | Landing straight down let the drones behind come within 4.66 m; keeping speed while descending lets them pass over. |
+| 12 | **Pure-Python fast simulator running the real agent code.** | Thousands of runs in minutes (1,000-run test, scaling to 100 drones, the app), while PX4 validates the same code with the real autopilot. |
+| 13 | **Obstacles are 2-D at flight height; flight height decides what counts.** | Simple and honest: at 16 m every building and wood is in the way; at 30 m only tall structures (OSM height or storeys) are. Flying over is not modelled. |
+| 14 | **Classical global planning for the leader (A*), local avoidance for followers.** | The leader's route can be computed from the map; followers must react locally while keeping formation, which is where learning can help. |
+| 15 | **Every avoider gets the same inputs and the same safety layer; the classical one is tuned first.** | A fair comparison: the question is whether learning beats a good classical controller, not a weak one. |
+| 16 | **Held-out evaluation seeds, paired statistics, confidence intervals.** | Results must hold on courses the policy never saw, and differences must be distinguishable from luck. |
+| 17 | **RL only where it can plausibly help: local obstacle and collision avoidance. Not for leader election, not for motor control.** | Election must be provably correct; motor control is already solved by PX4. |
+| 18 | **Residual policy (a correction on top of the formation law) with a hard brake shield.** | Starts from sensible behaviour, trains faster, and the brake keeps a learned mistake from becoming a crash; RL + brake was the best method. |
+| 19 | **Policy weights exported to numpy; no ML library on the drone.** | The onboard agent stays light and dependency-free; the exported policy matches the trained one to 3e-8. |
+| 20 | **Long routes: strip download, chunked planning, charging stops at open spots, landing in place on low battery.** | A single map query or planning grid over hundreds of kilometres is impossible; a quadcopter needs battery swaps about every 4 km; flying home from 100 km away is not realistic. |
+| 21 | **Positions put back on the ground far from home (tangent-plane correction).** | Without it a drone 270 km away is drawn about 240 m off. |
+| 22 | **Map keys in a git-ignored local file, never typed in by the assistant.** | Keys are the owner's credentials. |
+| 23 | **Everything tunable in `config/swarm.yaml`; strict config loading.** | One source of truth; a missing or unknown key is an error, not a silent default. |
+| 24 | **Simulation only.** | No serial ports, no real flight controller, no firmware flashing until the owner decides (`docs/SPECIFICATION.md` rule 7). |
+| 25 | **The GPU trainer picks its best policy on separate validation courses, never on the test courses.** | Choosing among ~20 checkpoints by their test score would inflate the reported result. The laptop trainer already used separate courses; the GPU kit did not until the final check (27 September 2026). |
+| 26 | **Secrets never leave the laptop: the Kaggle zip skips `*.local.*` files and checks every packed file for key values.** | The first zip had included the map keys; uploading it would have handed them to a third-party service. |
+| 27 | **The 3-D drone model is generated by a script (`scripts/make_drone_model.py`), not downloaded.** | No licence questions, a 54 KB file, easy to change; built chunkier than a real frame so it stays readable when drawn about 60 pixels wide. |
+| 28 | **The avoider runs at 10 Hz in the agent, the rate used in training and tuning.** | About 2.7 times faster simulation with obstacles (5.8x -> 15.6x real time on the Lahore route, together with a cheaper policy input), and every avoider runs at the rate it was trained or tuned for. The classical avoider did better at 20 Hz on the real map; both results are reported (`docs/RESULTS.md`). |
+| 29 | **The Islamabad -> Lahore run was stopped at 76 km on purpose.** | It only demonstrated scale (the charging-stop mechanism had already completed end to end on the 12 km route); the owner wanted the laptop free for the handover work. How to finish it: `docs/RUNBOOK.md`, section 4. |

@@ -1,0 +1,211 @@
+{
+ "params": {
+  "n": 10,
+  "home": [
+   33.7036,
+   73.0231
+  ],
+  "target": [
+   33.5973,
+   73.0479
+  ],
+  "cruise_mps": 5.0,
+  "endurance_min": 25.0,
+  "seed": 1,
+  "drift": 0.15,
+  "obstacles": "osm",
+  "avoider": "rl+shield",
+  "altitude": "low"
+ },
+ "code": "scripts/run_route.py (swarm_tools.gcs.fastsim_backend)",
+ "wall_s": 119,
+ "sim_s": 3130.8,
+ "speed_x": 27.4,
+ "outcome": "Mission complete: every drone still flying has landed",
+ "alive": 7,
+ "total": 10,
+ "obstacle_hits": 3,
+ "stops_total": 3,
+ "stop_landings": 3,
+ "route_km": 12.01,
+ "cruise_formation_rms_m": {
+  "max": 534.11,
+  "mean": 47.02
+ },
+ "cruise_min_separation_m": 5.67,
+ "progress": [
+  {
+   "t_s": 1000.0,
+   "stops_done": 1,
+   "dist_left_m": 9132,
+   "alive": 8,
+   "hits": 2,
+   "leader": 1,
+   "wall_s": 55
+  },
+  {
+   "t_s": 2000.0,
+   "stops_done": 2,
+   "dist_left_m": 4839,
+   "alive": 7,
+   "hits": 3,
+   "leader": 1,
+   "wall_s": 88
+  },
+  {
+   "t_s": 3000.0,
+   "stops_done": 3,
+   "dist_left_m": 504,
+   "alive": 7,
+   "hits": 3,
+   "leader": 1,
+   "wall_s": 112
+  }
+ ],
+ "events": [
+  [
+   2,
+   0.0,
+   "info",
+   "Mission ready: 10 drones, route 12.01 km, battery endurance 25 min (seed 1)"
+  ],
+  [
+   3,
+   0.0,
+   "info",
+   "Obstacles from OpenStreetMap: 253 buildings, 13 woods/parks (flight height 16 m, below the rooftops); leader route 13.51 km around them; avoidance: RL policy + brake"
+  ],
+  [
+   4,
+   0.0,
+   "info",
+   "3 charging stops, one every 4.1 km or so (about half a battery per leg, 3-minute battery swap)"
+  ],
+  [
+   5,
+   4.3,
+   "master",
+   "Drone 1 became master (term 1, election)"
+  ],
+  [
+   6,
+   4.3,
+   "phase",
+   "Takeoff to cruise altitude"
+  ],
+  [
+   7,
+   12.2,
+   "phase",
+   "Cruise to the target"
+  ],
+  [
+   8,
+   338.9,
+   "fault",
+   "Drone 7 hit a building or tree"
+  ],
+  [
+   9,
+   345.7,
+   "fault",
+   "Drone 9 hit a building or tree"
+  ],
+  [
+   10,
+   834.7,
+   "phase",
+   "Landing at charging stop 1 of 3"
+  ],
+  [
+   11,
+   855.4,
+   "phase",
+   "On the ground: swapping batteries"
+  ],
+  [
+   12,
+   948.8,
+   "phase",
+   "Batteries swapped: taking off from stop 1 of 3"
+  ],
+  [
+   13,
+   956.8,
+   "phase",
+   "Cruise to the target"
+  ],
+  [
+   14,
+   1455.4,
+   "fault",
+   "Drone 10 hit a building or tree"
+  ],
+  [
+   15,
+   1782.8,
+   "phase",
+   "Landing at charging stop 2 of 3"
+  ],
+  [
+   16,
+   1803.4,
+   "phase",
+   "On the ground: swapping batteries"
+  ],
+  [
+   17,
+   1906.0,
+   "phase",
+   "Batteries swapped: taking off from stop 2 of 3"
+  ],
+  [
+   18,
+   1914.0,
+   "phase",
+   "Cruise to the target"
+  ],
+  [
+   19,
+   2740.2,
+   "phase",
+   "Landing at charging stop 3 of 3"
+  ],
+  [
+   20,
+   2760.8,
+   "phase",
+   "On the ground: swapping batteries"
+  ],
+  [
+   21,
+   2863.2,
+   "phase",
+   "Batteries swapped: taking off from stop 3 of 3"
+  ],
+  [
+   22,
+   2871.2,
+   "phase",
+   "Cruise to the target"
+  ],
+  [
+   23,
+   3100.5,
+   "phase",
+   "Target reached: hovering"
+  ],
+  [
+   24,
+   3110.5,
+   "phase",
+   "Landing at the target"
+  ],
+  [
+   25,
+   3130.8,
+   "phase",
+   "Mission complete: every drone still flying has landed"
+  ]
+ ]
+}

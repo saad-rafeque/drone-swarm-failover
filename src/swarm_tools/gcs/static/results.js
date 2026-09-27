@@ -20,8 +20,14 @@
       Object.entries(j.paired).map(([lv, p]) => `${lv}: RL ${p.rl_only}, classical ${p.apf_only}`).join("; ") +
       ". The RL-only column in the file compares RL without the brake.";
   } catch (e) { $("rl-meta").textContent = "RL evaluation results are not available yet (reports/logs/rl/eval)."; }
-  try { $("route").innerHTML = renderMarkdown(await get("/reports/logs/rl/route_eval/summary.md")); }
-  catch (e) { $("route").textContent = "Not available yet."; }
+  try { $("longroute").innerHTML = renderMarkdown(await get("/reports/logs/long_route/summary.md"), "/reports/logs/long_route/"); }
+  catch (e) { $("longroute").textContent = "Not available yet."; }
+  // real-map comparison: the re-run with the current code (avoider at 10 Hz) first, else the first run
+  try { $("route").innerHTML = renderMarkdown(await get("/reports/logs/rl/route_eval_10hz/summary.md")); }
+  catch (e) {
+    try { $("route").innerHTML = renderMarkdown(await get("/reports/logs/rl/route_eval/summary.md")); }
+    catch (e2) { $("route").textContent = "Not available yet."; }
+  }
   try {
     const md = await get("/reports/SCALING.md");
     const start = md.indexOf("## Results");

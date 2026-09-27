@@ -13,4 +13,4 @@ if ! curl -s --max-time 2 "$URL/api/state" >/dev/null 2>&1; then
   echo $! >"$PIDFILE"
   for _ in $(seq 1 40); do curl -s --max-time 1 "$URL/api/state" >/dev/null 2>&1 && break; sleep 0.5; done
 fi
-xdg-open "$URL" >/dev/null 2>&1 &
+[ -n "${SWARM_NO_BROWSER:-}" ] || xdg-open "$URL" >/dev/null 2>&1 &

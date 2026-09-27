@@ -10,6 +10,7 @@
     ["Decisions and why", "/docs/DECISIONS.md"],
     ["Known issues and next steps", "/docs/KNOWN_ISSUES.md"],
     ["RL training on Kaggle", "/docs/KAGGLE.md"],
+    ["Kaggle guide (PDF)", "/docs/KAGGLE_GUIDE.pdf"],
     ["Phase 0 report", "/reports/PHASE_0.md"],
     ["Phase 1 report", "/reports/PHASE_1.md"],
     ["Phase 2 report", "/reports/PHASE_2.md"],

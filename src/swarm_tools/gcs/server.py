@@ -26,9 +26,10 @@ STATIC = Path(__file__).resolve().parent / "static"
 REPO = Path(__file__).resolve().parents[3]
 KEYS_FILE = REPO / "config" / "map_keys.local.yaml"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
-         ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png",
+         ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg",
          ".md": "text/markdown; charset=utf-8", ".json": "application/json", ".jsonl": "text/plain; charset=utf-8",
-         ".csv": "text/csv; charset=utf-8", ".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8"}
+         ".csv": "text/csv; charset=utf-8", ".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8",
+         ".glb": "model/gltf-binary"}
 SHARED = {"/reports/": REPO / "reports", "/docs/": REPO / "docs"}   # read-only file areas
 
 

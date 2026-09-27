@@ -1,14 +1,17 @@
 // Small Markdown renderer for the project's own reports (headings, paragraphs, lists, tables, code, links,
-// emphasis). Enough for reports/*.md and docs/*.md; not a general Markdown implementation.
+// images, emphasis, quote boxes). Enough for reports/*.md and docs/*.md; not a general Markdown implementation.
+"use strict";   // file level: a function with a default parameter may not carry its own "use strict"
 window.renderMarkdown = (src, base = "") => {
-  "use strict";
   const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  // the server mirrors the repository (/reports/, /docs/), so "reports/x" in README.md means /reports/x
+  const resolve = (href) => (/^(https?:|\/|#)/.test(href) ? href : /^(reports|docs)\//.test(href) ? "/" + href : base + href);
   const inline = (s) => esc(s)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, src) => `<img src="${resolve(src)}" alt="${alt}">`)
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, text, href) => {
-      const url = /^(https?:|\/|#)/.test(href) ? href : base + href;
+      const url = resolve(href);
       return `<a href="${url}"${/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : ""}>${text}</a>`;
     });
   const lines = src.replace(/\r/g, "").split("\n");
@@ -48,10 +51,16 @@ window.renderMarkdown = (src, base = "") => {
       out.push(ordered ? `<ol>${items.join("")}</ol>` : `<ul>${items.join("")}</ul>`);
       continue;
     }
+    if (/^>\s?/.test(line)) {                      // quote box (the "Urdu mein khulasa" notes)
+      const buf = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) buf.push(lines[i++].replace(/^>\s?/, ""));
+      out.push(`<blockquote><p>${inline(buf.join(" "))}</p></blockquote>`);
+      continue;
+    }
     if (!line.trim()) { i++; continue; }
     const para = [line];
     i++;
-    while (i < lines.length && lines[i].trim() && !/^(#|```|\||\s*([-*]|\d+\.)\s)/.test(lines[i])) para.push(lines[i++]);
+    while (i < lines.length && lines[i].trim() && !/^(#|```|\||>|\s*([-*]|\d+\.)\s)/.test(lines[i])) para.push(lines[i++]);
     out.push(`<p>${inline(para.join(" "))}</p>`);
   }
   return out.join("\n");

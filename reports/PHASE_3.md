@@ -24,6 +24,7 @@ Phase 3 tasks:
 - [DONE] Metrics script: `scripts/metrics.py` (formation RMS, minimum separation, time to goal).
 
 ## Key numbers
+
 | Run | Harness | Drones | RMS max / mean / p95 (m) | Min separation (m) | Time to goal (s) | Leader to goal (m) | Leaders at once |
 |---|---|---|---|---|---|---|---|
 | run1 | completed | 10 | 1.32 / 0.56 / 1.08 | 8.11 | 221.4 | 1.2 | 1 |

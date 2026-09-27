@@ -15,6 +15,7 @@ Status: PASSED
   cross-check (`crosscheck/`) reproduced the per-run file byte for byte.
 
 ## What was built (all importable and testable without ROS)
+
 | Module | Role |
 |---|---|
 | `src/swarm_agent/geometry.py` | WGS-84 ↔ ECEF ↔ one shared ENU frame at `config.origin`; tuple vector helpers |

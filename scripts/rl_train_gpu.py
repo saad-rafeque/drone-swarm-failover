@@ -12,7 +12,7 @@ Built for time-limited sessions (Kaggle: 12 h): it checkpoints every --checkpoin
 cleanly when --hours is used up, and resumes from <run>/ckpt.pt when started again with the same --run.
 
 Usage:
-  PYTHONPATH=src python3 scripts/rl_train_gpu.py --pool data/pools/train.npz --eval-pool data/pools/heldout.npz \
+  PYTHONPATH=src python3 scripts/rl_train_gpu.py --pool data/pools/train.npz --eval-pool data/pools/val.npz \
       --run runs/seed1 --seed 1 --hours 9.5 [--envs 1024] [--steps 3e9]
 """
 from __future__ import annotations
@@ -138,7 +138,8 @@ def evaluate(model: ActorCritic, cfg, pool: ScenarioPool, device, levels: np.nda
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--pool", required=True)
-    ap.add_argument("--eval-pool", default="")
+    ap.add_argument("--eval-pool", default="", help="validation pool that picks best_policy.npz (val.npz from "
+                    "build_pools.py; never the held-out test pool)")
     ap.add_argument("--run", required=True)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--device", default="auto")
@@ -296,7 +297,7 @@ def main() -> None:
         row = [round(time.time() - t_start, 1), step, update, round(n / dt), round(float(np.mean(recent_ret)), 3) if recent_ret else "",
                len(eps), round(sum(e["success"] for e in eps) / k, 3), round(sum(e["crash_free"] for e in eps) / k, 3),
                round(sum(e["crashes"] for e in eps) / k, 3), round(sum(e["restored"] for e in eps) / k, 3),
-               round(float(pg), 4), round(float(vl), 4), round(float(ent), 3), round(float(np.mean(kls)), 5),
+               round(pg.item(), 4), round(vl.item(), 4), round(ent.item(), 3), round(float(np.mean(kls)), 5),
                round(float(np.mean(clipfracs)), 3), round(ev, 3), [round(x, 3) for x in model.log_std.tolist()],
                sim.ray_overflow]
         writer.writerow(row)

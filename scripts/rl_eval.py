@@ -29,7 +29,7 @@ from swarm_agent.config import default_config_path, load_config  # noqa: E402
 from swarm_tools.obstacle_sim import make_scenario, run_episode, sim_cfg_from  # noqa: E402
 
 TRAIN_SEED_MAX = 1_000_000          # same constant as swarm_tools.rl_vecenv (kept here to avoid importing SB3)
-EVAL_SEED0 = TRAIN_SEED_MAX + 100   # model selection during training used TRAIN_SEED_MAX + 0..7
+EVAL_SEED0 = TRAIN_SEED_MAX + 100   # model selection uses TRAIN_SEED_MAX + 0..99 (laptop 0..7, GPU val.npz 0..29)
 LEVELS = {"low": (0.5, 0.25), "medium": (1.0, 0.5), "high": (2.0, 1.0)}   # buildings / tree clusters per hectare
 METHODS = ["none", "none+shield", "apf", "rl", "rl+shield"]
 

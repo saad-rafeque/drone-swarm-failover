@@ -20,4 +20,9 @@ if [ -d "$DESK" ]; then
   chmod +x "$DESK/Swarm Control.desktop"
   gio set "$DESK/Swarm Control.desktop" metadata::trusted true 2>/dev/null || true
 fi
-echo "Installed: $APPS/swarm-control.desktop${DESK:+ and $DESK/Swarm Control.desktop}"
+# a real program at the top of the project folder: double-click it in the Files app
+if command -v gcc >/dev/null 2>&1; then
+  gcc -O2 -o "$ROOT/Swarm Control" "$ROOT/scripts/launcher.c"
+  gio set "$ROOT/Swarm Control" metadata::custom-icon "file://$ROOT/src/swarm_tools/gcs/static/icon.svg" 2>/dev/null || true
+fi
+echo "Installed: $APPS/swarm-control.desktop${DESK:+, $DESK/Swarm Control.desktop} and $ROOT/Swarm Control"

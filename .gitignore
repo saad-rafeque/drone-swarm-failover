@@ -13,3 +13,6 @@ kaggle/swarm-rl-code.zip
 
 # local map service keys (never commit)
 config/map_keys.local.yaml
+
+# compiled launcher (built by scripts/install_launcher.sh)
+/Swarm Control

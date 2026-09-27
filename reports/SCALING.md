@@ -20,6 +20,7 @@ with the same term. *Formation < 2 m after* = time from the kill until formation
 completed, every flying drone landed, exactly one leader at the end. Values are median (min–max) of 3 runs.
 
 ## Results — clean radio, no drift
+
 | N | New leader agreed (s) | Formation < 2 m after (s) | Closest pair (m) | Cruise RMS max (m) | Landed | Sim speed (× real time) | Heartbeat (B) | Radio load (kbit/s) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | – | – | – | – | 3/3 | 2459.6 (2321.3–2483.4) | 44 | 1.8 |
@@ -32,6 +33,7 @@ completed, every flying drone landed, exactly one leader at the end. Values are 
 | 100 | 1.75 (1.70–1.75) | 8.75 (8.70–8.75) | 9.49 | 0.73 | 3/3 | 2.9 (2.8–2.9) | 56 | 224.0 |
 
 ## Results — 10 % loss, 150 ms delay, drift 0.15 m/s
+
 | N | New leader agreed (s) | Formation < 2 m after (s) | Closest pair (m) | Cruise RMS max (m) | Max leaders at once | Leader sequence | Landed | Sim speed (× real time) | Heartbeat (B) | Radio load (kbit/s) |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 10 | 2.35 (2.15–2.40) | 4.80 (4.65–4.90) | 9.15 | 1.14 | 1 | 1→2 | 3/3 | 150.4 (147.8–153.5) | 45 | 18.0 |

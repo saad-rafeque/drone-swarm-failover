@@ -28,7 +28,9 @@ def test_mission_on_real_gps_with_faults(cfg):
     run(b, 4.0)
     s = b.snapshot()
     assert s["master"] == 2 and s["alive"] == 4
-    assert any("became master (term 2" in e[3] for e in s["events"])
+    claim = next(e[3] for e in s["events"] if "became master (term 2" in e[3])
+    gap = float(claim.split(", ")[-1].split(" s after the fault on drone 1")[0])   # takeover time after the kill
+    assert 1.4 <= gap <= 2.5
     assert b.command({"cmd": "fault", "type": "gps", "target": [3]})["ok"]
     run(b, 1.0)
     d3 = next(d for d in b.snapshot()["drones"] if d["id"] == 3)

@@ -242,6 +242,7 @@ class FastSimBackend:
         self._ev_idx = {i: 0 for i in cfg.drone_ids}
         self._alive = {i: True for i in cfg.drone_ids}
         self._last_master: int | None = None
+        self._leader_fault: tuple[int, float] | None = None   # (leader id, sim time) of the last fault on a leader
         self._last_phase: Phase | None = None
         self._last_stop_note = (None, None)
         self._done = False
@@ -307,7 +308,11 @@ class FastSimBackend:
             for ev in evs[self._ev_idx[i]:]:
                 if ev.kind == "claim":
                     how = "planned handover" if ev.detail.get("reason") == "handover" else "election"
-                    self._event("master", f"Drone {i} became master (term {ev.detail['term']}, {how})")
+                    lf, gap = self._leader_fault, ""
+                    if lf is not None and lf[0] != i:
+                        gap = f", {sim.t - lf[1]:.1f} s after the fault on drone {lf[0]}"
+                        self._leader_fault = None
+                    self._event("master", f"Drone {i} became master (term {ev.detail['term']}, {how}){gap}")
                 elif ev.kind == "step_down":
                     self._event("info", f"Drone {i} stepped down; drone {ev.detail['to']} leads")
                 elif ev.kind == "handover_named":
@@ -320,11 +325,15 @@ class FastSimBackend:
             self._ev_idx[i] = len(evs)
         for t_hit, i in sim.obstacle_hits[self._hits_seen:]:
             self._event("fault", f"Drone {i} hit a building or tree")
+            if i == self._last_master and self._alive[i]:
+                self._leader_fault = (i, sim.t)
             self._alive[i] = False
         self._hits_seen = len(sim.obstacle_hits)
         for i, d in sim.drones.items():
             if self._alive[i] and not d.alive:
                 self._event("fault", f"Drone {i} went down" + (" (battery empty)" if d.battery_pct <= 0 else ""))
+                if i == self._last_master:
+                    self._leader_fault = (i, sim.t)
             self._alive[i] = d.alive
         ms = sim.masters()
         m = ms[0] if len(ms) == 1 else None
@@ -478,6 +487,9 @@ class FastSimBackend:
                 ids = self._targets(c.get("target", []))
                 if not ids:
                     return {"ok": False, "msg": "no drone selected (or none alive)"}
+                leader = self.sim.masters()
+                if ftype != "radio_restore" and len(leader) == 1 and leader[0] in ids:
+                    self._leader_fault = (leader[0], self.sim.t)   # the next claim reports the time since this fault
                 for i in ids:
                     d = self.sim.drones[i]
                     if ftype in ("crash", "motor"):

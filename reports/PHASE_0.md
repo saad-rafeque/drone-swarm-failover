@@ -24,6 +24,7 @@ Phase 0 tasks:
 - [DONE] Repo skeleton: `config/`, `src/swarm_agent/`, `src/swarm_tools/`, `tests/`, `scripts/`, `reports/`.
 
 ## Key numbers
+
 | Item | Value | Source |
 |---|---|---|
 | OS | Ubuntu 24.04.5 LTS, kernel 7.0.0-34-generic, x86_64 | env_audit.txt |
