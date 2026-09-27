@@ -11,13 +11,12 @@ these documents.
 
 ![The 3D view of the ground-control app: ten drones in V formation over F-9 Park, Islamabad](reports/gcs_3d_view.jpg)
 
-> **Urdu mein khulasa.** Yeh project drones ka aik group (swarm) hai jo leader ke girne, radio katne
-> ya battery khatam hone par bhi mission jari rakhta hai: agla drone ~2 second mein leader ban jata
-> hai. Sab kuch laptop par simulation mein bana aur test hua hai — koi asli drone abhi nahi udaya gaya.
-> Shuru karne ke liye project folder mein **Swarm Control** par double-click karein (ya Desktop par
-> **Swarm Control** icon) — poora program khud chal jata hai aur browser mein khul jata hai.
-> Kaggle par RL training ka poora tareeqa: `docs/KAGGLE.md` (ya `docs/KAGGLE_GUIDE.pdf`).
-> Sab kuch aik file mein: `docs/HANDOVER.pdf`.
+> **In short.** A group of drones (a swarm) that keeps flying its mission when the leader crashes,
+> loses its radio or runs low on battery: the next drone takes over in about 2 seconds. Everything was
+> built and tested in simulation on a laptop; no real drone has flown this code. To start, double-click
+> **Swarm Control** in the project folder (or the **Swarm Control** icon on the desktop): the whole
+> program starts and opens in the browser. Long RL training on Kaggle, step by step: `docs/KAGGLE.md`
+> (or `docs/KAGGLE_GUIDE.pdf`). Everything in one file: `docs/HANDOVER.pdf`.
 
 **Scope and safety.** Simulation only: no code here opens a serial port, talks to a real flight
 controller or flashes firmware. Payloads, targeting and anything that engages objects are out of
@@ -94,7 +93,7 @@ Everything else (PX4 flights, tests, RL training, evaluations): `docs/RUNBOOK.md
 - `docs/DECISIONS.md` — the important design decisions and why.
 - `docs/KNOWN_ISSUES.md` — limitations, what is not done, next steps, road to real drones.
 - `docs/KAGGLE.md` — long RL training on Kaggle, step by step: which files, how to start it, what
-  gets trained, where to paste the results, how to change things (with a Roman Urdu version);
+  gets trained, where to paste the results, how to change things;
   also as `docs/KAGGLE_GUIDE.pdf`.
 
 ## Main versions

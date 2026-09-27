@@ -66,6 +66,9 @@ last events are listed at the top right.
 | Metrics / plots of a run | `python3 scripts/metrics.py <run_dir>`; `python3 scripts/plot_mission.py <run_dir> out.png` | |
 | Replay page from a run | `python3 scripts/make_replay.py <run_dir> scripts/replay_template.html reports/replay/swarm_replay.html` | open in the app: PX4 flights |
 | Logs as CSV | `PYTHONPATH=src python3 -c "from swarm_tools.logfmt import jsonl_to_csv; jsonl_to_csv('<run>/states.jsonl', '<run>/states.csv')"` | |
+| Phase 0 / Phase 1 figures | `python3 scripts/plot_phase0.py`; `python3 scripts/plot_phase1.py` | `reports/phase0_altitude.png`, `reports/phase1_resources.png` |
+| Diagnostic: CPU and memory of idle PX4 + MAVROS for several N (Phase 1) | `scripts/ros_env.sh python3 scripts/mavros_idle_scaling.py --ns 1 3 5` | console |
+| Diagnostic: where 2 SIH drones spawn without home settings (Phase 1) | `scripts/ros_env.sh python3 scripts/spawn_default_check.py` | console |
 
 Every PX4 drone listens on UDP 14580+n and sends to 14540+n (PX4's own port plan, which covers 10
 instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refused by the tools.
@@ -100,6 +103,7 @@ instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refu
 |---|---|
 | Project brief page | `PYTHONPATH=src python3 scripts/make_brief.py` -> `reports/brief/swarm_failover.html` |
 | Handover PDF | `PYTHONPATH=src python3 scripts/make_handover_pdf.py` -> `docs/HANDOVER.pdf` (needs Google Chrome) |
+| Online copy of the project brief | a copy of `reports/brief/swarm_failover.html` was published once (26 September 2026) as a private online page in the owner's account; it is not updated automatically - republish it after regenerating the brief |
 | Kaggle code bundle | `python3 scripts/make_kaggle_bundle.py` -> `kaggle/swarm-rl-code.zip` (never contains `config/map_keys.local.yaml`) |
 | Kaggle guide alone as a PDF | `PYTHONPATH=src python3 scripts/make_handover_pdf.py --only kaggle --out docs/KAGGLE_GUIDE.pdf` |
 | 3-D drone model of the 3D view | `python3 scripts/make_drone_model.py` -> `src/swarm_tools/gcs/static/drone.glb` |

@@ -51,7 +51,7 @@ window.renderMarkdown = (src, base = "") => {
       out.push(ordered ? `<ol>${items.join("")}</ol>` : `<ul>${items.join("")}</ul>`);
       continue;
     }
-    if (/^>\s?/.test(line)) {                      // quote box (the "Urdu mein khulasa" notes)
+    if (/^>\s?/.test(line)) {                      // quote box (the "In short" notes)
       const buf = [];
       while (i < lines.length && /^>\s?/.test(lines[i])) buf.push(lines[i++].replace(/^>\s?/, ""));
       out.push(`<blockquote><p>${inline(buf.join(" "))}</p></blockquote>`);

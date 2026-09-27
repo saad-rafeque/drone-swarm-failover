@@ -46,6 +46,12 @@
   `reports/logs/long_route/`.
 - **The classical avoider depends on its update rate.** On the real map it hit 4 and 7 buildings when
   run every 0.05 s but 10 and 8 at 10 Hz, its tuned rate; RL + brake had 0 in both (`docs/RESULTS.md`).
+- **F5 on PX4: the formation re-forms slowly after a radio split heals.** The group with the newer
+  leader wins (the term rule), so the whole V re-forms around it; the transit layer and PX4's vertical
+  speeds make that take about 17 s against a 15 s target (`reports/PHASE_4.md`, three options).
+- **This laptop's power.** On battery the power-saver profile throttles the CPU and 10 PX4 drones
+  saturate it; the battery also ran out twice on 27 September 2026. Run long PX4 jobs only on the
+  charger (`scripts/phase4_runs.sh` waits for it).
 - **3-D view heights.** The simulators have flat ground; the 3-D view draws every drone at its
   simulated height above the real terrain under it (Cesium World Terrain), so on hills it shows
   height above ground, not a real climb. For the first seconds after the page opens the terrain is
@@ -66,6 +72,9 @@
 6. Three real drones in an open field with safety pilots; only then more.
 7. Legal permission for flights (local civil aviation rules) before any outdoor test.
 
+Also before real flights: PX4 is pinned to a release candidate (v1.18.0-rc1, the first version with
+the `px4_sitl_sih` target); move to a stable PX4 release for the real drones and run Phases 0-4 again.
+
 ## Ideas for later
 - RL where mistakes are cheap: area re-division when drones fail (search and rescue), charging and
   patrol schedules, battery-aware routing - planning on the ground rather than flight control.
@@ -73,6 +82,19 @@
   the loop; curriculum from sparse to dense clutter.
 - Terrain heights (for example Mapbox Terrain-DEM or Copernicus) so the swarm keeps its height
   above hills such as the Margalla range.
+
+## Housekeeping (not done)
+- **No backup.** The repository has no Git remote: the only copy of the code, the logs and the history
+  is on this laptop, which lost power twice on 27 September 2026. Push it to a private remote (for
+  example a private GitHub repository) or copy the folder to an external drive. Git-ignored files are
+  not in the history and need their own copy if wanted: `config/map_keys.local.yaml` (keys),
+  `.venv/`, `kaggle/swarm-rl-code.zip` (rebuilt by a script) and the `Swarm Control` launcher (rebuilt
+  by `scripts/install_launcher.sh`).
+- **No licence file.** Choose a licence before sharing the code outside the team. Third-party data keep
+  their own terms: OpenStreetMap data (ODbL, attribution), Mapbox and Cesium ion / Google tiles (their
+  terms of service, shown as credits in the app).
+- **The online project brief is out of date** (published 26 September 2026; see `docs/RUNBOOK.md`,
+  section 6).
 
 ## Found and fixed during the final check (27 September 2026)
 - **Kaggle bundle packed the private map keys.** `scripts/make_kaggle_bundle.py` zipped the whole

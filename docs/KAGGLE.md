@@ -1,16 +1,17 @@
 # Long RL training on Kaggle — the complete guide
 
-**Status (27 September 2026): everything is ready, nothing has been run on Kaggle yet.** This file
-explains, step by step: which files to take, how to start the training on Kaggle, what gets trained,
-what problem it solves, how to change things, where to paste every file when training is finished,
-and what you get at the end. A Roman Urdu version of the whole procedure is in section 12.
+**Status (27 September 2026): everything is ready, nothing has been run on Kaggle yet.** The kit
+has only been tested on this laptop with tiny settings (a few hundred training steps on the CPU, 16
+courses), so the first real Kaggle run may still show a problem that only appears there (paths, GPU
+memory, time). This file explains, step by step: which files to take, how to start the training on
+Kaggle, what gets trained, what problem it solves, how to change things, where to paste every file
+when training is finished, and what you get at the end. Section 12 has the whole procedure on one page.
 
-> **Urdu mein khulasa.** Laptop par aik command se aik zip file banti hai. Woh zip Kaggle par
-> "dataset" ke taur par upload hoti hai, phir hamari notebook import karke GPU on karke
-> "Save & Run All" dabana hai. ~11 ghante baad Kaggle aik `results.zip` deta hai. Us ke andar naya
-> "dimagh" (`best_policy.npz`) aur us ke imtehan ke nataij hote hain. Agar naye nataij purane se
-> behtar hon to `best_policy.npz` ko `models/avoid_policy.npz` ki jagah rakh dein — app aur drones
-> khud naya dimagh istemal karne lagte hain. Poori tafseel neeche section 12 mein.
+> **In short.** One command on the laptop builds a zip file. Upload it to Kaggle as a dataset, import
+> our notebook, switch the GPU on and press "Save & Run All". About 11 hours later Kaggle gives you
+> `results.zip`, which holds the newly trained policy (`best_policy.npz`) and its test results. If the
+> new results are better than the old ones, put `best_policy.npz` in place of `models/avoid_policy.npz`:
+> the app and the drones then use the new policy on their own. Details in section 12 and below.
 
 ## 1. What gets trained (in simple words)
 
@@ -258,58 +259,54 @@ shutil.copytree(prev, '/kaggle/working/run_seed1', dirs_exist_ok=True)
 
 The trainer finds `ckpt.pt` and continues from the saved step, keeping the best score so far.
 
-## 12. Asaan Urdu mein poora tareeqa
+## 12. The whole procedure on one page
 
-**Kya train hoga?** Sirf follower drones ka "rukawat se bachne wala dimagh" — aik chhota neural
-network. Har 0.1 second woh 47 cheezein dekhta hai (formation kidhar le jana chahti hai, apni
-raftar, V mein apni jagah se faasla, aas paas 24 simton mein deewar/darakht ka faasla, qareeb
-tareen 3 drones) aur 2 number batata hai: raftar mein kitni tabdeeli karni hai. Leader ka chunao,
-formation ke qaide aur autopilot train nahi hote — woh qaide hain aur waise hi rahenge.
+**What gets trained?** Only the followers' obstacle-avoidance policy, a small neural network. Every
+0.1 s it reads 47 numbers (where the formation wants the drone to go, its own speed, its distance from
+its place in the V, the distance to walls and trees in 24 directions, the three nearest drones) and
+returns 2 numbers: how much to change its velocity. The leader election, the formation rules and the
+autopilot are not trained; they are rules and stay as they are.
 
-**Masla kya hal hoga?** Laptop par training 38 minute chali aur ruki to abhi behtar ho rahi thi.
-Ghani (dense) abadi mein abhi sirf 30 mein se 5 mission kamyab hain. Kaggle ka GPU ~10 ghante
-train karega, is se takraav kam hone ki umeed hai — kitna, yeh naap kar hi pata chalega. Seed 2 aur
-3 se pata chalega ke nateeja dobara bhi aata hai ya nahi.
+**Which problem does it solve?** The laptop training ran for 38 minutes and was still improving when it
+stopped. In dense clutter only 5 of 30 missions succeed today. About 10 hours on Kaggle's GPU should
+reduce crashes; by how much can only be measured. Seeds 2 and 3 show whether the result repeats.
 
-**Kaunsi files uthani hain?** Sirf do:
-1. `kaggle/swarm-rl-code.zip` — pehle laptop par `python3 scripts/make_kaggle_bundle.py` chalayein,
-   yeh zip nayi ban jayegi (aap ki map keys is mein kabhi nahi jatin).
-2. `kaggle/train_swarm_rl.ipynb` — notebook.
+**Which files to take?** Only two:
+1. `kaggle/swarm-rl-code.zip`: first run `python3 scripts/make_kaggle_bundle.py` on the laptop, which
+   builds a fresh zip (your map keys are never included).
+2. `kaggle/train_swarm_rl.ipynb`: the notebook.
 
-**Kaggle par kaise chalana hai?**
-1. kaggle.com → Create → New Dataset → zip upload karein → naam `swarm-rl-code` → Private → Create.
-2. Create → New Notebook → File → Import Notebook → `train_swarm_rl.ipynb` chunein.
-3. Daayen panel mein Input → Add Input → apna `swarm-rl-code` dataset add karein.
-4. Session options → Accelerator → GPU P100 (ya T4 x2). Internet band rehne dein.
-5. Pehle cell mein `SEED = 1` rehne dein (agli dafa 2, phir 3).
-6. Save Version → **Save & Run All (Commit)** → Save. Ab laptop band bhi kar dein to Kaggle chalata
-   rahega. ~11 ghante lagenge.
+**How to run it on Kaggle:**
+1. kaggle.com → Create → New Dataset → upload the zip → name `swarm-rl-code` → Private → Create.
+2. Create → New Notebook → File → Import Notebook → choose `train_swarm_rl.ipynb`.
+3. Right-hand panel: Input → Add Input → add your `swarm-rl-code` dataset.
+4. Session options → Accelerator → GPU P100 (or T4 x2). Internet can stay off.
+5. Keep `SEED = 1` in the first cell (next time 2, then 3).
+6. Save Version → **Save & Run All (Commit)** → Save. Kaggle keeps running even if you switch the laptop
+   off. It takes about 11 hours.
 
-**Training khatam hone ke baad kya karna hai?**
-1. Notebook ke page par us version ka **Output** tab kholein → `results.zip` download karein →
-   `~/Downloads/results/` mein unzip karein.
-2. Yeh folders project mein paste karein:
+**When training has finished:**
+1. On the notebook's page open that version's **Output** tab → download `results.zip` → unzip it into
+   `~/Downloads/results/`.
+2. Paste these folders into the project (or copy the commands from section 7):
    - `run_seed1/` → `reports/logs/rl/kaggle_seed1/`
    - `eval_seed1/` → `reports/logs/rl/eval_kaggle_seed1/`
    - `route_eval_seed1/` → `reports/logs/rl/route_eval_kaggle_seed1/`
-   (section 7 ki commands copy paste kar sakte hain.)
-3. `eval_kaggle_seed1/summary.md` mein "RL + brake" wali line ko purani (26/30, 18/30, 5/30) se
-   milayein. Agar har density par barabar ya behtar hai, takraav zyada nahi, aur Islamabad wale
-   route par 0 takraav hain — tab hi naya dimagh lagayein:
-   `models/avoid_policy.npz` ka naam `avoid_policy_run1.npz` karein aur
-   `run_seed1/best_policy.npz` ko `models/avoid_policy.npz` ke naam se rakh dein.
-4. Section 9 ki commands se laptop par dobara check karein, `docs/RESULTS.md` mein naye number
-   likhein, PDF dobara banayein, commit karein.
+3. Compare the "RL + brake" line in `eval_kaggle_seed1/summary.md` with the old one (26/30, 18/30,
+   5/30). Only if it is equal or better at every density, crashes are not higher, and the Islamabad
+   route still has 0 hits, switch to the new policy: rename `models/avoid_policy.npz` to
+   `avoid_policy_run1.npz` and copy `run_seed1/best_policy.npz` to `models/avoid_policy.npz`.
+4. Re-check on the laptop with the commands in section 9, write the new numbers into `docs/RESULTS.md`,
+   rebuild the PDF, commit.
 
-**Aakhir mein kya milega?** Naya `models/avoid_policy.npz` — app ke "RL policy" aur "RL policy +
-brake" options, simulators aur drone ka agent khud usay istemal karenge, code badalne ki zaroorat
-nahi. Saath mein imandaar muqabla (wohi 90 test courses jo laptop par the), asli naqshe ka nateeja,
-aur training ke graph.
+**What you get at the end:** a new `models/avoid_policy.npz`. The app's "RL policy" and "RL policy +
+brake" options, the simulators and the drone agent use it without any code change. Plus a fair
+comparison (the same 90 test courses as on the laptop), the real-map result, and the training curves.
 
-**Kuch badalna ho to?** Seed aur ghante notebook ke pehle cell mein; baqi settings teesre cell mein
-(section 11 ka table). Code badla to nayi zip banayein aur Kaggle dataset ka "New Version"
-upload karein. Reward badalna ho to `obstacle_sim.py` aur `torch_sim.py` dono mein aik jaisa
-badlein aur `tests/test_torch_sim.py` chala kar check karein.
+**To change something:** seed and hours in the notebook's first code cell; everything else in the
+third cell (table in section 11). If you change code, build a new zip and upload it as a "New Version"
+of the Kaggle dataset. To change the reward, change `obstacle_sim.py` and `torch_sim.py` in the same way
+and run `tests/test_torch_sim.py` to check they still match.
 
 ## 13. When something goes wrong
 
