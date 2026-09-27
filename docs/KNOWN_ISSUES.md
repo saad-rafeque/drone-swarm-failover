@@ -89,3 +89,9 @@
   lifts itself above hills.
 - **Learning-curve plot** could not read the GPU trainer's logs; `scripts/plot_rl_training.py` now
   reads both formats.
+- **Stopping the app did not stop it.** `scripts/start_swarm.sh` saved the process ID of a helper shell
+  instead of the app, so `scripts/stop_swarm.sh` said "stopped" while the app kept running. The start
+  script now saves the app's own ID, and the stop script checks that the process really is the app
+  (and falls back to looking for it) before and after stopping it.
+- **In-app Docs page showed no documents.** `static/md.js` had a JavaScript syntax error ("use strict"
+  inside a function with a default parameter). Fixed; the viewer also shows pictures and quote boxes now.
