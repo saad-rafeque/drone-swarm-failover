@@ -1,0 +1,31 @@
+{
+ "time_to_goal_s": 220.8,
+ "formation_rms_cruise_m": {
+  "mean": 0.663,
+  "p95": 1.203,
+  "max": 7.303,
+  "samples": 2196,
+  "t_of_max_s": 113.5
+ },
+ "min_separation_m": 8.06,
+ "min_separation_pair": [
+  2,
+  3
+ ],
+ "goal_reached_all": true,
+ "max_simultaneous_masters": 1,
+ "master_changes": [
+  [
+   6.7,
+   1,
+   1
+  ],
+  [
+   113.3,
+   2,
+   2
+  ]
+ ]
+}
+ 
+{"result": "COMPLETED", "mission_wall_s": 303.5, "t_sim_ready_s": 13.7}

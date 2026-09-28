@@ -19,8 +19,10 @@ Position: east/north from the global fix converted to the shared ENU frame (neve
 frame); height from the local pose z, i.e. above the drone's own take-off point. In simulation
 every home shares one ground elevation, so that height is also above the origin's ground level.
 If the autopilot data goes stale (fcu_timeout_s) the drone counts as dead: no heartbeats.
+A drone whose autopilot link is a telemetry radio (--radio-link; the Phase 6 stand-in) uses the
+radio_standin settings instead: slower autopilot streams that fit the radio, and a longer fcu_timeout_s.
 
-Run: scripts/ros_env.sh python3 -m swarm_agent.ros_node --id 3
+Run: scripts/ros_env.sh python3 -m swarm_agent.ros_node --id 3 [--radio-link]
 """
 from __future__ import annotations
 
@@ -39,7 +41,7 @@ from sensor_msgs.msg import BatteryState, NavSatFix, NavSatStatus
 from std_msgs.msg import String, UInt8MultiArray
 
 from .agent_core import AgentCore, Command, FlightMode, OwnState
-from .config import Config, default_config_path, load_config
+from .config import MAVLINK_MSG_IDS, Config, default_config_path, load_config
 from .geometry import ZERO, EnuFrame, GeoPoint, Vec3
 from .heartbeat import decode, encode
 
@@ -47,14 +49,15 @@ REQUEST_PERIOD_S = 1.0
 MODE_OFFBOARD, MODE_LAND = "OFFBOARD", "AUTO.LAND"
 STREAM_RETRY_S = 2.0
 # MAVLink common message IDs (verified against pymavlink.dialects.v20.common, tests/test_ros_constants.py)
-MAVLINK_MSG_IDS = {"GLOBAL_POSITION_INT": 33, "LOCAL_POSITION_NED": 32, "ATTITUDE": 30, "ATTITUDE_QUATERNION": 31,
-                   "HIGHRES_IMU": 105, "ODOMETRY": 331, "ALTITUDE": 141}
 
 
 class SwarmAgentNode(Node):
-    def __init__(self, cfg: Config, drone_id: int) -> None:
+    def __init__(self, cfg: Config, drone_id: int, radio_link: bool = False) -> None:
         super().__init__("swarm_agent", namespace=f"/uav{drone_id}")
         self.cfg, self.drone_id = cfg, drone_id
+        self.radio_link = radio_link
+        self.fcu_timeout_s = cfg.radio_standin.fcu_timeout_s if radio_link else cfg.heartbeat.fcu_timeout_s
+        streams = cfg.radio_standin.autopilot_streams_hz if radio_link else cfg.autopilot_streams_hz
         self.frame = EnuFrame(cfg.origin_geo)
         self.core: AgentCore | None = None
         self.state = State()
@@ -84,7 +87,7 @@ class SwarmAgentNode(Node):
         self.mode_cli = self.create_client(SetMode, "mavros/set_mode")
         self.arm_cli = self.create_client(CommandBool, "mavros/cmd/arming")
         self.rate_cli = self.create_client(MessageInterval, "mavros/set_message_interval")
-        self._streams_pending = {MAVLINK_MSG_IDS[k]: v for k, v in cfg.autopilot_streams_hz.items()}
+        self._streams_pending = {MAVLINK_MSG_IDS[k]: v for k, v in streams.items()}
         self._streams_last_try = -math.inf
         self.create_timer(1.0 / cfg.setpoints.rate_hz, self._tick)
         self.create_timer(1.0 / cfg.logging.rate_hz, self._publish_state)
@@ -179,7 +182,7 @@ class SwarmAgentNode(Node):
         now = self.now()
         self._request_streams(now)
         fresh = self.state.connected and self.en is not None and self.z is not None and all(
-            now - t < self.cfg.heartbeat.fcu_timeout_s for t in self._rx.values())
+            now - t < self.fcu_timeout_s for t in self._rx.values())
         self.fcu_ok = fresh
         if not fresh:
             self._publish_setpoint(ZERO)  # keep PX4's offboard proof-of-life; no heartbeats
@@ -240,6 +243,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--id", type=int, required=True)
     ap.add_argument("--config", default=str(default_config_path()))
     ap.add_argument("--num-drones", type=int, default=0, help="override swarm.num_drones")
+    ap.add_argument("--radio-link", action="store_true",
+                    help="this drone's autopilot link is a telemetry radio: use the radio_standin settings")
     args = ap.parse_args(argv)
     cfg = load_config(args.config)
     if args.num_drones:
@@ -248,7 +253,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"drone id {args.id} not in configured ids {cfg.drone_ids}", file=sys.stderr)
         return 2
     rclpy.init()
-    node = SwarmAgentNode(cfg, args.id)
+    node = SwarmAgentNode(cfg, args.id, radio_link=args.radio_link)
     try:
         rclpy.spin(node)
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):

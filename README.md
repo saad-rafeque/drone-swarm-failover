@@ -21,12 +21,12 @@ All numbers come from logged simulation runs; each row names the report that hol
 | Leader failover (fast simulator, 10 drones, 20 runs per fault type) | new leader agreed 1.64 s after the leader crashes or loses its radio (worst 1.75 s); planned low-battery handover in 0.17 s; goal reached in 100 of 100 runs | [docs/RESULTS.md](docs/RESULTS.md) |
 | Leader election under random faults | exactly one leader after convergence in 1,000 of 1,000 randomized runs with crashes, radio loss, delays and network splits; median convergence 0.145 s | [reports/PHASE_2.md](reports/PHASE_2.md) |
 | PX4 formation flight | 10 PX4 SIH drones with MAVROS fly a 1 km V mission in 6 of 6 runs; formation error at most 1.66 m (limit 2 m); closest pair at least 7.80 m (limit 5 m) | [reports/PHASE_3.md](reports/PHASE_3.md) |
-| PX4 failover (Phase 4, 23 of 55 trials so far) | new leader 1.4–1.7 s after the leader is killed or loses its radio (limits: 3 s median, 4 s worst); planned handover under 0.01 s (limit 1 s); formation back within 6.6 s (13.4 s after a radio split heals); closest pair at least 6.03 m; goal reached 23/23 | [reports/PHASE_4.md](reports/PHASE_4.md) |
+| PX4 failover (Phase 4, passed: 55 trials) | new leader 1.4–1.7 s after the leader is killed or loses its radio (limits: 3 s median, 4 s worst); planned handover within 0.01 s (limit 1 s); formation back within 6.6 s (13.4 s after a radio split heals); closest pair at least 6.03 m; goal reached 55/55 | [reports/PHASE_4.md](reports/PHASE_4.md) |
 | Swarm size | 1 to 100 drones in the fast simulator; after the leader is killed, a new leader is agreed in 1.60–1.75 s (median) at every size from 2 to 100; heartbeat of 45 bytes for 10 drones and 56 bytes for 100 | [reports/SCALING.md](reports/SCALING.md) |
 | Obstacle avoidance | on 90 unseen courses the learned policy with a brake completes 26/30 sparse and 18/30 medium courses, against 15/30 and 7/30 for the tuned classical controller | [docs/RESULTS.md](docs/RESULTS.md) |
 | Real city map | 3.2 km across Islamabad among 932 OpenStreetMap buildings: no drone hit anything in 10 of 10 runs, including 5 in which the leader is killed halfway | [docs/RESULTS.md](docs/RESULTS.md) |
 | Long routes | 12 km Islamabad to Rawalpindi with 2 charging stops: all 10 drones landed, no hits. Islamabad to Lahore (272.55 km, 65 stops): flown to the end, all 10 drones landed, no hits | [docs/RESULTS.md](docs/RESULTS.md) |
-| Radio realism (fast simulator) | no false leader change in 180 missions with up to 300 ms delay and 30 % loss; the Phase 4 limits hold in 8 of 9 radio conditions | [reports/PHASE_5.md](reports/PHASE_5.md) |
+| Radio realism (Phase 5, passed: fast simulator and PX4) | no false leader change in 180 fast-simulator and 9 PX4 missions with up to 300 ms delay and 30 % loss; on PX4 a new leader took over in 1.6–2.5 s in all 9 conditions; the Phase 4 limits hold in 8 of 9 conditions in the fast simulator | [reports/PHASE_5.md](reports/PHASE_5.md) |
 
 ## Project status (28 September 2026)
 
@@ -41,9 +41,9 @@ All numbers come from logged simulation runs; each row names the report that hol
 | City-to-city routes with charging stops | Working; 12 km route completed end to end | [docs/RESULTS.md](docs/RESULTS.md) |
 | Islamabad to Lahore run (272.55 km, 65 charging stops) | Completed on 28 September 2026: 10/10 drones landed, 0 hits | [docs/RESULTS.md](docs/RESULTS.md) |
 | Ground-control app: 2-D map, 3-D view, fault injection, results, documents | Working | [docs/RUNBOOK.md](docs/RUNBOOK.md) |
-| Phase 4: fault trials on PX4 | In progress: 23 of 55 trials done, every limit met; the rest run whenever the owner presses Start | [reports/PHASE_4.md](reports/PHASE_4.md) |
-| Phase 5: radio realism sweep | Passed in the fast simulator; the PX4 sweep (18 missions) runs when the owner starts it | [reports/PHASE_5.md](reports/PHASE_5.md) |
-| Phase 6: mixed-reality readiness and flight test plan | Software parts done (drone profiles, telemetry-radio stand-in, flight test plan); the PX4 stand-in test (22 trials) runs when the owner starts it | [reports/PHASE_6.md](reports/PHASE_6.md) |
+| Phase 4: fault trials on PX4 | Passed: 50 trials and a clean-shell cross-check round, every limit met in every trial | [reports/PHASE_4.md](reports/PHASE_4.md) |
+| Phase 5: radio realism sweep | Passed: fast simulator (540 runs) and PX4 (18 missions) | [reports/PHASE_5.md](reports/PHASE_5.md) |
+| Phase 6: mixed-reality readiness and flight test plan | Software parts done (drone profiles, telemetry-radio stand-in, flight test plan). The first PX4 stand-in runs failed because of a wrong radio-link set-up; it is fixed and two check flights passed; the 22 acceptance trials run when the owner presses Start | [reports/PHASE_6.md](reports/PHASE_6.md) |
 | Formation shapes: line abreast, column, echelon | Added and compared; experimental, because only the V stays 5 m apart after faults | [docs/RESULTS.md](docs/RESULTS.md) |
 | Long RL training on a Kaggle GPU | Kit ready and checked; not run | [docs/KAGGLE_GUIDE.md](docs/KAGGLE_GUIDE.md) |
 | Real drones | Never flown | — |

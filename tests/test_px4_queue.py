@@ -117,3 +117,24 @@ def test_the_app_can_load_the_queue_script():
         _sys.modules.pop("px4_queue", None)
         if saved is not None:
             _sys.modules["px4_queue"] = saved
+
+
+def test_leftover_radio_relays_are_stopped_and_nothing_else():
+    """Stop now once left a telemetry-radio relay running (its own session), and the next trial's relay could
+    not bind its ports. The queue stops relays by their exact module argument, and nothing that only looks
+    similar; the launcher's clean-up uses the same rule."""
+    from swarm_tools.sim_launch import is_radio_relay
+    sleep = "import time; time.sleep(60)"
+    relay = subprocess.Popen([sys.executable, "-c", sleep, "-m", "swarm_tools.radio_proxy"])
+    other = subprocess.Popen([sys.executable, "-c", sleep, "-m", "swarm_tools.radio_proxy_x"])
+    try:
+        time.sleep(0.3)
+        stopped = q.stop_radio_relays()
+        assert relay.pid in stopped and other.pid not in stopped
+        assert relay.wait(timeout=5) != 0 and other.poll() is None
+    finally:
+        for p in (relay, other):
+            p.kill()
+            p.wait()
+    assert is_radio_relay(["python3", "-m", "swarm_tools.radio_proxy", "--instance", "0"])
+    assert not is_radio_relay(["python3", "scripts/radio_proxy.py"])

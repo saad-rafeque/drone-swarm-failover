@@ -75,7 +75,14 @@ def agent_pid(drone_id: int) -> int | None:
     return None
 
 
+def _terminate(signum, frame) -> None:
+    """SIGTERM (the PX4 test queue's Stop now) runs the same clean-up as the end of a mission: without this,
+    Python exits at once and processes in their own sessions (the telemetry-radio relay) are left running."""
+    raise SystemExit(128 + signum)
+
+
 def main() -> int:
+    signal.signal(signal.SIGTERM, _terminate)
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--n", type=int, required=True)
     ap.add_argument("--run-dir", required=True)
@@ -160,6 +167,8 @@ def main() -> int:
             v = getattr(args, opt)
             if v is not None:
                 cmd.append(f"{opt}:={v}")
+        if profile is not None and profile.standin:
+            cmd.append("radio_ids:=" + ",".join(str(i) for i in profile.standin))
         launch_log = open(run_dir / "proc_logs" / "ros2_launch.log", "w", encoding="utf-8")
         launch = subprocess.Popen(cmd, stdout=launch_log, stderr=subprocess.STDOUT, start_new_session=True)
         t_launch = time.time()

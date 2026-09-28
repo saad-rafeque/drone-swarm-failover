@@ -18,6 +18,15 @@
   two drones came closer than 5 m; every such run had a random radio split or random link drops.
   The rules cannot push apart drones that do not hear each other. Needs onboard proximity sensing
   or sticky formation references before real flights.
+- **A drone that keeps dropping out takes the lead back each time.** The election gives the lead to the
+  lowest alive ID, so a leader whose own link drops in and out (seen in the first Phase 6 attempt, with an
+  overloaded radio) keeps losing and retaking the lead. The overloaded link is fixed (`reports/PHASE_6.md`).
+  A rule that makes a returning drone wait before it can lead again would change `docs/SPECIFICATION.md`
+  section 6, and Phases 2–5 would have to be repeated; this is for the owner to decide.
+- **A drone on a telemetry radio needs the radio settings.** PX4 on TELEM1 in Minimal mode at 1,200 B/s
+  (`MAV_0_MODE` 7, `MAV_0_RATE` 1200), its agent started with `--radio-link`, and MAVROS time sync at 1 Hz
+  (`config/swarm.yaml`, `radio_standin`; `docs/FLIGHT_TEST_PLAN.md`). With PX4's default Normal mode at
+  1,200 B/s, position arrives at only about 1 Hz.
 - **Dense clutter is unsolved.** In the densest obstacle courses the best method (RL + brake)
   completes 5 of 30; followers still hit buildings in dense city blocks at 16 m.
 - **Simplified physics.** PX4 SIH uses a simple aircraft model; the fast simulators use point

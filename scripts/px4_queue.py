@@ -97,6 +97,26 @@ def queue() -> list[Trial]:
     return out
 
 
+def stop_radio_relays() -> list[int]:
+    """Stop leftover telemetry-radio relays (`python -m swarm_tools.radio_proxy`), matched by their exact
+    module argument in /proc/<pid>/cmdline; they run in their own session, outside a trial's process group."""
+    pids = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            args = (entry / "cmdline").read_bytes().split(b"\0")
+        except OSError:
+            continue
+        if any(a == b"-m" and b == b"swarm_tools.radio_proxy" for a, b in zip(args, args[1:])):
+            try:
+                os.kill(int(entry.name), signal.SIGTERM)
+                pids.append(int(entry.name))
+            except ProcessLookupError:
+                pass
+    return pids
+
+
 def result_of(t: Trial) -> str | None:
     try:
         return json.loads((t.path / "run_summary.json").read_text()).get("result")
@@ -304,6 +324,7 @@ class Runner:
             env = dict(os.environ)
         subprocess.run(["pkill", "-x", "px4"], check=False)
         subprocess.run(["pkill", "-x", "mavros_node"], check=False)
+        stop_radio_relays()
         self.current, self.state, self.detail = t, "running", ""
         self._t0, self.started = time.time(), dt.datetime.now().isoformat(timespec="seconds")
         log(f"{t.phase}/{t.name}: start" + (" (clean shell)" if t.clean_shell else ""))
@@ -344,8 +365,8 @@ class Runner:
     @staticmethod
     def stop(proc: subprocess.Popen) -> None:
         try:
-            os.killpg(proc.pid, signal.SIGTERM)
-            proc.wait(timeout=20)
+            os.killpg(proc.pid, signal.SIGTERM)      # run_mission.py then stops PX4, MAVROS, the launch, relays
+            proc.wait(timeout=40)
         except (ProcessLookupError, subprocess.TimeoutExpired):
             try:
                 os.killpg(proc.pid, signal.SIGKILL)
@@ -354,6 +375,7 @@ class Runner:
             proc.wait()
         subprocess.run(["pkill", "-x", "px4"], check=False)
         subprocess.run(["pkill", "-x", "mavros_node"], check=False)
+        stop_radio_relays()
 
     def loop(self) -> None:
         log(f"runner started (pid {os.getpid()}); mode {mode()}, running on battery "

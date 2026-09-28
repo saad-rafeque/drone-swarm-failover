@@ -68,7 +68,7 @@ last events are listed at the top right.
 | 5: radio sweep on PX4 (9 conditions, one mission without a fault and one F1 mission each, ~16 min per condition) | `bash scripts/phase5_runs.sh <first> <last>` (conditions 1-9) | `reports/logs/phase_5/d<delay>_l<loss>_<none\|F1>` |
 | 6: radio stand-in test on PX4 (F1 and F2 with drone 1 behind the stand-in, ~16 min per round) | `bash scripts/phase6_runs.sh <r> <r>` for round r = 1..10 | `reports/logs/phase_6/` |
 | Check a drone profile (never opens a serial port) | `PYTHONPATH=src python3 scripts/check_profile.py config/profiles/mixed.yaml` | console |
-| One mission with a profile, for example drone 1 behind the radio stand-in | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir <dir> --profile config/profiles/standin.yaml` | run folder, `proc_logs/radio_standin_1.json` (link statistics) |
+| One mission with a profile, for example drone 1 behind the radio stand-in | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir <dir> --profile config/profiles/standin.yaml` | run folder, `proc_logs/radio_standin_1.json` (link statistics); drone 1's PX4 log shows `mode: Minimal, data rate: 1200 B/s` (its radio link set-up) |
 | Metrics / plots of a run | `python3 scripts/metrics.py <run_dir>`; `python3 scripts/plot_mission.py <run_dir> out.png` | |
 | Replay page from a run | `python3 scripts/make_replay.py <run_dir> scripts/replay_template.html reports/replay/swarm_replay.html` | open in the app: PX4 flights |
 | Logs as CSV | `PYTHONPATH=src python3 -c "from swarm_tools.logfmt import jsonl_to_csv; jsonl_to_csv('<run>/states.jsonl', '<run>/states.csv')"` | |

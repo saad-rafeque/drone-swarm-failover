@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from swarm_tools.profiles import PROFILE_DIR, ProfileError, load_profile
-from swarm_tools.sim_launch import SimLauncher
+from swarm_tools.sim_launch import SimLauncher, radio_link_commands
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -36,6 +36,21 @@ def test_simulation_tools_refuse_a_real_drone_and_use_the_profile_urls(cfg):
         SimLauncher(cfg, {}, profile=load_profile(PROFILE_DIR / "mixed.yaml", cfg))
     sim = SimLauncher(cfg, {}, profile=load_profile(PROFILE_DIR / "standin.yaml", cfg))
     assert sim.fcu_url(1) == "udp://:15540@127.0.0.1:15580" and sim.fcu_url(3) == "udp://:14542@127.0.0.1:14582"
+
+
+def test_radio_drone_gets_a_telemetry_port_link(cfg, tmp_path):
+    """The stand-in drone's PX4 link is restarted like a real TELEM1 port (same ports as px4-rc.mavlink), and its
+    MAVROS gets the radio time-sync rate."""
+    stop, start, *streams = radio_link_commands(cfg, 1)
+    assert stop[1:] == ["--instance", "0", "stop", "-u", "14580"]
+    assert start[1:] == ["--instance", "0", "start", "-x", "-u", "14580", "-r", "1200", "-f", "-m", "minimal",
+                         "-o", "14540"]
+    assert ["--instance", "0", "stream", "-u", "14580", "-s", "LOCAL_POSITION_NED", "-r", "5"] in [c[1:] for c in streams]
+    assert len(streams) == len(cfg.radio_standin.autopilot_streams_hz)
+    assert radio_link_commands(cfg, 3)[1][-1] == "14542"
+    sim = SimLauncher(cfg, {}, log_dir=tmp_path, profile=load_profile(PROFILE_DIR / "standin.yaml", cfg))
+    text = sim.mavros_radio_params(1).read_text(encoding="utf-8")
+    assert "/**/time:" in text and "timesync_rate: 1.0" in text
 
 
 @pytest.mark.parametrize("entry, message", [

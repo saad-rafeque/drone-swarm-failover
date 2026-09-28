@@ -18,9 +18,15 @@ Everything here is simulation. Each number points at the file it came from.
 | 1,000 random runs with crashes, radio loss, delays and splits | exactly one leader after convergence in 1,000 of 1,000; median convergence 0.145 s after the last fault (p95 2.12 s, max 2.72 s) | `reports/PHASE_2.md` |
 | Known weak spot | 143 of those 1,000 runs had two drones closer than 5 m; every one contained a random radio split or random link drops (drones that cannot hear each other cannot be pushed apart) | `reports/PHASE_2.md` |
 
-Fault types, 10 drones, 20 runs each (fast simulator). On PX4, 23 of the 55 Phase 4 trials ran on 28 September
-2026 and met every limit: new leader in under 1.7 s, planned handover in under 0.01 s, formation back within
-6.6 s (13.4 s after a healed split), closest pair 6.0 m or more (`reports/PHASE_4.md`):
+Fault types, 10 drones, 20 runs each (fast simulator). On PX4, Phase 4 passed on 28 September 2026 (`reports/PHASE_4.md`).
+All 55 trials (10 per fault plus a clean-shell cross-check round) met every limit:
+- new leader in 1.4–1.7 s;
+- planned handover within 0.01 s;
+- formation back within 6.6 s (13.4 s after a healed split);
+- closest pair 6.03 m or more;
+- goal reached 55 of 55.
+
+The fast-simulator results:
 
 | Fault | New leader agreed (median / worst) | Formation back under 2 m | Closest pair | Goal reached |
 |---|---|---|---|---|
@@ -54,8 +60,13 @@ without a fault, 20 with the leader killed (F1) and 20 with its radio cut (F2): 
 - Formation back under 2 m within 9.47 s in every run (limit 15 s); closest pair 6.44 m or more; every
   mission reached the goal.
 
+- **On PX4** (18 missions with 10 drones, one without a fault and one with the leader killed per condition):
+  - no false leader change;
+  - a new leader in 1.59–2.48 s in all nine conditions, including 300 ms with 30 % loss (2.30 s);
+  - formation back within 6.84 s, closest pair 6.89 m or more, every goal reached.
+
 Evidence: `reports/PHASE_5.md`, `reports/logs/phase_5_fastsim/` (`summary.md`, `summary.json`,
-`radio_sweep.jsonl`), `reports/phase5_radio_sweep.png`. The same sweep on PX4 runs when the owner starts it.
+`radio_sweep.jsonl`), `reports/logs/phase_5/` (PX4 runs, `phase5_px4_table.md`), `reports/phase5_radio_sweep.png`.
 
 ## Formation shapes (fast simulator)
 Four shapes with the same agent code, 10 drones, clean radio, 10 runs each of: no fault, F1 (leader killed),
@@ -180,8 +191,14 @@ The earlier run in the app on 26 September 2026 was stopped on purpose after 76.
   with SiK defaults - 64 kbit/s air rate halved by error correction to 32 kbit/s shared by both directions,
   transmit turns of up to 131 ms, 1 % loss, a 1 s buffer. Its tests (`tests/test_radio_proxy.py`, 6 tests)
   measure the rate (2,000 bytes delivered in 0.45-0.75 s), the shared channel, the turn wait, loss and the
-  full buffer with local sockets. The PX4 test (F1 and F2 with drone 1 behind it, `scripts/phase6_runs.sh`)
-  runs when the owner starts it.
+  full buffer with local sockets.
+- **The PX4 stand-in test** (F1 and F2 with drone 1 behind the stand-in): the first four runs failed because the
+  simulated autopilot flooded the radio, 1.7–3.9 times its capacity.
+  - The radio drone is now set up like a real telemetry port: PX4 Minimal mode at 1,200 B/s, the agent asking
+    for position at 5 Hz, and 1 s allowed without autopilot data.
+  - Two check flights then passed: new leader 1.50 and 1.63 s, never two leaders, goal reached, radio delay
+    about 75 ms.
+  - The 22 acceptance trials run when the owner starts them (`reports/PHASE_6.md`).
 - **Flight test plan**: `docs/FLIGHT_TEST_PLAN.md` (one real drone with simulated ones; PX4 safety
   parameters checked in the PX4 source; go/no-go checklist; abort criteria; kill-switch procedure).
 

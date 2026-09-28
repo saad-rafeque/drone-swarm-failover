@@ -12,4 +12,6 @@ scripts/ros_env.sh ros2 launch "$PWD/launch/swarm.launch.py" num_drones:=10 run_
 ```
 
 Optional arguments override the link emulator settings in `config/swarm.yaml`: `loss_pct:=10`,
-`latency_ms:=150`, `jitter_ms:=30`.
+`latency_ms:=150`, `jitter_ms:=30`. `radio_ids:=1` marks drones whose autopilot link is a telemetry radio;
+their agents start with `--radio-link` and use the `radio_standin` settings. `scripts/run_mission.py` sets it
+from the profile.

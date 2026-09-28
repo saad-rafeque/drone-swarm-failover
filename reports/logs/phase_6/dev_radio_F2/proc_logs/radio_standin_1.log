@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/saad-rafique/Documents/drone swarm/src/swarm_tools/radio_proxy.py", line 193, in <module>
+    main()
+  File "/home/saad-rafique/Documents/drone swarm/src/swarm_tools/radio_proxy.py", line 183, in main
+    relay = for_instance(load_config(args.config).radio_standin, args.instance,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/saad-rafique/Documents/drone swarm/src/swarm_tools/radio_proxy.py", line 164, in for_instance
+    return RadioRelay(cfg,
+           ^^^^^^^^^^^^^^^
+  File "<string>", line 11, in __init__
+  File "/home/saad-rafique/Documents/drone swarm/src/swarm_tools/radio_proxy.py", line 75, in __post_init__
+    self.s_px4.bind(self.px4_bind)
+OSError: [Errno 98] Address already in use

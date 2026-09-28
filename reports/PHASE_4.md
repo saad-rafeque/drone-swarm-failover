@@ -1,114 +1,96 @@
 # Phase 4 — Failover under faults
-Status: IN PROGRESS — 23 of the 55 trials done (28 September 2026, all on the charger), and every one met
-every limit. The other trials run whenever the owner presses Start on the "PX4 tests" page of the
-ground-control app (`scripts/px4_queue.py`); nothing starts by itself.
+Status: PASSED — 50 trials (10 per fault) and a 5-trial cross-check round from a clean shell, 10 PX4 drones,
+28 September 2026. Every acceptance criterion holds in every trial.
 
-> **In short.** In Phase 4, ten PX4 drones fly the mission while one of five faults is injected (leader
-> killed, leader's radio lost, leader's battery low, a follower killed, radio network split), 10 times each
-> plus a clean-shell cross-check. The first two attempts on 27 September 2026 overloaded the laptop (the
-> first ran on battery in power-saver mode). On 28 September 2026 23 trials ran on the charger: a new
-> leader took over 1.4–1.7 s after the leader was killed or lost its radio (limits 3 s median, 4 s worst),
-> the planned battery handover took under 0.01 s (limit 1 s), the formation was back within 6.6 s
-> (13.4 s after a radio split heals; limits 15 s and 20 s), no two drones came closer than 6.03 m, and
-> every mission reached its goal (23 of 23).
-
-## What Phase 4 must show (`docs/SPECIFICATION.md`, section 7)
-Faults, each at a random time during cruise, 10 trials each, 10 drones:
-- F1 master killed (its PX4 + MAVROS processes killed)
-- F2 master link lost (the link emulator drops 100 % of the master's heartbeats)
-- F3 master low battery (PX4's simulated battery if verifiable, else injected at the agent level)
-- F4 follower killed
-- F5 partition then heal (two groups, then reconnect)
-
-Acceptance:
-- F1/F2: new master heartbeat within 3.0 s median (4.0 s worst case) of the failure.
-- F3: planned handover within 1.0 s of the trigger; the old master leaves and returns home.
-- F4: no master change; the formation recovers.
-- F5: a single master within 3.0 s after the heal.
-- All: formation RMS back under 2 m within 15 s; minimum separation never below 5 m; goal reached in
-  at least 9 of 10 trials per fault.
-- Report table per fault: median / worst handover time, recovery time, minimum separation, success rate.
+> **In short.** Ten PX4 drones flew the mission while one of five faults was injected: the leader killed,
+> the leader's radio lost, the leader's battery low, a follower killed, the radio network split. Each fault
+> ran 10 times, plus once more from a clean shell.
+> - After the leader was killed or lost its radio, a new leader took over in 1.4–1.7 s (limits: 3 s median,
+>   4 s worst).
+> - The planned battery handover took at most 0.01 s (limit 1 s), and the old leader flew home every time.
+> - Killing a follower never changed the leader.
+> - After a split healed, one leader remained within 0.35 s (limit 3 s).
+> - The formation was back within 6.6 s (limit 15 s), or 13.4 s after a split (limit 20 s).
+> - No two drones came closer than 6.03 m (limit 5 m), and every mission reached its goal (55 of 55).
 
 ## Acceptance criteria
-None of them can be marked PASS or FAIL: the required 10 valid trials per fault were not run. What the
-partial runs indicate (conditions below):
-- [NOT MEASURED] F1/F2 handover — indicative: 1.62–2.23 s in all 6 F1/F2 trials (limit 3.0 / 4.0 s).
-- [NOT MEASURED] F3 planned handover — indicative: 0.35 and 0.80 s (limit 1.0 s); the old master landed
-  at home both times.
-- [NOT MEASURED] F4 no master change — indicative: 2 of 2 without a change; formation back in 7.4–8.5 s.
-- [NOT MEASURED] F5 single master after the heal — indicative: 0.30 and 1.55 s (limit 3.0 s).
-- [NOT MEASURED] Formation under 2 m within 15 s (F5: 20 s, the owner's decision of 28 September 2026) —
-  indicative: yes for F1–F4 (5.7–8.5 s) and for F5 (16.7 and 17.1 s, see "Why F5 is slow"; it would
-  fail the original 15 s).
-- [NOT MEASURED] Minimum separation >= 5 m — indicative: 6.11 m or more in every trial.
-- [NOT MEASURED] Goal reached >= 9/10 per fault — indicative: every trial that ran to the end reached
-  the goal (10 of 10).
+Rounds 1–10 (`reports/logs/phase_4/phase4_table.md`) and the cross-check round 11 from a clean shell
+(`reports/logs/phase_4_crosscheck/phase4_table.md`), both made by `scripts/phase4_metrics.py` from the
+trial logs.
+- [PASS] F1/F2: new master heartbeat within 3.0 s median, 4.0 s worst.
+  - F1: 1.48 / 1.69 s; F2: 1.48 / 1.60 s (rounds 1–10).
+  - Cross-check: F1 1.41 s, F2 1.60 s.
+- [PASS] F3: planned handover within 1.0 s of the trigger, and the old master leaves and returns home.
+  - 0.00 / 0.01 s (median / worst); cross-check 0.00 s.
+  - The old leader landed at home in 10 of 10, and 1 of 1 in the cross-check.
+- [PASS] F4: no master change, and the formation recovers.
+  - Leader changed in 0 of 10 and 0 of 1.
+  - Formation back within 6.18 s at worst.
+- [PASS] F5: a single master within 3.0 s after the heal.
+  - 0.25 / 0.35 s (median / worst); cross-check 0.10 s.
+- [PASS] All: formation RMS back under 2 m within 15 s (F5: 20 s, the owner's decision of 28 September 2026).
+  - F1–F4: at most 6.60 s. F5: at most 13.44 s.
+  - Every trial recovered within its limit: 55 of 55.
+- [PASS] All: minimum separation never below 5 m.
+  - The closest pair in any trial was 6.03 m (F5_t1).
+- [PASS] All: goal reached in at least 9 of 10 trials per fault.
+  - 10 of 10 for every fault, and 5 of 5 in the cross-check.
+- [PASS] Report table per fault: below.
 
-## Results so far (28 September 2026, 23 trials on the charger)
-Made by `scripts/phase4_metrics.py` from `reports/logs/phase_4/F?_t*` (`phase4_table.json`, `phase4_table.md`).
-Rounds 1 to 4 of all five faults and round 5 of F1-F3; every trial ran on the charger in the performance
-profile (`run_summary.json`, `power_before`).
+## Key numbers
+Rounds 1–10 (`reports/logs/phase_4/phase4_table.md`, per-trial rows there):
 
 | Fault | Trials | New leader median / worst (s) | Limit (s) | Formation < 2 m median / worst (s) | Recovered within limit (15 s; F5: 20 s) | Closest pair (m) | Goal reached | Other |
 |---|---|---|---|---|---|---|---|---|
-| F1 | 5 | 1.51 / 1.69 | 3.0 / 4.0 | 5.20 / 6.14 | 5/5 | 8.04 | 5/5 |  |
-| F2 | 5 | 1.43 / 1.48 | 3.0 / 4.0 | 5.53 / 6.60 | 5/5 | 7.58 | 5/5 |  |
-| F3 | 5 | 0.00 / 0.01 | 1.0 | 4.11 / 4.25 | 5/5 | 8.08 | 5/5 | old leader landed at home: 5/5 |
-| F4 | 4 | no change | no change | 4.92 / 5.78 | 4/4 | 7.91 | 4/4 | leader changed: 0/4 |
-| F5 | 4 | 0.28 / 0.35 | 3.0 (after heal) | 12.43 / 13.44 | 4/4 | 6.03 | 4/4 |  |
+| F1 | 10 | 1.48 / 1.69 | 3.0 / 4.0 | 5.54 / 6.14 | 10/10 | 8.04 | 10/10 |  |
+| F2 | 10 | 1.48 / 1.60 | 3.0 / 4.0 | 5.75 / 6.60 | 10/10 | 7.58 | 10/10 |  |
+| F3 | 10 | 0.00 / 0.01 | 1.0 | 4.20 / 4.50 | 10/10 | 7.05 | 10/10 | old leader landed at home: 10/10 |
+| F4 | 10 | no change | no change | 5.28 / 6.18 | 10/10 | 6.88 | 10/10 | leader changed: 0/10 |
+| F5 | 10 | 0.25 / 0.35 | 3.0 (after heal) | 12.52 / 13.44 | 10/10 | 6.03 | 10/10 |  |
 
-- **F3, under 0.01 s:** the old leader names its successor when its battery reaches 30 % (its `retire_t`),
-  and drone 2 claimed 2-5 ms later in all five trials: on a CPU that is not overloaded, the handover message
-  arrives at once. In the overloaded battery attempt it took 0.35-0.80 s.
-- **F5 within 15 s:** on the charger the formation re-formed after a healed radio split in 12.4 s (worst
-  13.4 s), within even the original 15 s; the 17 s of 27 September came from the slowed CPU on battery.
-- Three trials were cut off when the charger was unplugged (F5_t1, F3_t5, F4_t5); their partial files were
-  discarded and F5_t1 and F3_t5 ran again from the start (`reports/logs/px4_queue/runner.log`).
+Cross-check, round 11 from a clean shell (`reports/logs/phase_4_crosscheck/`; every simulator process was stopped
+before it):
 
-## What happened (27 September 2026)
+| Fault | New leader (s) | Formation < 2 m (s) | Closest pair (m) | Goal |
+|---|---|---|---|---|
+| F1 | 1.41 | 5.48 | 8.06 | yes |
+| F2 | 1.60 | 5.75 | 8.09 | yes |
+| F3 | 0.00 (old leader home: yes) | 3.75 | 8.55 | yes |
+| F4 | no change | 0.01 | 8.54 | yes |
+| F5 | 0.10 | 12.47 | 6.05 | yes |
 
-| Time | What | Outcome |
-|---|---|---|
-| 12:31–13:57 | First attempt: rounds 1–3 of F1–F5 | The laptop was on battery in the power-saver profile (CPU about 1.7 GHz instead of up to 4.1 GHz). With 10 drones the CPU was at 99.9 % for the whole run (load average about 60; Phase 3 ran at about 17 and 67 % CPU on the charger). 10 trials completed; F1_t3 stopped when the whole machine stalled for 18 s; the battery ran out at 13:57 (the system log ends without a shutdown) and cut F2_t3 off. Kept apart: `reports/logs/phase_4_on_battery/` (README there). |
-| 14:26 | Batch restarted with a charger check | It waited for the charger and a non-power-saver profile. |
-| 14:50 | Charger connected, Performance profile | The first trial started with a wrong fault name (a variable clash in the new charger check) and stopped at once; fixed in `a31f1f0`. |
-| 14:52–14:57 | Second attempt, on the charger | F1 trial 1 flew: new leader after 1.62 s, formation back under 2 m after 5.71 s, closest pair 7.90 m. The load average still rose from 19 to about 40. |
-| 14:58 | Stopped by the owner | "This laptop can't handle it." The trial was in the hover at the goal, not yet landed. `reports/logs/phase_4_stopped/F1_t1/`. |
+![Phase 4: time to a new leader and formation recovery for every trial, against the limits](phase4_faults.png)
 
-## Key numbers so far (indicative only)
-First attempt, on battery with a saturated CPU (`reports/logs/phase_4_on_battery/phase4_on_battery_table.md`,
-made by `scripts/phase4_metrics.py` from the trial logs):
+## How the trials ran (28 September 2026)
+- **One trial at a time:** the PX4 test queue (`scripts/px4_queue.py`, the "PX4 tests" page of the
+  ground-control app) ran them, started and stopped by the owner. Its log is `reports/logs/px4_queue/runner.log`.
+- **Power:** 40 trials ran on the charger. 15 ran on battery, which the owner allows: F1–F5 round 10, F1–F3
+  round 7, F3–F5 rounds 6 and 7, and the F1 and F2 cross-checks (`run_summary.json`, `power_before`). They
+  passed like the others; for example F1_t7 and F1_t10 took 1.58 and 1.47 s. The first attempt on
+  27 September had failed on battery in the power-saver profile; this time the profile was Balanced.
+- **Interrupted attempts:**
+  - Trials cut off when the charger was unplugged were discarded and flown again from the start.
+  - One attempt of the F4 cross-check stopped when the mission watcher stalled (a tooling fault, not a flight
+    result). It is kept in `reports/logs/phase_4_incomplete/`, and the trial then ran again and passed.
+- **Earlier attempts on 27 September 2026, not used for acceptance:**
+  - `reports/logs/phase_4_on_battery/`: 12 trials on battery in the power-saver profile, with the CPU
+    saturated.
+  - `reports/logs/phase_4_stopped/`: one trial on the charger, stopped by the owner.
+  - They were slower (for example F1 2.2 s instead of 1.5 s) but within the limits, except F5's 17 s against
+    the original 15 s limit.
 
-| Fault | Trials | New leader median / worst (s) | Limit (s) | Formation < 2 m median / worst (s) | Recovered within 15 s | Closest pair (m) | Goal reached | Other |
-|---|---|---|---|---|---|---|---|---|
-| F1 | 3 | 2.19 / 2.23 | 3.0 / 4.0 | 7.54 / 8.11 | 3/3 | 7.41 | 2/3 (F1_t3 stopped by the machine stall) |  |
-| F2 | 2 | 1.84 / 1.94 | 3.0 / 4.0 | 7.92 / 8.51 | 2/2 | 8.00 | 2/2 |  |
-| F3 | 2 | 0.57 / 0.80 | 1.0 | 6.88 / 7.78 | 2/2 | 7.17 | 2/2 | old leader landed at home: 2/2 |
-| F4 | 2 | no change | no change | 7.90 / 8.45 | 2/2 | 7.96 | 2/2 | leader changed: 0/2 |
-| F5 | 2 | 0.93 / 1.55 | 3.0 (after the heal) | 16.89 / 17.08 | 0/2 | 6.11 | 2/2 |  |
-
-Second attempt, on the charger (`reports/logs/phase_4_stopped/phase4_stopped_table.json`): F1 trial 1 — new
-leader 1.62 s, formation back 5.71 s, closest pair 7.90 m, reached the goal hover. The same fault with
-the same seed on battery took 2.23 s and 7.54 s: the power-saver CPU made everything slower.
-
-Per-trial rows, including a short 0.4 s formation-error spike in F4_t1 (a late message under the
-saturated CPU) and the 18 s stall in F1_t3: `reports/logs/phase_4_on_battery/phase4_on_battery_table.md`.
-Figure: `reports/phase4_on_battery.png` (takeover times against the limits; formation error around each
-fault).
-
-![Phase 4, first attempt on battery: takeover times against the limits, and formation error around each fault](phase4_on_battery.png)
-
-## Why F5 is slow, and the options (the owner decides)
+## Why F5 takes longer, and the owner's decision
 The front group (drones 1–5) and the back group (6–10) are split for 10–20 s. The back group elects
 drone 6 (term 2). After the heal, drone 1 (term 1) hears a master with a higher term and steps down,
 exactly as `docs/SPECIFICATION.md` section 6 prescribes, so **all ten drones re-form around drone 6**. Timeline of
-F5_t1 after the heal (from `states.jsonl`): every follower is 20–32 m from its new slot; each moves on
+F5_t1 of the first attempt (27 September, on battery with a slowed CPU; `states.jsonl`) after the heal: every follower is 20–32 m from its new slot; each moves on
 the "transit layer" (drops about 6 m below the formation, crosses, climbs back) so paths cannot cross
 at the same height. PX4 descends at about 1.5 m/s and the drones climb at 2 m/s, so: about 7 s
 descending (with little sideways progress: the drones only move sideways slowly until they are 5 m
 below), about 6 s crossing, about 4–5 s climbing back. The height offset counts in the 3-D formation
-error, so the error only falls under 2 m after the climb: about 17 s in total. In the fast simulator
-(faster vertical response) the same fault recovered in about 10 s.
+error, so the error only falls under 2 m after the climb: about 17 s in total. On the charger on
+28 September the same sequence took 12.5 s (median; worst 13.4 s). In the fast simulator (faster vertical
+response) it took about 10 s.
 
 Options considered:
 1. Keep the rules; make the move faster: allow sideways motion from half the transit depth, and/or a
@@ -123,43 +105,7 @@ Options considered:
 the election rule and the transit layer unchanged. `scripts/phase4_metrics.py` and `scripts/plot_phase4.py`
 use 20 s for F5 and 15 s for the other faults.
 
-## How to run Phase 4 later
-### What the computer needs
-- **A stronger computer is recommended.** On this laptop (Intel i3-1115G4, 2 cores / 4 threads, 8 GB)
-  10 PX4 drones + 10 MAVROS + 10 agents load the CPU to 60–100 % even on the charger; on battery the
-  CPU saturates. A machine with 8 or more cores and 16 GB (a desktop or a cloud VM) with the same setup
-  (`docs/RUNBOOK.md`, section 1: Ubuntu 24.04, ROS 2 Jazzy, MAVROS 2.15.1, PX4 v1.18.0-rc1 built with
-  `scripts/build_px4.sh`) runs it comfortably.
-- **Or on this laptop with fewer drones:** `N=5 bash scripts/phase4_all.sh 1`. `docs/SPECIFICATION.md` rule 6
-  allows reducing the drone count; say so in the report.
-- Always: on the charger, power mode Balanced or Performance (the batch waits otherwise), lid open,
-  at least 800 MB free memory (`free -m`; `run_mission.py` refuses to start below that), and the
-  Swarm Control app, the 3-D view and other heavy programs closed.
-
-### Commands (from the repository root)
-```bash
-bash scripts/phase4_all.sh 1      # rounds 1-10 of F1-F5, then round 11 from a clean shell as the cross-check
-```
-About 8 minutes per trial: 50 trials plus 5 cross-check trials, about 7 hours. If it is stopped, run the
-same command again: finished trials are skipped. To check the plan without flying:
-`DRY_RUN=1 bash scripts/phase4_runs.sh 1 2 dry_test` (then delete `reports/logs/dry_test`).
-
-After the batch:
-```bash
-python3 scripts/phase4_metrics.py --out reports/logs/phase_4/phase4_table.json --md reports/logs/phase_4/phase4_table.md reports/logs/phase_4/F?_t*
-python3 scripts/phase4_metrics.py --out reports/logs/phase_4_crosscheck/phase4_table.json --md reports/logs/phase_4_crosscheck/phase4_table.md reports/logs/phase_4_crosscheck/F?_t*
-python3 scripts/plot_phase4.py reports/logs/phase_4/phase4_table.json --out reports/phase4_faults.png
-```
-Then rewrite this report: the per-fault table from `phase4_table.md`, every acceptance line marked PASS
-or FAIL with its number and file, the cross-check round compared, commit, and tag `phase-4` if it passed.
-
-> **Checklist for later.** (1) Use a stronger computer (8 or more cores, 16 GB), or this laptop with
-> 5 drones. (2) Charger in, power mode Balanced or Performance, lid open, the 3-D view and other heavy
-> programs closed. (3) Run `bash scripts/phase4_all.sh 1` (5 drones: `N=5 bash scripts/phase4_all.sh 1`);
-> about 7 hours. If it stops, run the same command again: finished trials are skipped. (4) Afterwards run
-> the `phase4_metrics.py` and `plot_phase4.py` commands above and rewrite this report with PASS/FAIL.
-
-### What each trial writes (`reports/logs/phase_4/F<k>_t<round>/`)
+## What each trial writes (`reports/logs/phase_4/F<k>_t<round>/`)
 
 | File | Contents |
 |---|---|
@@ -172,7 +118,7 @@ or FAIL with its number and file, the cross-check round compared, commit, and ta
 | `proc_logs/` | PX4, MAVROS and launch console logs |
 | `../F<k>_t<round>.out` | the trial's console output |
 
-### How each number is measured (`scripts/phase4_metrics.py`)
+## How each number is measured (`scripts/phase4_metrics.py`)
 - The fault time is when the injector started the fault (before the kill commands ran), so the kill
   time counts against the result.
 - F1/F2 handover: fault → the first `claim_t` of another drone (a new master sends its heartbeat in the
@@ -185,7 +131,7 @@ or FAIL with its number and file, the cross-check round compared, commit, and ta
 - Minimum separation and "goal reached": `scripts/metrics.py` (3-D distance between airborne drones;
   every drone still reporting at the end landed in its slot at the goal, a retired one at home).
 
-### How the faults are made (`scripts/faults.py`)
+## How the faults are made (`scripts/faults.py`)
 Each fault fires at a seeded random time 30–150 s after the master first reports CRUISE (the batch uses
 the round number as the seed, so a round can be repeated exactly).
 - F1 / F4: SIGKILL the drone's PX4 and MAVROS process groups, then its agent process.
@@ -196,7 +142,7 @@ the round number as the seed, so a round can be repeated exactly).
 - F5: the link emulator splits IDs 1–5 from 6–10 (the front and the back of the V, as distance would),
   and heals after a random 10–20 s.
 
-### Files that make up Phase 4
+## Files that make up Phase 4
 
 | File | Role |
 |---|---|
@@ -242,18 +188,17 @@ the round number as the seed, so a round can be repeated exactly).
 - 16 MB of state log per trial: compressed after each trial (about 1.5 MB); the metric scripts read
   the compressed files.
 
+
 ## Known limitations / honest caveats
-- No valid 10-trial set exists: all numbers above are indicative. Of the 12 trials with results, 11 ran
-  on battery with a saturated CPU (10 to the end, 1 stopped by the stall), which made takeovers and
-  recovery slower (compare the charger trial); the 12th ran on the charger and was stopped in the hover
-  at the goal.
-- Two trials per fault cannot show a median or a worst case; F5's 17 s is consistent across both
-  trials and explained by the transit layer; it is within the 20 s limit the owner set for F5.
-- The earlier Phase 3 harness stall came back once (F1_t3), this time caused by the whole machine
-  stalling on battery, not by the harness.
+- **Simulation only:** PX4 SIH with MAVROS on one laptop. Radio timing is the ROS 2 link emulator's, and there
+  is no wind or sensor noise beyond SIH's own.
+- **10 trials per fault** show the median and worst case over 10 seeded fault times. They do not rule out
+  rarer timings.
+- **F5 uses the 20 s limit** the owner set. With the original 15 s limit, F5 would pass on this computer
+  (at most 13.44 s) but not on a slowed CPU (17 s on battery in power-saver mode on 27 September).
+- **15 trials ran on battery** (Balanced profile). They passed, but the timing margins are smaller on a
+  slower CPU.
 
 ## Next phase: what is needed from the owner
-1. Decide where to run Phase 4: a stronger computer (recommended), or this laptop with 5 drones.
-2. Decide how F5 should be handled (options 1–3 above).
-3. Phase 5 (radio realism: 50/150/300 ms × 0/10/30 % loss) and Phase 6 build on Phase 4 and have the
-   same computing needs.
+Nothing for Phase 4. Phase 5 (radio realism) and Phase 6 (a drone behind a telemetry radio) use the same
+fault tools.

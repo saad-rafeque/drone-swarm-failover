@@ -9,6 +9,12 @@ Verified sources (see reports/PHASE_0.md / PHASE_1.md):
     (px4-rc.mavlink); MAV_SYS_ID = n+1 (rcS).
   * MAVROS: mavros_node with px4_config.yaml as in mavros px4.launch, but our own lean plugin
     list (config/mavros_pluginlists.yaml) instead of px4_pluginlists.yaml.
+  * Radio drone (profile link "standin", Phase 6): its PX4 offboard link is restarted like a real
+    TELEM1 port: `mavlink stop -u <port>` and `mavlink start ... -r <B/s> [-m <mode>]` through the PX4
+    client (`px4-mavlink --instance <n>`, platforms/posix/src/px4/common/main.cpp); PX4 then lowers every
+    stream so the link stays under that rate (Mavlink::update_rate_mult, src/modules/mavlink/mavlink_main.cpp).
+    Defaults of a real TELEM1: MAV_0_RATE 1200 B/s (src/modules/mavlink/module.yaml). MAVROS time sync on
+    that drone runs at radio_standin.timesync_rate_hz (px4_config.yaml /**/time timesync_rate, default 10 Hz).
 """
 from __future__ import annotations
 
@@ -58,6 +64,24 @@ def sim_fcu_url(cfg: Config, drone_id: int) -> str:
     return f"udp://:{PX4_OFFBOARD_REMOTE_BASE + i}@127.0.0.1:{PX4_OFFBOARD_LOCAL_BASE + i}"
 
 
+def radio_link_commands(cfg: Config, drone_id: int) -> list[list[str]]:
+    """PX4 client commands that turn this drone's offboard link into a telemetry-radio link
+    (radio_standin.px4_link_mode / px4_link_rate_bytes_s; same ports and flags as px4-rc.mavlink), then set
+    the stream rates the agent asks for over a radio (radio_standin.autopilot_streams_hz), as a real drone's
+    link would be set up at boot: Minimal mode has no LOCAL_POSITION_NED until then, and the mission
+    start waits for every drone's position."""
+    i = instance_of(cfg, drone_id)
+    r = cfg.radio_standin
+    client = [str(px4_build_dir(cfg) / "bin" / "px4-mavlink"), "--instance", str(i)]
+    local, remote = str(PX4_OFFBOARD_LOCAL_BASE + i), str(PX4_OFFBOARD_REMOTE_BASE + i)
+    start = client + ["start", "-x", "-u", local, "-r", str(r.px4_link_rate_bytes_s), "-f"]
+    if r.px4_link_mode != "normal":        # PX4 has no "-m normal": Normal is what it uses without -m
+        start += ["-m", r.px4_link_mode]
+    streams = [client + ["stream", "-u", local, "-s", name, "-r", f"{hz:g}"]
+               for name, hz in r.autopilot_streams_hz.items()]
+    return [client + ["stop", "-u", local], start + ["-o", remote], *streams]
+
+
 def assert_simulated_url(url: str) -> None:
     """Hard rule 7: never open serial devices from the simulation tools."""
     if not url.startswith("udp://"):
@@ -73,9 +97,16 @@ def require_ros_env() -> None:
         raise RuntimeError("ROS 2 environment not sourced; run through scripts/ros_env.sh")
 
 
+def is_radio_relay(cmdline: list[str]) -> bool:
+    """A telemetry-radio stand-in process: `python -m swarm_tools.radio_proxy ...` (exact module argument)."""
+    return any(a == "-m" and b == "swarm_tools.radio_proxy" for a, b in zip(cmdline, cmdline[1:]))
+
+
 def kill_orphans(timeout_s: float = 5.0) -> list[int]:
-    """Kill leftover px4 / mavros_node processes (rule 6). Matches exact process names only."""
-    victims = [p for p in psutil.process_iter(["name"]) if p.info["name"] in ("px4", "mavros_node")]
+    """Kill leftover px4 / mavros_node processes (rule 6), matched by exact process name, and leftover
+    telemetry-radio relays, matched by their exact module argument."""
+    victims = [p for p in psutil.process_iter(["name", "cmdline"])
+               if p.info["name"] in ("px4", "mavros_node") or is_radio_relay(p.info["cmdline"] or [])]
     for p in victims:
         try:
             p.send_signal(signal.SIGTERM)
@@ -156,8 +187,45 @@ class SimLauncher:
         )
         self.procs[drone_id] = DroneProcs(drone_id, proc)
 
+    def _wait_in_log(self, path: Path, text: str, timeout_s: float, what: str) -> None:
+        deadline = time.time() + timeout_s
+        while True:
+            try:
+                if text in path.read_text(encoding="utf-8", errors="replace"):
+                    return
+            except FileNotFoundError:
+                pass
+            if time.time() > deadline:
+                raise RuntimeError(f"{what}: {text!r} did not appear in {path} within {timeout_s:.0f} s")
+            time.sleep(0.2)
+
+    def set_radio_link(self, drone_id: int) -> None:
+        """Restart this drone's PX4 offboard MAVLink link with the telemetry-radio settings. PX4 prints the
+        client's output in its own log, so the new link's own start line is the proof."""
+        px4_log = self.log_dir / f"px4_{drone_id}.log"
+        self._wait_in_log(px4_log, "Startup script returned successfully", 60.0, f"PX4 of drone {drone_id}")
+        for cmd in radio_link_commands(self.cfg, drone_id):
+            subprocess.run(cmd, check=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                           stderr=subprocess.STDOUT, timeout=15)
+        port = PX4_OFFBOARD_LOCAL_BASE + instance_of(self.cfg, drone_id)
+        rate = self.cfg.radio_standin.px4_link_rate_bytes_s
+        self._wait_in_log(px4_log, f"data rate: {rate} B/s on udp port {port}", 10.0, f"radio link of drone {drone_id}")
+
+    def mavros_radio_params(self, drone_id: int) -> Path:
+        """MAVROS parameters for a drone on a telemetry radio (written next to its logs as evidence)."""
+        path = self.log_dir / f"mavros_radio_{drone_id}.yaml"
+        path.write_text("/**/time:\n  ros__parameters:\n"
+                        f"    timesync_rate: {self.cfg.radio_standin.timesync_rate_hz}\n", encoding="utf-8")
+        return path
+
     def start_relay(self, drone_id: int) -> None:
         """The telemetry-radio stand-in between this drone's PX4 and its MAVROS (swarm_tools.radio_proxy)."""
+        i = instance_of(self.cfg, drone_id)
+        port = self.cfg.radio_standin.relay_port_base + i
+        busy = {c.laddr.port for c in psutil.net_connections(kind="udp") if c.laddr}
+        taken = sorted({port, PX4_OFFBOARD_REMOTE_BASE + i} & busy)
+        if taken:   # a relay left over from an interrupted run would carry this drone's traffic instead
+            raise RuntimeError(f"radio stand-in for drone {drone_id}: UDP port(s) {taken} already in use")
         log = open(self.log_dir / f"radio_standin_{drone_id}.log", "w", encoding="utf-8")
         proc = subprocess.Popen(
             [sys.executable, "-m", "swarm_tools.radio_proxy", "--instance", str(instance_of(self.cfg, drone_id)),
@@ -166,7 +234,6 @@ class SimLauncher:
             env={**os.environ, "PYTHONPATH": str(REPO_ROOT / "src")},
         )
         self.procs[drone_id].relay = proc
-        port = self.cfg.radio_standin.relay_port_base + instance_of(self.cfg, drone_id)
         deadline = time.time() + 10.0
         while not any(c.laddr and c.laddr.port == port for c in psutil.net_connections(kind="udp")):
             if proc.poll() is not None or time.time() > deadline:
@@ -181,7 +248,9 @@ class SimLauncher:
     def start_mavros(self, drone_id: int) -> None:
         require_ros_env()
         url = self.fcu_url(drone_id)
-        if self.profile is not None and self.profile.of(drone_id).link == "standin":
+        radio = self.profile is not None and self.profile.of(drone_id).link == "standin"
+        if radio:
+            self.set_radio_link(drone_id)
             self.start_relay(drone_id)
         args = [
             str(MAVROS_NODE), "--ros-args",
@@ -191,6 +260,7 @@ class SimLauncher:
             "-r", "/tf:=tf", "-r", "/tf_static:=tf_static", "-r", "/parameter_events:=parameter_events",
             "--params-file", str(self.pluginlists),
             "--params-file", str(MAVROS_SHARE / "px4_config.yaml"),
+            *(["--params-file", str(self.mavros_radio_params(drone_id))] if radio else []),
             "-p", f"fcu_url:={url}",
             "-p", f"tgt_system:={sysid_of(self.cfg, drone_id)}",
             "-p", "tgt_component:=1",

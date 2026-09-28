@@ -1,0 +1,20 @@
+{
+ "time_to_goal_s": null,
+ "formation_rms_cruise_m": null,
+ "min_separation_m": 9.171,
+ "min_separation_pair": [
+  6,
+  4
+ ],
+ "goal_reached_all": false,
+ "max_simultaneous_masters": 1,
+ "master_changes": [
+  [
+   5.3,
+   1,
+   1
+  ]
+ ]
+}
+ 
+{"result": "WATCHER_STALLED", "mission_wall_s": 24.1, "t_sim_ready_s": 13.8}

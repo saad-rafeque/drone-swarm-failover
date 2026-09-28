@@ -1,0 +1,3 @@
+{"t": 1790610801.289, "cmd": "start", "loss_pct": 0.0, "latency_ms": 0.0, "jitter_ms": 0.0, "seed": 1, "ids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+{"t": 1790610916.102, "cmd": "block_tx", "src": 1, "blocked_links": 9}
+{"t": 1790611399.054, "cmd": "summary", "forwarded": 213614, "dropped": 15201, "drop_pct": 6.643}

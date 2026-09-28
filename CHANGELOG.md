@@ -6,6 +6,21 @@ this repository's history.
 
 ## 28 September 2026
 
+### Phases 4 and 5 passed on PX4; Phase 6 radio link fixed (evening)
+- **Phase 4 passed.** 55 PX4 trials: 10 per fault and a clean-shell cross-check round. New leader in
+  1.4–1.7 s, planned handover within 0.01 s, formation back within 6.6 s (13.4 s after a split), closest pair
+  6.03 m, goal 55 of 55 (`reports/PHASE_4.md`, `reports/phase4_faults.png`).
+- **Phase 5 passed on PX4.** 18 missions: no false leader change in any radio condition; a new leader in
+  1.6–2.5 s even at 300 ms with 30 % loss (`reports/PHASE_5.md`).
+- **Phase 6: the first stand-in runs failed** (3 of 4 did not reach the goal). The simulated autopilot flooded
+  the radio stand-in; the failed runs are kept in `reports/logs/phase_6_radio_saturated/`.
+  - The radio drone now gets a real telemetry port's set-up: PX4 Minimal mode at 1,200 B/s, the agent's
+    `--radio-link` streams and a 1 s data timeout, MAVROS time sync at 1 Hz. A config check refuses traffic
+    over 80 % of the radio.
+  - Two check flights then passed (`reports/PHASE_6.md`).
+- **Stop now left the radio relay running.** The mission script now cleans up on SIGTERM, the queue and the
+  launcher stop leftover relays, and the launcher refuses busy relay ports.
+
 ### PX4 tests
 - A test queue (`scripts/px4_queue.py`) for the remaining PX4 trials of Phases 4, 5 and 6, run one at a time
   with Start and Stop buttons on the new "PX4 tests" page of the ground-control app. Nothing starts by itself;
