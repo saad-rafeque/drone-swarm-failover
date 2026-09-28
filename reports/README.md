@@ -11,9 +11,9 @@ made from the logs, and the raw logs themselves.
 | [PHASE_1.md](PHASE_1.md) | Passed | Scaling to 10 PX4 SIH and MAVROS instances; memory and CPU at 3, 5 and 10 drones; the lean MAVROS plugin list. |
 | [PHASE_2.md](PHASE_2.md) | Passed | Pure-Python agent logic, unit tests and coverage, and 1,000 randomized fault runs. |
 | [PHASE_3.md](PHASE_3.md) | Passed | ROS 2 integration: 10-drone PX4 formation flights, three acceptance runs and three clean-shell cross-checks. |
-| [PHASE_4.md](PHASE_4.md) | Not completed | Fault trials F1 to F5 on PX4: indicative results, why the batch was stopped, and how to run it later. |
-| [PHASE_5.md](PHASE_5.md) | Passed in the fast simulator; PX4 in rounds | Radio realism: delay 50-300 ms x loss 0-30 %; false leader changes, takeover time, formation recovery. |
-| [PHASE_6.md](PHASE_6.md) | Software parts done; PX4 in rounds | Drone profiles, the telemetry-radio stand-in, the flight test plan, a fresh-clone check. |
+| [PHASE_4.md](PHASE_4.md) | In progress: 23 of 55 trials, all within limits | Fault trials F1 to F5 on PX4: indicative results, why the batch was stopped, and how to run it later. |
+| [PHASE_5.md](PHASE_5.md) | Passed in the fast simulator; PX4 part not run yet | Radio realism: delay 50-300 ms x loss 0-30 %; false leader changes, takeover time, formation recovery. |
+| [PHASE_6.md](PHASE_6.md) | Software parts done; PX4 part not run yet | Drone profiles, the telemetry-radio stand-in, the flight test plan, a fresh-clone check. |
 | [SCALING.md](SCALING.md) | Passed (fast simulator) | 1 to 100 drones: failover time, formation recovery, separation, heartbeat size and radio load. |
 
 ## Figures
@@ -44,11 +44,12 @@ made from the logs, and the raw logs themselves.
 | `logs/phase_1/` | Hover tests with 3, 5 and 10 drones (`n3`, `n5`, `n10`), their clean-shell cross-checks, and the runs with the default plugin list (`*_default_mavros`). |
 | `logs/phase_2/` | The 1,000 randomized fault runs and their cross-check, fault types F1 to F5 in the fast simulator, test coverage, separation breakdown. |
 | `logs/phase_3/` | Acceptance runs `run1` to `run3`, clean-shell cross-checks `crosscheck1` to `crosscheck3`, and the development runs before them (`dev_*`). |
-| `logs/phase_4/` | The Phase 4 batch, run in rounds from 28 September 2026: `F<k>_t<round>` trial folders. |
+| `logs/phase_4/` | The Phase 4 trials (`F<k>_t<round>`), run from 28 September 2026, and their table (`phase4_table.md`). |
+| `logs/px4_queue/` | The PX4 test queue's log (`runner.log`): every start, result and stop. |
 | `logs/phase_4_stopped/` | The second Phase 4 attempt of 27 September 2026, stopped by the owner: trial `F1_t1` and the table of what was measured. |
 | `logs/phase_4_on_battery/` | The first Phase 4 attempt on battery power: 12 trials, not used for acceptance (see the folder's README). |
 | `logs/phase_5_fastsim/` | Phase 5 in the fast simulator: every run (`radio_sweep.jsonl`) and the summary. |
-| `logs/phase_5/`, `logs/phase_6/` | Phase 5 and Phase 6 on PX4, run in rounds (folders appear as the rounds run). |
+| `logs/phase_5/`, `logs/phase_6/` | Phase 5 and Phase 6 on PX4 (folders appear when those trials run). |
 | `logs/formations/` | The formation-shape comparison: every run and the summary. |
 | `logs/scaling/` | The 1 to 100 drone scaling test, with clean and with harder radio, and the machine description. |
 | `logs/rl/` | Tuning of the classical avoider, training run `run1`, the fair comparison (`eval/`) and the real-map evaluations (`route_eval/`, `route_eval_10hz/`). |

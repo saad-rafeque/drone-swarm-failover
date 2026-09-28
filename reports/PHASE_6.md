@@ -1,7 +1,7 @@
 # Phase 6 — Mixed-reality readiness (still software only)
 Status: NOT COMPLETED — the software parts are done and checked; the PX4 test of the radio stand-in (the
-swarm must still pass Phase 4 F1 and F2 with drone 1 behind it) is scheduled in rounds on this laptop
-(`scripts/px4_queue.py`, as agreed with the owner on 28 September 2026).
+swarm must still pass Phase 4 F1 and F2 with drone 1 behind it) runs when the owner presses Start on the PX4
+tests page of the ground-control app (`scripts/px4_queue.py`).
 
 ## Acceptance criteria
 - [DONE] `config/profiles/`: `sim.yaml` (every drone simulated) and `mixed.yaml` (drone 1 real through a serial

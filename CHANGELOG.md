@@ -6,11 +6,14 @@ this repository's history.
 
 ## 28 September 2026
 
-### PX4 tests, in rounds
-- A test queue (`scripts/px4_queue.py`) runs the remaining 95 PX4 trials of Phases 4, 5 and 6 one at a time:
-  pause and resume on the new "PX4 tests" page of the ground-control app, and it continues after a shutdown
-  or restart (a user service, `scripts/px4_queue_service.sh`). Finished trials are never re-run; a trial
-  stopped halfway runs again from its start; tooling failures are kept as evidence.
+### PX4 tests
+- A test queue (`scripts/px4_queue.py`) for the remaining PX4 trials of Phases 4, 5 and 6, run one at a time
+  with Start and Stop buttons on the new "PX4 tests" page of the ground-control app. Nothing starts by itself;
+  running on battery is the owner's choice. Finished trials are never re-run; a trial stopped halfway runs again
+  from its start; tooling failures are kept as evidence.
+- The first 23 Phase 4 trials (rounds 1-4 and part of round 5, on the charger) met every limit: a new leader in
+  under 1.7 s, the planned handover in under 0.01 s, the formation back within 6.6 s (13.4 s after a radio
+  split heals), no two drones closer than 6.0 m, every goal reached.
 - The owner set the F5 formation-recovery limit to 20 s (15 s for the other faults).
 
 ### Phase 5 and Phase 6

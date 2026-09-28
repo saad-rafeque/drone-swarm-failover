@@ -166,3 +166,5 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .tablewrap th, .tablewrap td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; }
 .tablewrap th { color: var(--ink-2); font-weight: 500; position: sticky; top: 0; background: var(--panel); }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.qswitch { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+.qicon[data-state="stopped"] { color: var(--ink-2); }

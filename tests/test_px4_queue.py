@@ -1,6 +1,6 @@
 """PX4 test queue (scripts/px4_queue.py) and its app endpoints: which trials count as finished, what is kept
-as evidence, what runs again, and that "pause now" stops a running trial. No PX4: the trial command is replaced
-by a sleeping process."""
+as evidence, what runs again, that "stop now" stops a running trial, that the runner exits when stopped, and
+that running on battery is the owner's choice. No PX4: the trial command is replaced by a sleeping process."""
 from __future__ import annotations
 
 import json
@@ -63,7 +63,7 @@ def test_interruptions_are_discarded_and_do_not_count(repo):
     assert not t.path.exists() and q.attempts_of(t) == 0 and not q.is_given_up(t)
 
 
-def test_pause_now_stops_the_running_trial(repo, monkeypatch):
+def test_stop_now_stops_the_running_trial(repo, monkeypatch):
     real_popen = subprocess.Popen
     monkeypatch.setattr(q.subprocess, "Popen", lambda cmd, **kw: real_popen(["sleep", "60"], **kw))
     monkeypatch.setattr(q, "power_ok", lambda: (True, ""))
@@ -71,20 +71,49 @@ def test_pause_now_stops_the_running_trial(repo, monkeypatch):
     q.set_mode("run")
     runner = q.Runner()
     t = runner.trials[0]
-    threading.Timer(1.0, lambda: q.set_mode("pause_now")).start()
+    threading.Timer(1.0, lambda: q.set_mode("stop_now")).start()
     t0 = time.time()
     result = runner.run_trial(t)
-    assert result == "interrupted: paused by the owner" and time.time() - t0 < 30
+    assert result == "interrupted: stopped by the owner" and time.time() - t0 < 30
     assert not t.path.exists() and q.attempts_of(t) == 0
     status = json.loads(q.STATUS.read_text())
     assert status["recent"][-1]["name"] == "F1_t1" and len(status["trials"]) == 95
 
 
+def test_runner_exits_when_stopped_and_battery_is_the_owners_choice(repo, monkeypatch):
+    q.set_control(mode="stop_after", allow_battery=False)
+    runner = q.Runner()
+    runner.loop()                                           # returns at once: nothing runs unless started
+    assert json.loads(q.STATUS.read_text())["state"] == "stopped"
+    monkeypatch.setattr(q, "power_state", lambda: {"ac_online": False, "profile": "balanced"})
+    assert q.power_ok()[0] is False                         # battery not allowed: wait for the charger
+    q.set_control(allow_battery=True)
+    assert q.power_ok() == (True, "")                       # the owner allowed battery: run anyway
+
+
 def test_app_endpoints(tmp_path):
     assert not queue_control("explode", tmp_path)["ok"]
-    assert queue_control("pause_after", tmp_path)["ok"]
-    assert json.loads((tmp_path / "control.json").read_text())["mode"] == "pause_after"
-    queue_control("resume", tmp_path)
-    assert queue_status(tmp_path)["mode"] == "run" and queue_status(tmp_path)["runner_alive"] is False
+    assert queue_control("stop_after", tmp_path)["ok"]
+    assert json.loads((tmp_path / "control.json").read_text())["mode"] == "stop_after"
+    assert queue_control("battery", tmp_path, value=False)["ok"]
+    st = queue_status(tmp_path)
+    assert st["mode"] == "stop_after" and st["allow_battery"] is False and st["runner_alive"] is False
+    started = []
+    assert queue_control("start", tmp_path, start=lambda: started.append(1) or "Started")["msg"] == "Started"
+    assert started == [1]
     (tmp_path / "status.json").write_text(json.dumps({"state": "running", "pid": 1, "updated": "2000-01-01T00:00:00"}))
     assert queue_status(tmp_path)["runner_alive"] is False                  # stale status: not alive
+
+
+def test_the_app_can_load_the_queue_script():
+    """The Start button loads scripts/px4_queue.py inside the app (this is what failed on 28 September 2026)."""
+    import sys as _sys
+    from swarm_tools.gcs import server
+    saved = _sys.modules.pop("px4_queue", None)
+    try:
+        mod = server._queue_module()
+        assert len(mod.queue()) == 95 and callable(mod.start_runner)
+    finally:
+        _sys.modules.pop("px4_queue", None)
+        if saved is not None:
+            _sys.modules["px4_queue"] = saved

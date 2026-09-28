@@ -35,15 +35,17 @@
       </div>
     </div>
     <div class="row">
-      <button id="b-pause-after" type="button" title="The running trial finishes first; nothing is lost">Pause after this trial</button>
-      <button id="b-pause-now" class="warn" type="button" title="Stops the running trial at once; it runs again later from its start">Pause now</button>
-      <button id="b-resume" class="primary" type="button">Resume</button>
+      <button id="b-start" class="primary" type="button">Start</button>
+      <button id="b-stop-after" type="button" title="The running trial finishes first; nothing is lost">Stop after this trial</button>
+      <button id="b-stop-now" class="warn" type="button" title="Stops the running trial at once; it runs again from its start next time">Stop now</button>
     </div>
+    <label class="qswitch"><input type="checkbox" id="c-battery"> Allow running without the charger</label>
+    <p class="hint" id="q-power"></p>
     <p class="hint" id="q-msg" role="status" aria-live="polite"></p>
-    <p class="hint">The tests keep running when this page or the app is closed. After a shutdown or restart they
-      continue by themselves once you log in and the charger is connected, unless you paused them. A finished
-      trial is never lost; a trial stopped halfway runs again from its start. The laptop is slow while a trial
-      runs (10 PX4 drones).</p>
+    <p class="hint">Nothing starts by itself: the tests run only after you press Start, and stop when you press
+      Stop. A finished trial is never lost: Start always continues with the first trial that has not finished,
+      also after a shutdown or restart. A trial stopped halfway runs again from its start. The laptop is slow
+      while a trial runs (10 PX4 drones).</p>
   </section>
   <section class="card" aria-labelledby="h-progress">
     <h2 id="h-progress">Progress</h2>

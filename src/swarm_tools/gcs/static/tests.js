@@ -1,4 +1,4 @@
-// PX4 tests page: the status of the PX4 test queue (scripts/px4_queue.py) and its pause / resume buttons.
+// PX4 tests page: the status of the PX4 test queue (scripts/px4_queue.py), its Start / Stop buttons and battery switch.
 (() => {
   "use strict";
   const $ = (id) => document.getElementById(id);
@@ -8,7 +8,7 @@
     phase_6: "Phase 6: F1 and F2 with drone 1 behind the radio stand-in",
   };
   const STATES = {   // icon + label, never colour alone
-    running: ["▶", "Running"], paused: ["❚❚", "Paused"], waiting: ["⏳", "Waiting"],
+    running: ["▶", "Running"], stopped: ["■", "Stopped"], waiting: ["⏳", "Waiting"],
     finished: ["✓", "Finished"], starting: ["○", "Starting"], "not started": ["○", "Not started"],
     "between trials": ["▶", "Running"],
   };
@@ -19,7 +19,7 @@
   function render(st) {
     const alive = st.runner_alive;
     let key = st.state || "not started";
-    if (!alive && key !== "finished") key = "not started";
+    if (!alive && key !== "finished") key = st.state === "stopped" || st.updated ? "stopped" : "not started";
     const [icon, label] = STATES[key] || ["○", key];
     $("q-icon").textContent = icon;
     $("q-icon").dataset.state = key;
@@ -27,15 +27,24 @@
     if (key === "running" && st.current) {
       detail = `${PHASES[st.current.phase].split(":")[0]}, trial ${st.current.name}: ${mins(st.current.elapsed_s)} so far`;
     } else if (!alive && st.state !== "finished") {
-      detail = st.updated ? `The runner is not running (last seen ${st.updated.replace("T", " ")}). Start it with: bash scripts/px4_queue_service.sh install`
-        : "The runner has not been started. Start it with: bash scripts/px4_queue_service.sh install";
+      detail = st.state === "stopped" ? "Press Start to continue with the next unfinished trial."
+        : st.updated ? `Not running (last seen ${st.updated.replace("T", " ")}). Press Start to continue.`
+        : "Not started yet. Press Start when you want the tests to run.";
     }
-    if (alive && st.mode !== "run" && key === "running") detail += " — pausing after this trial";
-    $("q-state").textContent = alive && st.mode === "pause_now" && key === "running" ? "Pausing…" : label;
+    if (alive && st.mode === "stop_after") detail += " — stopping after this trial";
+    $("q-state").textContent = alive && st.mode === "stop_now" ? "Stopping…" : label;
     $("q-detail").textContent = detail;
-    $("b-pause-after").disabled = st.mode !== "run";
-    $("b-pause-now").disabled = st.mode === "pause_now" || key !== "running";
-    $("b-resume").disabled = st.mode === "run";
+    $("b-start").disabled = alive && st.mode === "run";
+    $("b-stop-after").disabled = !alive || st.mode !== "run";
+    $("b-stop-now").disabled = !alive || st.mode === "stop_now";
+    if (document.activeElement !== $("c-battery")) $("c-battery").checked = !!st.allow_battery;
+    const pw = st.power || {};
+    const onBattery = pw.ac_online === false;
+    $("q-power").textContent = pw.ac_online == null ? "" : (onBattery
+      ? `On battery (${pw.battery_pct} %${pw.profile ? `, ${pw.profile} mode` : ""}).` + (st.allow_battery
+        ? " Trials run anyway; on battery the CPU can slow down and results can be a little worse (each trial records the power state)."
+        : " Trials wait for the charger.")
+      : `On the charger${pw.profile ? ` (${pw.profile} mode)` : ""}.`);
 
     const prog = st.progress || {};
     $("q-progress").innerHTML = Object.entries(PHASES).map(([ph, name]) => {
@@ -68,15 +77,16 @@
       $("q-detail").textContent = "The app cannot read the queue status right now.";
     }
   }
-  async function act(action) {
-    const r = await fetch("/api/tests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action }) });
+  async function act(action, value) {
+    const r = await fetch("/api/tests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, value }) });
     const res = await r.json();
     $("q-msg").textContent = res.msg || "";
     refresh();
   }
-  $("b-pause-after").addEventListener("click", () => act("pause_after"));
-  $("b-pause-now").addEventListener("click", () => act("pause_now"));
-  $("b-resume").addEventListener("click", () => act("resume"));
+  $("b-start").addEventListener("click", () => act("start"));
+  $("b-stop-after").addEventListener("click", () => act("stop_after"));
+  $("b-stop-now").addEventListener("click", () => act("stop_now"));
+  $("c-battery").addEventListener("change", (e) => act("battery", e.target.checked));
   refresh();
   setInterval(refresh, 3000);
 })();

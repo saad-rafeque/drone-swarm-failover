@@ -1,6 +1,7 @@
 # Phase 5 — Radio realism (telemetry-like links)
 Status: NOT COMPLETED — the sweep passed in the fast simulator (the real agent code); the same sweep on PX4
-(`scripts/phase5_runs.sh`) is scheduled in rounds on this laptop and is not finished yet.
+runs when the owner presses Start on the PX4 tests page of the ground-control app (`scripts/px4_queue.py`)
+and is not done yet.
 
 ## Acceptance criteria
 - [DONE, fast simulator] Sweep the heartbeat link: delay {50, 150, 300} ms x loss {0, 10, 30} %. Nine
@@ -56,7 +57,7 @@ Status: NOT COMPLETED — the sweep passed in the fast simulator (the real agent
 
 ## Known limitations / honest caveats
 - **Fast simulator only so far.** Point-mass physics; PX4's own timing is not in these numbers. The PX4
-  sweep (one mission without a fault and one F1 mission per condition) is scheduled in rounds; it is much
+  sweep (one mission without a fault and one F1 mission per condition) runs when the owner starts it; it is much
   smaller.
 - **Independent packet loss.** Real radios lose packets in bursts (interference, range); bursts would stretch
   the time to a new leader more than the same average loss spread evenly.
@@ -64,5 +65,5 @@ Status: NOT COMPLETED — the sweep passed in the fast simulator (the real agent
   30 ms jitter.
 
 ## Next phase: what is needed from the user
-Nothing. The PX4 sweep is scheduled in rounds, as agreed with the owner on 28 September 2026: 10 drones, one
-part at a time, only on the charger.
+Nothing. The PX4 sweep runs whenever the owner presses Start on the PX4 tests page (10 drones, one mission at a
+time; Stop at any time).

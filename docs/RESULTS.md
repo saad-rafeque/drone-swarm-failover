@@ -18,10 +18,9 @@ Everything here is simulation. Each number points at the file it came from.
 | 1,000 random runs with crashes, radio loss, delays and splits | exactly one leader after convergence in 1,000 of 1,000; median convergence 0.145 s after the last fault (p95 2.12 s, max 2.72 s) | `reports/PHASE_2.md` |
 | Known weak spot | 143 of those 1,000 runs had two drones closer than 5 m; every one contained a random radio split or random link drops (drones that cannot hear each other cannot be pushed apart) | `reports/PHASE_2.md` |
 
-Fault types, 10 drones, 20 runs each (fast simulator). On PX4, Phase 4 was started and stopped (this
-laptop is too weak for the 55-trial batch); its indicative results agree, except that F5's formation took
-about 17 s to recover after the heal, within the 20 s the owner set for F5 on 28 September 2026
-(`reports/PHASE_4.md`):
+Fault types, 10 drones, 20 runs each (fast simulator). On PX4, 23 of the 55 Phase 4 trials ran on 28 September
+2026 and met every limit: new leader in under 1.7 s, planned handover in under 0.01 s, formation back within
+6.6 s (13.4 s after a healed split), closest pair 6.0 m or more (`reports/PHASE_4.md`):
 
 | Fault | New leader agreed (median / worst) | Formation back under 2 m | Closest pair | Goal reached |
 |---|---|---|---|---|
@@ -56,7 +55,7 @@ without a fault, 20 with the leader killed (F1) and 20 with its radio cut (F2): 
   mission reached the goal.
 
 Evidence: `reports/PHASE_5.md`, `reports/logs/phase_5_fastsim/` (`summary.md`, `summary.json`,
-`radio_sweep.jsonl`), `reports/phase5_radio_sweep.png`. The same sweep on PX4 is scheduled in rounds.
+`radio_sweep.jsonl`), `reports/phase5_radio_sweep.png`. The same sweep on PX4 runs when the owner starts it.
 
 ## Formation shapes (fast simulator)
 Four shapes with the same agent code, 10 drones, clean radio, 10 runs each of: no fault, F1 (leader killed),
@@ -182,7 +181,7 @@ The earlier run in the app on 26 September 2026 was stopped on purpose after 76.
   transmit turns of up to 131 ms, 1 % loss, a 1 s buffer. Its tests (`tests/test_radio_proxy.py`, 6 tests)
   measure the rate (2,000 bytes delivered in 0.45-0.75 s), the shared channel, the turn wait, loss and the
   full buffer with local sockets. The PX4 test (F1 and F2 with drone 1 behind it, `scripts/phase6_runs.sh`)
-  is scheduled in rounds.
+  runs when the owner starts it.
 - **Flight test plan**: `docs/FLIGHT_TEST_PLAN.md` (one real drone with simulated ones; PX4 safety
   parameters checked in the PX4 source; go/no-go checklist; abort criteria; kill-switch procedure).
 

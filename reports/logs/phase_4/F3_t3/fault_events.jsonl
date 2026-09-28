@@ -1,0 +1,2 @@
+{"t": 1790584268.848, "kind": "F3", "action": "cruise_detected"}
+{"t": 1790584327.553, "kind": "F3", "action": "fault", "seed": 3, "delay_after_cruise_s": 58.56, "t_fault": 1790584327.551, "master_before": 1, "target": 1, "px4_param_rc": 0, "px4_param_out": "SIM_BAT_MIN_PCT: curr: 50.0000 -> new: 20.0000"}

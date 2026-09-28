@@ -27,6 +27,7 @@ skipped when those are not installed. The Phase 2 coverage record (`election.py`
 | `test_gcs_backend.py` | The ground-control app: commands, faults, snapshots, takeover timing, and which files the Docs page may serve. |
 | `test_tools_scripts.py` | Safety checks on helper scripts: the Kaggle bundle never packs a key, and validation and test courses stay apart. |
 | `test_radio_proxy.py` | The telemetry-radio stand-in: shared rate, transmit-turn wait, loss, full buffer and order, with local sockets. |
+| `test_px4_queue.py` | The PX4 test queue: which trials count as finished, what is kept, Stop now, battery choice, and that the app can load it. |
 | `test_profiles.py` | Drone profiles: valid and invalid files, and that the simulation tools refuse a real drone. |
 | `test_ros_constants.py` | Constants the ROS node relies on, checked against their sources (needs ROS 2). |
 

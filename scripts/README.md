@@ -30,6 +30,7 @@ when they import the project packages. The exact command lines and run times are
 | `faults.py` | Phase 4 fault injection (F1 to F5), used by `run_mission.py --fault`. |
 | `phase4_runs.sh` | Phase 4 trials, interleaved by round; skips finished trials and waits for the charger. |
 | `phase4_all.sh` | The full Phase 4 batch: rounds 1 to 10 of every fault, then a cross-check round from a clean shell. |
+| `px4_queue.py` | The PX4 test queue: the remaining Phase 4, 5 and 6 trials one at a time, started and stopped by the owner (the PX4 tests page of the app uses it). |
 | `phase5_runs.sh` | Phase 5 on PX4: the radio sweep (delay 50/150/300 ms x loss 0/10/30 %), a mission without a fault and one with the leader killed per condition; resumable. |
 | `phase6_runs.sh` | Phase 6 on PX4: F1 and F2 with drone 1 behind the telemetry-radio stand-in (`config/profiles/standin.yaml`); resumable. |
 | `batch_power.sh` | Shared by the PX4 batches: wait for the charger and a power profile other than power saver. |

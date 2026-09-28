@@ -1,17 +1,16 @@
 # Phase 4 — Failover under faults
-Status: NOT COMPLETED — stopped by the owner on 27 September 2026 because this laptop cannot run the
-55-trial PX4 batch reliably. The tools are ready and checked; this report says what was measured so
-far (indicative only), why the runs were stopped, and exactly how to run Phase 4 later.
+Status: IN PROGRESS — 23 of the 55 trials done (28 September 2026, all on the charger), and every one met
+every limit. The other trials run whenever the owner presses Start on the "PX4 tests" page of the
+ground-control app (`scripts/px4_queue.py`); nothing starts by itself.
 
 > **In short.** In Phase 4, ten PX4 drones fly the mission while one of five faults is injected (leader
-> killed, leader's radio lost, leader's battery low, a follower killed, radio network split). Each fault
-> had to be run 10 times (about 7 hours). The first attempt ran on battery (power-saver mode, CPU at
-> 100 %) until the battery ran out; the second, on the charger, still overloaded the laptop and was
-> stopped by the owner. So far: a new leader takes over in about 1.6–2.2 s (limit 3 s), the planned
-> battery handover in 0.35–0.80 s (limit 1 s), and no two drones came closer than 5 m. Only F5 (after the
-> radio split heals) needed about 17 s to re-form; on 28 September 2026 the owner set F5's limit to 20 s
-> (it was 15 s), so that is now within the limit. How to run it later is in
-> "How to run Phase 4 later" below.
+> killed, leader's radio lost, leader's battery low, a follower killed, radio network split), 10 times each
+> plus a clean-shell cross-check. The first two attempts on 27 September 2026 overloaded the laptop (the
+> first ran on battery in power-saver mode). On 28 September 2026 23 trials ran on the charger: a new
+> leader took over 1.4–1.7 s after the leader was killed or lost its radio (limits 3 s median, 4 s worst),
+> the planned battery handover took under 0.01 s (limit 1 s), the formation was back within 6.6 s
+> (13.4 s after a radio split heals; limits 15 s and 20 s), no two drones came closer than 6.03 m, and
+> every mission reached its goal (23 of 23).
 
 ## What Phase 4 must show (`docs/SPECIFICATION.md`, section 7)
 Faults, each at a random time during cruise, 10 trials each, 10 drones:
@@ -44,6 +43,27 @@ partial runs indicate (conditions below):
 - [NOT MEASURED] Minimum separation >= 5 m — indicative: 6.11 m or more in every trial.
 - [NOT MEASURED] Goal reached >= 9/10 per fault — indicative: every trial that ran to the end reached
   the goal (10 of 10).
+
+## Results so far (28 September 2026, 23 trials on the charger)
+Made by `scripts/phase4_metrics.py` from `reports/logs/phase_4/F?_t*` (`phase4_table.json`, `phase4_table.md`).
+Rounds 1 to 4 of all five faults and round 5 of F1-F3; every trial ran on the charger in the performance
+profile (`run_summary.json`, `power_before`).
+
+| Fault | Trials | New leader median / worst (s) | Limit (s) | Formation < 2 m median / worst (s) | Recovered within limit (15 s; F5: 20 s) | Closest pair (m) | Goal reached | Other |
+|---|---|---|---|---|---|---|---|---|
+| F1 | 5 | 1.51 / 1.69 | 3.0 / 4.0 | 5.20 / 6.14 | 5/5 | 8.04 | 5/5 |  |
+| F2 | 5 | 1.43 / 1.48 | 3.0 / 4.0 | 5.53 / 6.60 | 5/5 | 7.58 | 5/5 |  |
+| F3 | 5 | 0.00 / 0.01 | 1.0 | 4.11 / 4.25 | 5/5 | 8.08 | 5/5 | old leader landed at home: 5/5 |
+| F4 | 4 | no change | no change | 4.92 / 5.78 | 4/4 | 7.91 | 4/4 | leader changed: 0/4 |
+| F5 | 4 | 0.28 / 0.35 | 3.0 (after heal) | 12.43 / 13.44 | 4/4 | 6.03 | 4/4 |  |
+
+- **F3, under 0.01 s:** the old leader names its successor when its battery reaches 30 % (its `retire_t`),
+  and drone 2 claimed 2-5 ms later in all five trials: on a CPU that is not overloaded, the handover message
+  arrives at once. In the overloaded battery attempt it took 0.35-0.80 s.
+- **F5 within 15 s:** on the charger the formation re-formed after a healed radio split in 12.4 s (worst
+  13.4 s), within even the original 15 s; the 17 s of 27 September came from the slowed CPU on battery.
+- Three trials were cut off when the charger was unplugged (F5_t1, F3_t5, F4_t5); their partial files were
+  discarded and F5_t1 and F3_t5 ran again from the start (`reports/logs/px4_queue/runner.log`).
 
 ## What happened (27 September 2026)
 

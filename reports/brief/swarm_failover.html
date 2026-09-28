@@ -305,7 +305,7 @@
           <tr><td>Formation shapes</td><td>Line abreast, column and echelon against the V, with the same faults</td>
             <td><span class="chip warn">V only</span> the others come closer than 5&nbsp;m after faults</td></tr>
           <tr><td>Faults on PX4</td><td>Leader killed, radio lost, low battery, follower lost, radio split; 10 trials each</td>
-            <td><span class="chip next">running</span> in rounds</td></tr>
+            <td><span class="chip ok">23 of 55 passed</span> every limit met so far</td></tr>
         </tbody>
       </table>
     </div>
@@ -452,10 +452,10 @@
         <p>Real-map obstacles, tuned classical baseline, learned policy, fair comparison on unseen routes.</p></li>
       <li><div class="st"><b>Longer RL training</b><span class="chip next">ready</span></div>
         <p>More steps, several seeds, real-map training areas, brake inside training.</p></li>
-      <li class="now"><div class="st"><b>Fault and bad-radio trials on PX4</b><span class="chip next">running</span></div>
-        <p>95 PX4 trials run one at a time on this laptop and can be paused and resumed from the app; they carry on after
-          a restart. First results: a new leader in 1.6&ndash;2.2&nbsp;s, the planned battery handover in under 1&nbsp;s, no two
-          drones closer than 6&nbsp;m. The bad-radio sweep already passed in the fast simulator.</p></li>
+      <li class="now"><div class="st"><b>Fault and bad-radio trials on PX4</b><span class="chip next">23 of 95 done</span></div>
+        <p>The PX4 trials run one at a time on this laptop when the owner presses Start in the app, and stop when asked.
+          The first 23 met every limit: a new leader in under 1.7&nbsp;s, the planned battery handover in under 0.01&nbsp;s,
+          no two drones closer than 6&nbsp;m, every goal reached. The bad-radio sweep already passed in the fast simulator.</p></li>
       <li class="done"><div class="st"><b>Hardware readiness</b><span class="chip ok">software done</span></div>
         <p>A telemetry-radio stand-in (its PX4 test is in the queue), drone profiles where a real drone only needs its
           connection address, and a flight test plan with go/no-go checklist and kill-switch procedure.</p></li>
