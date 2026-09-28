@@ -103,7 +103,7 @@ instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refu
 | Fair comparison, 90 unseen courses | `PYTHONPATH=src python3 scripts/rl_eval.py --policy models/avoid_policy.npz --episodes 30 --jobs 3` | ~9 min |
 | Real map, full agent code | `PYTHONPATH=src python3 scripts/rl_eval_route.py --policy models/avoid_policy.npz --seeds 5 --jobs 3` | ~8 min |
 | Use a policy in the app | copy its `best_policy.npz` to `models/avoid_policy.npz` | |
-| Long training on a GPU | step by step in `docs/KAGGLE_GUIDE.md` | ~11 h per seed on Kaggle |
+| Long training on a GPU | step by step in `docs/KAGGLE_GUIDE.md` | ~11 h per seed on Kaggle (two seeds can run at once) |
 | Learning curve of a Kaggle run | `python3 scripts/plot_rl_training.py reports/logs/rl/kaggle_seed1 --out reports/rl_training_kaggle_seed1.png` | seconds |
 
 ## 6. Documents

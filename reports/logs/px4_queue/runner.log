@@ -56,3 +56,33 @@
 2026-09-28T14:41:17 phase_4/F4_t5: partial files of an interrupted attempt removed (interrupted: charger unplugged or power saver on)
 2026-09-28T15:10:19 runner started (pid 137925); mode run, running on battery allowed
 2026-09-28T15:10:19 phase_4/F4_t5: start
+2026-09-28T15:15:47 phase_4/F4_t5: COMPLETED after 5.5 min
+2026-09-28T15:15:47 phase_4/F5_t5: start
+2026-09-28T15:21:25 phase_4/F5_t5: COMPLETED after 5.6 min
+2026-09-28T15:21:25 phase_4/F1_t6: start
+2026-09-28T15:26:52 phase_4/F1_t6: COMPLETED after 5.5 min
+2026-09-28T15:26:52 phase_4/F2_t6: start
+2026-09-28T15:32:25 phase_4/F2_t6: COMPLETED after 5.5 min
+2026-09-28T15:32:25 phase_4/F3_t6: start
+2026-09-28T15:39:10 phase_4/F3_t6: COMPLETED after 6.7 min
+2026-09-28T15:39:10 phase_4/F4_t6: start
+2026-09-28T15:44:38 phase_4/F4_t6: COMPLETED after 5.5 min
+2026-09-28T15:44:39 phase_4/F5_t6: start
+2026-09-28T15:50:23 phase_4/F5_t6: COMPLETED after 5.7 min
+2026-09-28T15:50:23 phase_4/F1_t7: start
+2026-09-28T15:55:52 phase_4/F1_t7: COMPLETED after 5.5 min
+2026-09-28T15:55:52 phase_4/F2_t7: start
+2026-09-28T16:01:26 phase_4/F2_t7: COMPLETED after 5.6 min
+2026-09-28T16:01:26 phase_4/F3_t7: start
+2026-09-28T16:07:05 phase_4/F3_t7: COMPLETED after 5.6 min
+2026-09-28T16:07:05 phase_4/F4_t7: start
+2026-09-28T16:12:43 phase_4/F4_t7: COMPLETED after 5.6 min
+2026-09-28T16:12:43 phase_4/F5_t7: start
+2026-09-28T16:18:17 phase_4/F5_t7: COMPLETED after 5.6 min
+2026-09-28T16:18:17 phase_4/F1_t8: start
+2026-09-28T16:23:55 phase_4/F1_t8: COMPLETED after 5.6 min
+2026-09-28T16:23:56 phase_4/F2_t8: start
+2026-09-28T16:29:36 phase_4/F2_t8: COMPLETED after 5.7 min
+2026-09-28T16:29:37 phase_4/F3_t8: start
+2026-09-28T16:35:10 phase_4/F3_t8: COMPLETED after 5.6 min
+2026-09-28T16:35:10 phase_4/F4_t8: start

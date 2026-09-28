@@ -1,0 +1,4 @@
+{"t": 1790590566.241, "cmd": "start", "loss_pct": 0.0, "latency_ms": 0.0, "jitter_ms": 0.0, "seed": 1, "ids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+{"t": 1790590702.223, "cmd": "partition", "groups": [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]], "blocked_links": 50}
+{"t": 1790590719.651, "cmd": "heal", "blocked_links": 0}
+{"t": 1790590879.461, "cmd": "summary", "forwarded": 117231, "dropped": 3810, "drop_pct": 3.148}
