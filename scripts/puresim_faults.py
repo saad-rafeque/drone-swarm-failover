@@ -23,8 +23,10 @@ from swarm_tools.puresim import PureSim  # noqa: E402
 RMS_OK_M = 2.0
 
 
-def run_trial(cfg, fault: str, seed: int, latency: float, loss: float, t_fault: float | None = None) -> dict:
-    sim = PureSim(cfg, seed=seed, latency_s=latency, jitter_s=latency * 0.2, loss=loss)
+def run_trial(cfg, fault: str, seed: int, latency: float, loss: float, t_fault: float | None = None,
+              jitter: float | None = None) -> dict:
+    """latency, jitter in seconds (jitter defaults to 20 % of latency), loss as a fraction."""
+    sim = PureSim(cfg, seed=seed, latency_s=latency, jitter_s=latency * 0.2 if jitter is None else jitter, loss=loss)
     rng = sim.rng
     t_fault = t_fault if t_fault is not None else rng.uniform(40.0, 150.0)
     ids = cfg.drone_ids
@@ -83,6 +85,11 @@ def run_trial(cfg, fault: str, seed: int, latency: float, loss: float, t_fault: 
     flyers = [i for i in sim.alive_ids() if sim.role(i) != Role.RETIRED]
     res["goal_reached"] = all(math.hypot(sim.drones[i].pos[0] - gx, sim.drones[i].pos[1] - gy) < 60.0
                               and sim.drones[i].landed for i in flyers)
+    # shape-independent: every drone still flying landed, and the leader landed at the goal (a long column or
+    # echelon lands its tail more than 60 m behind the goal although the mission ended normally)
+    lead = min(flyers) if flyers else None
+    res["all_landed_leader_at_goal"] = bool(flyers) and all(sim.drones[i].landed for i in flyers) and \
+        math.hypot(sim.drones[lead].pos[0] - gx, sim.drones[lead].pos[1] - gy) < 60.0
     if state["retiree"]:
         d = sim.drones[state["retiree"]]
         home = sim.agents[state["retiree"]].home

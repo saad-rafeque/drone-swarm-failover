@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from swarm_agent.config import default_config_path, load_config  # noqa: E402
-from swarm_agent.formation import assign_slots, v_slot_body  # noqa: E402
+from swarm_agent.formation import assign_slots, slot_body  # noqa: E402
 
 SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 MASTER, FOLLOWER, SLOT, LIMIT = "#2a78d6", "#a3a29c", "#eb6834", "#52514e"
@@ -102,7 +102,7 @@ def main() -> None:
             lf.append(-de * math.sin(h) + dn * math.cos(h))
         ax_fm.scatter(lf, fw, s=1.5, color=FOLLOWER, alpha=0.35, linewidths=0)
     for i, slot in slots.items():
-        f, l = v_slot_body(slot, cfg.formation.spacing_m, half)
+        f, l = slot_body(slot, cfg.formation.spacing_m, half, cfg.formation.shape)
         ax_fm.scatter([l], [f], s=36, facecolors="none", edgecolors=SLOT, linewidths=1.3, zorder=3)
         ax_fm.annotate(str(i), (l, f), xytext=(6, -2), textcoords="offset points", fontsize=7, color=INK2)
     ax_fm.scatter([0], [0], s=36, color=MASTER, zorder=3)

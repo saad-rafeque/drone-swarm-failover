@@ -26,6 +26,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 RMS_LIMIT_M = 2.0
 STAY_S = 5.0
+# formation back under 2 m within this time; F5 set to 20 s by the owner on 28 September 2026
+RECOVERY_LIMIT_S = {"F1": 15.0, "F2": 15.0, "F3": 15.0, "F4": 15.0, "F5": 20.0}
 
 
 def load_states(d: Path) -> list[dict]:
@@ -133,7 +135,9 @@ def summarize(rows: list[dict]) -> dict:
             "handover_measured": len(ho),
             "recovery_median_s": round(statistics.median(rec), 2) if rec else None,
             "recovery_worst_s": round(max(rec), 2) if rec else None,
-            "recovered_within_15s": sum(1 for r in rs if r.get("recovery_s") is not None and r["recovery_s"] <= 15.0),
+            "recovery_limit_s": RECOVERY_LIMIT_S.get(f, 15.0),
+            "recovered_within_limit": sum(1 for r in rs if r.get("recovery_s") is not None
+                                          and r["recovery_s"] <= RECOVERY_LIMIT_S.get(f, 15.0)),
             "min_sep_m": min(r["min_sep_m"] for r in rs if r.get("min_sep_m") is not None),
             "goal_reached": sum(1 for r in rs if r.get("goal_reached")),
         }
@@ -154,7 +158,7 @@ def fmt(v, digits: int = 2) -> str:
 def markdown(table: dict, rows: list[dict]) -> str:
     """Per-fault and per-trial tables for reports/PHASE_4.md (numbers straight from the logs)."""
     out = ["| Fault | Trials | New leader median / worst (s) | Limit (s) | Formation < 2 m median / worst (s) | "
-           "Recovered within 15 s | Closest pair (m) | Goal reached | Other |", "|---|---|---|---|---|---|---|---|---|"]
+           "Recovered within limit (15 s; F5: 20 s) | Closest pair (m) | Goal reached | Other |", "|---|---|---|---|---|---|---|---|---|"]
     for f, t in table.items():
         other = ""
         if f == "F3":
@@ -163,7 +167,7 @@ def markdown(table: dict, rows: list[dict]) -> str:
             other = f"leader changed: {t['master_changed']}/{t['trials']}"
         ho = "no change" if f == "F4" else f"{fmt(t['handover_median_s'])} / {fmt(t['handover_worst_s'])}"
         out.append(f"| {f} | {t['trials']} | {ho} | {LIMITS.get(f, '')} | {fmt(t['recovery_median_s'])} / "
-                   f"{fmt(t['recovery_worst_s'])} | {t['recovered_within_15s']}/{t['trials']} | {fmt(t['min_sep_m'])} | "
+                   f"{fmt(t['recovery_worst_s'])} | {t['recovered_within_limit']}/{t['trials']} | {fmt(t['min_sep_m'])} | "
                    f"{t['goal_reached']}/{t['trials']} | {other} |")
     out += ["", "| Trial | Leader before | Target | Fault at (s) | New leader (s) | New leader id | Formation < 2 m (s) | "
             "Max RMS after (m) | Closest pair (m) | Goal |", "|---|---|---|---|---|---|---|---|---|---|"]

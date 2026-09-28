@@ -41,7 +41,7 @@ Check the environment: `scripts/env_audit.sh`. Before any PX4 run: `free -m` sho
 | Save changes to GitHub (private repository `saad-rafeque/drone-swarm-failover`) | `git status`, then `git add <files>`, `git commit -m "<message>"` and `git push` (the laptop's deploy key is used automatically; see `docs/KNOWN_ISSUES.md`, Housekeeping) |
 
 In the app: choose home and target (type or pick on the map), number of drones (1-100), obstacles
-(none or real buildings), avoidance, flight height; Start; change the speed; use the fault buttons
+(none or real buildings), avoidance, flight height, formation (V; line, column and echelon are marked experimental); Start; change the speed; use the fault buttons
 (kill leader, kill 2/3/4, per-drone crash / motor / battery / GPS / radio faults, radio split).
 Routes up to 400 km; longer than a battery leg they get charging stops automatically.
 
@@ -63,7 +63,11 @@ last events are listed at the top right.
 | 1: N drones hover | `scripts/ros_env.sh python3 scripts/phase1_scale_test.py --n 10` | `reports/logs/phase_1/n10/` |
 | 3: formation mission | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir reports/logs/phase_3/run1` | run folder: `states.jsonl`, `metrics.json`, ... |
 | 3: acceptance batch (3 runs + 3 clean-shell cross-checks) | `bash scripts/phase3_runs.sh` | `reports/logs/phase_3/` |
-| 4: fault trials (not completed; needs a stronger computer or `N=5`, ~7 h) | `bash scripts/phase4_all.sh 1`, then `python3 scripts/phase4_metrics.py --out ... --md ... reports/logs/phase_4/F?_t*` and `python3 scripts/plot_phase4.py` | `reports/logs/phase_4/`; how-to: `reports/PHASE_4.md` |
+| 4: fault trials, in rounds (one round = F1-F5 once, ~40 min; 10 drones; waits for the charger) | `bash scripts/phase4_runs.sh <r> <r>` for round r = 1..10, then the clean-shell cross-check round (`scripts/phase4_all.sh` does all of it in one go, ~7 h); then `python3 scripts/phase4_metrics.py --out ... --md ... reports/logs/phase_4/F?_t*` and `python3 scripts/plot_phase4.py` | `reports/logs/phase_4/`; how-to: `reports/PHASE_4.md` |
+| 5: radio sweep on PX4 (9 conditions, one mission without a fault and one F1 mission each, ~16 min per condition) | `bash scripts/phase5_runs.sh <first> <last>` (conditions 1-9) | `reports/logs/phase_5/d<delay>_l<loss>_<none\|F1>` |
+| 6: radio stand-in test on PX4 (F1 and F2 with drone 1 behind the stand-in, ~16 min per round) | `bash scripts/phase6_runs.sh <r> <r>` for round r = 1..10 | `reports/logs/phase_6/` |
+| Check a drone profile (never opens a serial port) | `PYTHONPATH=src python3 scripts/check_profile.py config/profiles/mixed.yaml` | console |
+| One mission with a profile, for example drone 1 behind the radio stand-in | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir <dir> --profile config/profiles/standin.yaml` | run folder, `proc_logs/radio_standin_1.json` (link statistics) |
 | Metrics / plots of a run | `python3 scripts/metrics.py <run_dir>`; `python3 scripts/plot_mission.py <run_dir> out.png` | |
 | Replay page from a run | `python3 scripts/make_replay.py <run_dir> scripts/replay_template.html reports/replay/swarm_replay.html` | open in the app: PX4 flights |
 | Logs as CSV | `PYTHONPATH=src python3 -c "from swarm_tools.logfmt import jsonl_to_csv; jsonl_to_csv('<run>/states.jsonl', '<run>/states.csv')"` | |
@@ -83,7 +87,10 @@ instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refu
 | Swarm size 1-100 | `PYTHONPATH=src python3 scripts/scale_test.py --ns 1 2 3 5 10 20 50 100 --seeds 1 2 3 --jsonl reports/logs/scaling/fastsim_scaling.jsonl` |
 | One app mission without the browser, saved as JSON (events, progress, formation error, closest pair) | `PYTHONPATH=src python3 scripts/run_route.py --target LAT LON [--altitude auto\|low\|normal] [--avoider rl+shield] --out reports/logs/long_route/NAME.json` |
 | The 12 km route (F-9 Park -> Rawalpindi Saddar), ~2 min each | `... scripts/run_route.py --target 33.5973 73.0479 --altitude auto --out reports/logs/long_route/rawalpindi_12km_auto.json`, and `--altitude low` |
-| Islamabad -> Lahore to the end (272.55 km, 65 stops), ~30-60 min | `PYTHONPATH=src python3 scripts/run_route.py --target 31.5204 74.3587 --out reports/logs/long_route/lahore.json` |
+| Islamabad -> Lahore to the end (272.55 km, 65 stops), ~20-25 min | `PYTHONPATH=src python3 scripts/run_route.py --target 31.5204 74.3587 --out reports/logs/long_route/lahore_full.json` |
+| Replay part of a route and record every follower (for example the stop-5 episode) | `PYTHONPATH=src python3 scripts/route_window.py --target 31.5204 74.3587 --from 5000 --to 5300 --out reports/logs/long_route/lahore_full_stop5_detail.json` |
+| Phase 5 radio sweep in the fast simulator (540 runs, ~14 min with 2 jobs) | `PYTHONPATH=src python3 scripts/radio_sweep.py --seeds 20 --jobs 2` |
+| Formation shapes compared (160 runs, ~3 min) | `PYTHONPATH=src python3 scripts/formation_compare.py --seeds 10 --jobs 3` |
 
 ## 5. Obstacle avoidance and RL
 

@@ -40,6 +40,7 @@ from swarm_agent.geometry import EnuFrame, GeoPoint, heading_of  # noqa: E402
 from swarm_tools.mavros_link import MavrosLink  # noqa: E402
 from swarm_tools.resources import ResourceMonitor, power_state  # noqa: E402
 from swarm_tools.sim_launch import SimLauncher, kill_orphans, namespace_of  # noqa: E402
+from swarm_tools.profiles import load_profile  # noqa: E402
 
 MIN_AVAILABLE_MB = 800
 
@@ -84,6 +85,9 @@ def main() -> int:
     ap.add_argument("--jitter-ms", type=float, default=None)
     ap.add_argument("--fault", default="", help="Phase 4 fault spec (see scripts/faults.py)")
     ap.add_argument("--fault-seed", type=int, default=0)
+    ap.add_argument("--profile", default=None,
+                    help="drone profile (config/profiles/*.yaml), e.g. standin.yaml puts drone 1 behind the "
+                         "telemetry-radio stand-in; default: every drone plain simulated")
     ap.add_argument("--allow-battery", action="store_true",
                     help="run even when the laptop is not on its charger (results then are not comparable)")
     args = ap.parse_args()
@@ -94,8 +98,11 @@ def main() -> int:
     run_dir.mkdir(parents=True, exist_ok=True)
     for stale in ("states.jsonl", "link_events.jsonl", "fault_events.jsonl"):
         (run_dir / stale).unlink(missing_ok=True)  # inside the repo's reports/ only
+    profile = load_profile(args.profile, cfg) if args.profile else None
     summary: dict = {"n": args.n, "ids": ids, "run_dir": str(run_dir), "fault": args.fault,
-                     "loss_pct": args.loss_pct, "latency_ms": args.latency_ms, "jitter_ms": args.jitter_ms}
+                     "loss_pct": args.loss_pct, "latency_ms": args.latency_ms, "jitter_ms": args.jitter_ms,
+                     "profile": None if profile is None else {"name": profile.name, "standin": profile.standin,
+                                                              "real": profile.real}}
 
     avail = psutil.virtual_memory().available / 1e6
     summary["available_mb_before"] = round(avail)
@@ -111,12 +118,12 @@ def main() -> int:
 
     frame = EnuFrame(cfg.origin_geo)
     layout = initial_layout(ids, heading_of(*cfg.mission.goal_enu_m), cfg.formation.spacing_m,
-                            math.radians(cfg.formation.v_half_angle_deg))
+                            math.radians(cfg.formation.v_half_angle_deg), cfg.formation.shape)
     homes = {}
     for i, (e, n) in layout.items():
         g = frame.to_geodetic((e, n, 0.0))
         homes[i] = GeoPoint(g.lat_deg, g.lon_deg, cfg.origin.alt_m)
-    sim = SimLauncher(cfg, homes, log_dir=run_dir / "proc_logs")
+    sim = SimLauncher(cfg, homes, log_dir=run_dir / "proc_logs", profile=profile)
     label = {"v": "boot"}
     monitor = ResourceMonitor(lambda: label["v"])
 

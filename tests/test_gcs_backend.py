@@ -119,3 +119,14 @@ def test_docs_urls_open_repository_markdown_but_never_other_files():
     for url in ("/docs/../config/map_keys.local.yaml", "/docs/config/map_keys.example.yaml", "/docs/../../etc/passwd",
                 "/docs/../README.md.local.md", "/docs/.git/config", "/docs/.pytest_cache/README.md", "/docs/src/swarm_tools/gcs/server.py"):
         assert shared_file(url) is None, url
+
+
+def test_formation_shape_can_be_chosen(cfg):
+    b = FastSimBackend(cfg)
+    assert not b.command({"cmd": "start", "n": 5, "home": HOME, "target": [33.7100, 73.0300], "shape": "circle"})["ok"]
+    assert b.command({"cmd": "start", "n": 5, "home": HOME, "target": [33.7100, 73.0300], "shape": "column"})["ok"]
+    assert b.sim.cfg.formation.shape == "column" and b.snapshot()["params"]["shape"] == "column"
+    assert any("formation: Column (experimental)" in e[3] for e in b.snapshot()["events"])
+    run(b, 60.0)
+    s = b.snapshot()
+    assert s["phase"] == "CRUISE" and s["alive"] == 5 and s["rms"] is not None and s["rms"] < 2.0

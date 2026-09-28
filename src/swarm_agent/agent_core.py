@@ -405,7 +405,7 @@ class AgentCore:
             self.orphan = False
         self._last_slot = slot_id
         alt_off = f.orphan_alt_offset_m if self.orphan else 0.0
-        slot = slot_position(master_pos, mhb.heading, slot_id, f.spacing_m, self.half_angle, alt_off)
+        slot = slot_position(master_pos, mhb.heading, slot_id, f.spacing_m, self.half_angle, alt_off, shape=f.shape)
         # Long moves (e.g. after a partition heals, the new master may sit far behind) happen on
         # the transit layer below the formation, so crossing paths are vertically separated.
         err_xy = norm_xy(sub(slot, own.pos))

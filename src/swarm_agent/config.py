@@ -100,6 +100,23 @@ class LinkCfg:
 
 
 @dataclass(frozen=True)
+class RadioStandinCfg:
+    air_rate_bps: float
+    ecc: int
+    max_window_ms: float
+    loss_pct: float
+    max_queue_s: float
+    mavros_port_base: int
+    relay_port_base: int
+    seed: int
+
+    @property
+    def usable_rate_bps(self) -> float:
+        """Both directions share this rate (time-division turns); error correction halves it."""
+        return self.air_rate_bps / (2.0 if self.ecc else 1.0)
+
+
+@dataclass(frozen=True)
 class LoggingCfg:
     rate_hz: float
 
@@ -125,6 +142,7 @@ class Config:
     setpoints: SetpointCfg
     autopilot_streams_hz: dict[str, float]
     link_emulator: LinkCfg
+    radio_standin: RadioStandinCfg
     logging: LoggingCfg
     sim: SimCfg
 
@@ -209,13 +227,22 @@ def validate(cfg: Config) -> None:
         raise ConfigError("goal lies outside the geofence")
     if f.spacing_m <= s.min_separation_m:
         raise ConfigError("formation spacing must exceed the minimum separation")
-    if f.shape != "V":
+    if f.shape not in ("V", "line", "column", "echelon"):     # swarm_agent.formation.SHAPES
         raise ConfigError(f"unsupported formation shape {f.shape!r}")
     hb = cfg.heartbeat
     if hb.master_timeout_s < 2.0 / hb.rate_hz:
         raise ConfigError("master_timeout_s must cover at least two heartbeat periods")
     if not 0.0 <= cfg.link_emulator.loss_pct <= 100.0:
         raise ConfigError("link_emulator.loss_pct must be within 0..100")
+    r = cfg.radio_standin
+    if r.air_rate_bps <= 0 or r.ecc not in (0, 1) or r.max_window_ms < 0 or r.max_queue_s <= 0:
+        raise ConfigError("radio_standin: air_rate_bps > 0, ecc 0 or 1, max_window_ms >= 0, max_queue_s > 0")
+    if not 0.0 <= r.loss_pct <= 100.0:
+        raise ConfigError("radio_standin.loss_pct must be within 0..100")
+    # port blocks of 40 (+ PX4 instance), like PX4's own offboard plan (14540 / 14580), must not overlap
+    blocks = [r.mavros_port_base, r.relay_port_base, 14540, 14580]
+    if any(abs(p - q) < 40 for i, p in enumerate(blocks) for q in blocks[i + 1:]):
+        raise ConfigError("radio_standin port bases must be 40 or more apart and clear of PX4's 14540 / 14580 blocks")
 
 
 def load_config(path: str | Path) -> Config:

@@ -8,12 +8,15 @@
   GET  /api/config    map service keys from config/map_keys.local.yaml (git-ignored), read on every call
   GET  /reports/<f>   result files (charts, reports, logs summaries, the PX4 replay page)
   GET  /docs/<f>      handover documents (docs/ and the README)
+  GET  /api/tests     status of the PX4 test queue (scripts/px4_queue.py), for the PX4 tests page
   POST /api/cmd       JSON command (start, pause, resume, reset, speed, fault, partition, heal)
+  POST /api/tests     {"action": "pause_now" | "pause_after" | "resume"} for the PX4 test queue
 Bound to 127.0.0.1: only this laptop can open it.
 """
 from __future__ import annotations
 
 import json
+import os
 import time
 import urllib.parse
 from http import HTTPStatus
@@ -31,6 +34,46 @@ TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=u
          ".csv": "text/csv; charset=utf-8", ".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8",
          ".glb": "model/gltf-binary"}
 SHARED = {"/reports/": REPO / "reports", "/docs/": REPO / "docs"}   # read-only file areas
+QUEUE_DIR = REPO / "reports" / "logs" / "px4_queue"                 # scripts/px4_queue.py: control and status
+QUEUE_ACTIONS = {"pause_now": "pause_now", "pause_after": "pause_after", "resume": "run"}
+
+
+def queue_status(qdir: Path = QUEUE_DIR) -> dict:
+    """The runner's latest status, the mode the owner set, and whether the runner is alive."""
+    try:
+        st = json.loads((qdir / "status.json").read_text())
+    except (OSError, ValueError):
+        st = {"state": "not started", "detail": "the test queue has not run yet"}
+    try:
+        st["mode"] = json.loads((qdir / "control.json").read_text()).get("mode", "run")
+    except (OSError, ValueError):
+        st.setdefault("mode", "run")
+    pid, alive = st.get("pid"), False
+    try:
+        fresh = time.time() - time.mktime(time.strptime(st.get("updated", ""), "%Y-%m-%dT%H:%M:%S")) < 90.0
+    except (TypeError, ValueError):
+        fresh = False                      # the runner rewrites status.json every 5 s while it lives
+    if isinstance(pid, int) and fresh:
+        try:
+            os.kill(pid, 0)
+            alive = True
+        except OSError:
+            pass
+    st["runner_alive"] = alive
+    return st
+
+
+def queue_control(action: str, qdir: Path = QUEUE_DIR) -> dict:
+    if action not in QUEUE_ACTIONS:
+        return {"ok": False, "msg": f"unknown action {action!r}"}
+    qdir.mkdir(parents=True, exist_ok=True)
+    tmp = qdir / "control.tmp"
+    tmp.write_text(json.dumps({"mode": QUEUE_ACTIONS[action], "set_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                               "set_by": "PX4 tests page"}) + "\n")
+    os.replace(tmp, qdir / "control.json")
+    msg = {"pause_now": "Pausing now: the running trial stops and will run again later from its start.",
+           "pause_after": "Pausing after the running trial.", "resume": "Resumed."}[action]
+    return {"ok": True, "msg": msg}
 
 
 def shared_file(path: str) -> Path | None:
@@ -100,6 +143,8 @@ def make_handler(backend):
                 self._json(backend.obstacles_payload())
             elif path == "/api/config":
                 self._json(map_keys())
+            elif path == "/api/tests":
+                self._json(queue_status())
             elif path.startswith(("/reports/", "/docs/")):
                 f = shared_file(urllib.parse.unquote(path))
                 if f is None:
@@ -124,12 +169,15 @@ def make_handler(backend):
                 self._send(404, b"not found", "text/plain")
 
         def do_POST(self) -> None:
-            if self.path != "/api/cmd":
+            if self.path not in ("/api/cmd", "/api/tests"):
                 self._send(404, b"not found", "text/plain")
                 return
             try:
                 n = int(self.headers.get("Content-Length", "0"))
                 cmd = json.loads(self.rfile.read(n) or b"{}")
+                if self.path == "/api/tests":
+                    self._json(queue_control(str(cmd.get("action", ""))))
+                    return
                 self._json(backend.command(cmd))
             except (ValueError, TypeError, KeyError) as exc:
                 self._json({"ok": False, "msg": f"bad command: {exc}"}, 400)

@@ -18,6 +18,7 @@
       <a href="/" aria-current="page">Mission</a>
       <a href="/static/3d.html">3D view</a>
       <a href="/static/results.html">Results</a>
+      <a href="/static/tests.html">PX4 tests</a>
       <a href="/reports/replay/swarm_replay.html">PX4 flights</a>
       <a href="/static/docs.html">Docs</a>
     </nav>
@@ -65,7 +66,10 @@
         </select></label>
         <label>Avoidance<select id="avoider"></select></label>
       </div>
-      <label>Flight height<select id="altitude"></select></label>
+      <div class="grid2">
+        <label>Flight height<select id="altitude"></select></label>
+        <label>Formation<select id="shape"></select></label>
+      </div>
       <p class="hint" id="route">&nbsp;</p>
       <div class="row">
         <button class="primary" id="start" type="button">Start mission</button>

@@ -292,7 +292,7 @@
             <td><span class="chip ok">passed</span> 135&nbsp;MB RAM</td></tr>
           <tr><td>Ten drones</td><td>10 PX4 autopilots on one laptop (i3, 8&nbsp;GB): all take off, hover 30&nbsp;s and land</td>
             <td><span class="chip ok">passed</span> 1.07&nbsp;GB RAM, 77&nbsp;% CPU in total</td></tr>
-          <tr><td>Swarm logic</td><td>100 automated tests; 1,000 random runs with crashes, radio loss, delays and splits</td>
+          <tr><td>Swarm logic</td><td>180 automated tests; 1,000 random runs with crashes, radio loss, delays and splits</td>
             <td><span class="chip ok">passed</span> exactly one leader in 1,000 of 1,000</td></tr>
           <tr><td>Formation flight</td><td>10 PX4 drones fly 1&nbsp;km in a V and land at the target, 4 clean runs</td>
             <td><span class="chip ok">passed</span> error &le; 1.56&nbsp;m (limit 2), gap &ge; 8.0&nbsp;m (limit 5)</td></tr>
@@ -300,8 +300,12 @@
             <td><span class="chip ok">passed</span> all landed, one leader each time</td></tr>
           <tr><td>Obstacle avoidance</td><td>Learned policy vs tuned classical controller, 90 unseen routes with buildings and trees</td>
             <td><span class="chip ok">RL + brake ahead</span> at low and medium density</td></tr>
+          <tr><td>Bad radio</td><td>Heartbeat delay 50&ndash;300&nbsp;ms and loss 0&ndash;30&nbsp;%, 540 runs in the fast simulator</td>
+            <td><span class="chip ok">passed</span> no false leader change; limits hold in 8 of 9</td></tr>
+          <tr><td>Formation shapes</td><td>Line abreast, column and echelon against the V, with the same faults</td>
+            <td><span class="chip warn">V only</span> the others come closer than 5&nbsp;m after faults</td></tr>
           <tr><td>Faults on PX4</td><td>Leader killed, radio lost, low battery, follower lost, radio split; 10 trials each</td>
-            <td><span class="chip next">next</span></td></tr>
+            <td><span class="chip next">running</span> in rounds</td></tr>
         </tbody>
       </table>
     </div>
@@ -359,9 +363,10 @@
     <p>A small quadcopter flies only a few kilometres per battery, so long routes are planned with charging stops about
       every 4&nbsp;km (half a battery per leg, a 3-minute battery swap), and the building map is downloaded as a strip
       along the route. Islamabad (F-9 Park) to Rawalpindi Saddar, 12&nbsp;km: all 10 drones landed at the target with no
-      hit after two stops. Islamabad to Lahore, 272.55&nbsp;km with 65 stops: after 76&nbsp;km and 18 stops all 10 drones
-      were still flying with no hit, when the run was stopped on purpose (it only demonstrated scale). Flying low
-      (16&nbsp;m) through town is still hard: on the 12&nbsp;km route three followers got stuck at a wall and hit it.</p>
+      hit after two stops. Islamabad to Lahore, 272.55&nbsp;km with 65 stops: all 10 drones landed in Lahore after
+      18 simulated hours with no hit. Once, after a charging stop, a tall building held one follower back for about two
+      minutes before it caught up. Flying low (16&nbsp;m) through town is still hard: on the 12&nbsp;km route three
+      followers got stuck at a wall and hit it.</p>
   </section>
 
   <section aria-labelledby="h-rl">
@@ -445,15 +450,15 @@
         <p>Real GPS targets, per-drone crash, battery, GPS and radio faults, repeatable runs, 1&ndash;100 drones.</p></li>
       <li class="done"><div class="st"><b>RL for obstacle avoidance, first version</b><span class="chip ok">trained</span></div>
         <p>Real-map obstacles, tuned classical baseline, learned policy, fair comparison on unseen routes.</p></li>
-      <li class="now"><div class="st"><b>Longer RL training</b><span class="chip next">next</span></div>
+      <li><div class="st"><b>Longer RL training</b><span class="chip next">ready</span></div>
         <p>More steps, several seeds, real-map training areas, brake inside training.</p></li>
-      <li><div class="st"><b>Fault trials on PX4, then bad-radio trials</b><span class="chip warn">started, paused</span></div>
-        <p>Started on 27 September 2026 and paused: this laptop is too weak for the 55 PX4 trials (about 7 hours).
-          First results: a new leader in 1.6&ndash;2.2&nbsp;s, the planned battery handover in under 1&nbsp;s, no two drones closer
-          than 6&nbsp;m; after a radio split heals the formation takes about 17&nbsp;s to re-form (target 15&nbsp;s). Next: a computer
-          with 8 or more cores, or 5 drones; then 50&ndash;300&nbsp;ms delay and 0&ndash;30&nbsp;% loss.</p></li>
-      <li><div class="st"><b>Hardware readiness</b></div>
-        <p>A telemetry-radio stand-in test, a flight test plan with go/no-go checklist and kill-switch procedure.</p></li>
+      <li class="now"><div class="st"><b>Fault and bad-radio trials on PX4</b><span class="chip next">running</span></div>
+        <p>95 PX4 trials run one at a time on this laptop and can be paused and resumed from the app; they carry on after
+          a restart. First results: a new leader in 1.6&ndash;2.2&nbsp;s, the planned battery handover in under 1&nbsp;s, no two
+          drones closer than 6&nbsp;m. The bad-radio sweep already passed in the fast simulator.</p></li>
+      <li class="done"><div class="st"><b>Hardware readiness</b><span class="chip ok">software done</span></div>
+        <p>A telemetry-radio stand-in (its PX4 test is in the queue), drone profiles where a real drone only needs its
+          connection address, and a flight test plan with go/no-go checklist and kill-switch procedure.</p></li>
       <li><div class="st"><b>Hardware</b></div>
         <p>A small companion computer on each drone wired to its Pixhawk 6C, a radio link for heartbeats, a bench test with
           propellers off, then one real drone with nine simulated ones, then three real drones in an open field with

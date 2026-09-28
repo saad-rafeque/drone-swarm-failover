@@ -14,7 +14,7 @@ when they import the project packages. The exact command lines and run times are
 | `install_launcher.sh`, `launcher.c` | Install the desktop and menu icon and build the **Swarm Control** program in the project folder. |
 | `run_route.py` | Fly one ground-control mission without the browser and save its events, progress, formation error and closest pair as JSON. |
 
-## PX4 simulation (Phases 0 to 4)
+## PX4 simulation (Phases 0 to 6)
 
 | Script | Purpose |
 |---|---|
@@ -30,6 +30,10 @@ when they import the project packages. The exact command lines and run times are
 | `faults.py` | Phase 4 fault injection (F1 to F5), used by `run_mission.py --fault`. |
 | `phase4_runs.sh` | Phase 4 trials, interleaved by round; skips finished trials and waits for the charger. |
 | `phase4_all.sh` | The full Phase 4 batch: rounds 1 to 10 of every fault, then a cross-check round from a clean shell. |
+| `phase5_runs.sh` | Phase 5 on PX4: the radio sweep (delay 50/150/300 ms x loss 0/10/30 %), a mission without a fault and one with the leader killed per condition; resumable. |
+| `phase6_runs.sh` | Phase 6 on PX4: F1 and F2 with drone 1 behind the telemetry-radio stand-in (`config/profiles/standin.yaml`); resumable. |
+| `batch_power.sh` | Shared by the PX4 batches: wait for the charger and a power profile other than power saver. |
+| `check_profile.py` | Check a drone profile (`config/profiles/*.yaml`) and print every drone's link; real drones are checked as text only. |
 
 ## Metrics and figures
 
@@ -49,6 +53,8 @@ when they import the project packages. The exact command lines and run times are
 | `random_trials.py` | Phase 2 acceptance: randomized runs with random kills, link drops and network splits. |
 | `puresim_faults.py` | The fault types F1 to F5 in the fast simulator. |
 | `scale_test.py` | The swarm-size test from 1 to 100 drones. |
+| `radio_sweep.py` | Phase 5 in the fast simulator: delay x loss, false leader changes, takeover time and formation recovery, with a figure. |
+| `formation_compare.py` | The formation shapes (V, line, column, echelon) compared under the same faults, with a figure. |
 
 ## Obstacle avoidance and reinforcement learning
 

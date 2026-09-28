@@ -4,6 +4,29 @@ The history of the project by milestone, newest first. The tags `phase-0` to `ph
 gates of the plan in `docs/SPECIFICATION.md`; `v1.0-handover` marks the first complete handover. Commit IDs refer to
 this repository's history.
 
+## 28 September 2026
+
+### PX4 tests, in rounds
+- A test queue (`scripts/px4_queue.py`) runs the remaining 95 PX4 trials of Phases 4, 5 and 6 one at a time:
+  pause and resume on the new "PX4 tests" page of the ground-control app, and it continues after a shutdown
+  or restart (a user service, `scripts/px4_queue_service.sh`). Finished trials are never re-run; a trial
+  stopped halfway runs again from its start; tooling failures are kept as evidence.
+- The owner set the F5 formation-recovery limit to 20 s (15 s for the other faults).
+
+### Phase 5 and Phase 6
+- Phase 5 in the fast simulator (`scripts/radio_sweep.py`, 540 runs): no false leader change at any radio
+  condition; the Phase 4 limits hold in 8 of 9 conditions (`reports/PHASE_5.md`).
+- Phase 6 software parts: drone profiles (`config/profiles/`) with `scripts/check_profile.py`; the telemetry-
+  radio stand-in (`src/swarm_tools/radio_proxy.py`, SiK defaults); `docs/FLIGHT_TEST_PLAN.md`
+  (`reports/PHASE_6.md`).
+
+### Formations and routes
+- Formation shapes line abreast, column and echelon, selectable in the app; compared with the V
+  (`scripts/formation_compare.py`): only the V stays 5 m apart after faults, so the others are experimental.
+- The Islamabad -> Lahore run flown to the end: all 10 drones landed after 18.1 simulated hours, 65 charging
+  stops, no hits; one follower was held at a tall building for about 2 minutes and caught up
+  (`scripts/route_window.py` records the episode).
+
 ## 27 September 2026
 
 ### Publication

@@ -75,6 +75,8 @@ correction) with a speed ramp; with obstacles it follows the planned route (pure
 the formation heading at most 20 degrees per second.
 
 ## 6. Formation (`formation.py`)
+- Shape set by `formation.shape`: the V (the default, and the only shape used in Phases 0-5), or the
+  experimental line abreast, column and echelon (section 12).
 - V formation, 10 m between neighbours, 45 degree arms. Even IDs fly the left arm, odd IDs the right,
   in ID order ("parity arms"), so losing a drone only slides the drones behind it on the same arm.
 - Follower command = leader velocity (feed-forward) + P-control toward its slot, saturated at 3 m/s.
@@ -152,8 +154,27 @@ downloads, long-route planning) runs in a background thread with progress on the
 |---|---|
 | spacing, speeds, gains, timeouts, battery levels, geofence | `config/swarm.yaml` |
 | election rules | `src/swarm_agent/election.py` (+ `tests/test_election.py`) |
-| formation shape | `src/swarm_agent/formation.py` (V only today) |
+| formation shape | `config/swarm.yaml` `formation.shape` (V; line, column and echelon are experimental); geometry in `src/swarm_agent/formation.py` |
+| which drones are simulated, behind the radio stand-in, or real | `config/profiles/*.yaml` (check with `scripts/check_profile.py`) |
 | what counts as an obstacle, flight heights | `src/swarm_tools/osm.py`, `gcs/fastsim_backend.py` |
 | the avoider used by the app | `models/avoid_policy.npz` (RL) or `PotentialField` parameters |
 | the 3-D view (drone look, cameras, colours) | `src/swarm_tools/gcs/static/view3d.js`, `3d.html`; the model: `scripts/make_drone_model.py` |
 | reward / training | `src/swarm_tools/obstacle_sim.py`, `scripts/rl_train.py`, `scripts/rl_train_gpu.py` |
+
+## 12. Formation shapes, profiles and the radio stand-in (28 September 2026)
+- **Shapes.** All shapes use the same slot model (two arms by ID parity, a row per arm). Line abreast puts
+  the arms side by side with the leader in the middle; column and echelon interleave the two arms into one
+  line (left row r is place 2r-1, right row r is place 2r), straight behind the leader or on a diagonal to
+  its right. The rules for moving to new slots after a loss are the V's, and they are not safe for the other
+  shapes after the leader is lost or a radio split heals (`docs/RESULTS.md`, formation shapes).
+- **Profiles** (`src/swarm_tools/profiles.py`, `config/profiles/`). For every drone: `sim` (PX4 SIH, MAVROS
+  over UDP), `standin` (the same behind the radio stand-in) or `real` (a MAVROS serial URL, checked as text
+  only). `SimLauncher` starts a profile's stand-in relays and refuses any profile with a real drone, so the
+  simulation tools can never reach hardware.
+- **Radio stand-in** (`src/swarm_tools/radio_proxy.py`). PX4 instance i sends to 14540+i, where the relay
+  listens instead of MAVROS; MAVROS binds 15540+i and sends to the relay at 15580+i; the relay forwards to
+  PX4 at 14580+i. Every packet shares one channel at the usable SiK rate (64 kbit/s air rate, halved by error
+  correction), waits up to 131 ms for its transmit turn when the channel is idle, is lost with 1 %
+  probability, and is dropped when it would wait more than 1 s. Link statistics go to
+  `proc_logs/radio_standin_<id>.json` in the run folder.
+

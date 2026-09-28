@@ -1,0 +1,160 @@
+{"shape": "V", "kind": "none", "seed": 1, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 0, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 2, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 3, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 5, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 4, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 7, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 6, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "none", "seed": 8, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "F1", "seed": 0, "handover_s": 1.608, "rms_recovery_s": 4.46, "min_sep_m": 9.49, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "none", "seed": 9, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": true}
+{"shape": "V", "kind": "F1", "seed": 1, "handover_s": 1.616, "rms_recovery_s": 4.47, "min_sep_m": 9.49, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 2, "handover_s": 1.568, "rms_recovery_s": 4.37, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 3, "handover_s": 1.579, "rms_recovery_s": 4.48, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 4, "handover_s": 1.715, "rms_recovery_s": 4.52, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 5, "handover_s": 1.501, "rms_recovery_s": 4.35, "min_sep_m": 9.49, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 6, "handover_s": 1.703, "rms_recovery_s": 4.5, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 7, "handover_s": 1.666, "rms_recovery_s": 4.47, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 8, "handover_s": 1.705, "rms_recovery_s": 4.51, "min_sep_m": 9.49, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 0, "handover_s": 0.058, "rms_recovery_s": 1.06, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F1", "seed": 9, "handover_s": 1.551, "rms_recovery_s": 4.35, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 1, "handover_s": 0.066, "rms_recovery_s": 1.07, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 3, "handover_s": 0.079, "rms_recovery_s": 1.08, "min_sep_m": 6.95, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 2, "handover_s": 0.068, "rms_recovery_s": 1.12, "min_sep_m": 7.23, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 6, "handover_s": 0.053, "rms_recovery_s": 1.1, "min_sep_m": 7.23, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 4, "handover_s": 0.065, "rms_recovery_s": 1.12, "min_sep_m": 7.23, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 5, "handover_s": 0.051, "rms_recovery_s": 1.05, "min_sep_m": 6.95, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 7, "handover_s": 0.066, "rms_recovery_s": 1.12, "min_sep_m": 7.23, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 9, "handover_s": 0.051, "rms_recovery_s": 1.1, "min_sep_m": 9.5, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F4", "seed": 8, "handover_s": 0.055, "rms_recovery_s": 1.11, "min_sep_m": 7.23, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 0, "handover_s": 0.1, "rms_recovery_s": 9.35, "min_sep_m": 6.17, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 1, "handover_s": 0.1, "rms_recovery_s": 12.2, "min_sep_m": 6.23, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 2, "handover_s": 0.1, "rms_recovery_s": 11.6, "min_sep_m": 6.27, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 4, "handover_s": 0.1, "rms_recovery_s": 7.35, "min_sep_m": 6.53, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 5, "handover_s": 0.2, "rms_recovery_s": 6.65, "min_sep_m": 8.21, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 3, "handover_s": 0.15, "rms_recovery_s": 10.8, "min_sep_m": 6.34, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 6, "handover_s": 0.2, "rms_recovery_s": 7.45, "min_sep_m": 6.53, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 7, "handover_s": 0.1, "rms_recovery_s": 8.5, "min_sep_m": 6.53, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 8, "handover_s": 0.25, "rms_recovery_s": 6.7, "min_sep_m": 8.08, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "V", "kind": "F5", "seed": 9, "handover_s": 0.1, "rms_recovery_s": 10.15, "min_sep_m": 6.21, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "none", "seed": 0, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 1, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 2, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 3, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 4, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 5, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 6, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 7, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 8, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "none", "seed": 9, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 10.0, "goal_reached": true}
+{"shape": "line", "kind": "F1", "seed": 0, "handover_s": 1.608, "rms_recovery_s": 4.71, "min_sep_m": 7.25, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 1, "handover_s": 1.616, "rms_recovery_s": 4.72, "min_sep_m": 7.24, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 2, "handover_s": 1.568, "rms_recovery_s": 4.67, "min_sep_m": 7.19, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 3, "handover_s": 1.579, "rms_recovery_s": 4.68, "min_sep_m": 7.29, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 4, "handover_s": 1.715, "rms_recovery_s": 4.82, "min_sep_m": 7.19, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 5, "handover_s": 1.501, "rms_recovery_s": 4.6, "min_sep_m": 7.25, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 6, "handover_s": 1.703, "rms_recovery_s": 4.8, "min_sep_m": 7.16, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 7, "handover_s": 1.666, "rms_recovery_s": 4.77, "min_sep_m": 7.15, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 8, "handover_s": 1.705, "rms_recovery_s": 4.81, "min_sep_m": 7.18, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F1", "seed": 9, "handover_s": 1.551, "rms_recovery_s": 4.7, "min_sep_m": 7.14, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 0, "handover_s": 0.058, "rms_recovery_s": 1.06, "min_sep_m": 9.99, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 2, "handover_s": 0.068, "rms_recovery_s": 1.12, "min_sep_m": 7.24, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 1, "handover_s": 0.066, "rms_recovery_s": 1.07, "min_sep_m": 9.99, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 3, "handover_s": 0.079, "rms_recovery_s": 1.08, "min_sep_m": 6.95, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 4, "handover_s": 0.065, "rms_recovery_s": 1.12, "min_sep_m": 7.24, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 5, "handover_s": 0.051, "rms_recovery_s": 1.05, "min_sep_m": 6.95, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 6, "handover_s": 0.053, "rms_recovery_s": 1.1, "min_sep_m": 7.24, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 7, "handover_s": 0.066, "rms_recovery_s": 1.12, "min_sep_m": 7.24, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 8, "handover_s": 0.055, "rms_recovery_s": 1.11, "min_sep_m": 7.24, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F4", "seed": 9, "handover_s": 0.051, "rms_recovery_s": 1.1, "min_sep_m": 10.0, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 0, "handover_s": 0.1, "rms_recovery_s": 9.55, "min_sep_m": 3.04, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 1, "handover_s": 0.1, "rms_recovery_s": 12.45, "min_sep_m": 3.92, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 2, "handover_s": 0.1, "rms_recovery_s": 11.25, "min_sep_m": 4.3, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 4, "handover_s": 0.1, "rms_recovery_s": 8.35, "min_sep_m": 5.46, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 3, "handover_s": 0.15, "rms_recovery_s": 11.2, "min_sep_m": 4.56, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 5, "handover_s": 0.2, "rms_recovery_s": 3.05, "min_sep_m": 0.85, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 7, "handover_s": 0.1, "rms_recovery_s": 6.9, "min_sep_m": 6.1, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 6, "handover_s": 0.2, "rms_recovery_s": 8.3, "min_sep_m": 4.88, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 8, "handover_s": 0.25, "rms_recovery_s": 3.1, "min_sep_m": 0.57, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "line", "kind": "F5", "seed": 9, "handover_s": 0.1, "rms_recovery_s": 10.7, "min_sep_m": 4.06, "goal_reached": true, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "none", "seed": 0, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 1, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 2, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 3, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 4, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 5, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 6, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 7, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 8, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "none", "seed": 9, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.27, "goal_reached": false}
+{"shape": "column", "kind": "F1", "seed": 1, "handover_s": 1.616, "rms_recovery_s": 25.62, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 0, "handover_s": 1.608, "rms_recovery_s": 25.61, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 2, "handover_s": 1.568, "rms_recovery_s": 25.57, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 4, "handover_s": 1.715, "rms_recovery_s": 25.72, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 3, "handover_s": 1.579, "rms_recovery_s": 25.58, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 7, "handover_s": 1.666, "rms_recovery_s": 25.67, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 5, "handover_s": 1.501, "rms_recovery_s": 25.5, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 6, "handover_s": 1.703, "rms_recovery_s": 25.7, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 8, "handover_s": 1.705, "rms_recovery_s": 25.71, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F1", "seed": 9, "handover_s": 1.551, "rms_recovery_s": 25.55, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 0, "handover_s": 0.058, "rms_recovery_s": 1.06, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 1, "handover_s": 0.066, "rms_recovery_s": 1.07, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 2, "handover_s": 0.068, "rms_recovery_s": 1.12, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 3, "handover_s": 0.079, "rms_recovery_s": 1.08, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 4, "handover_s": 0.065, "rms_recovery_s": 1.12, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 5, "handover_s": 0.051, "rms_recovery_s": 1.05, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 6, "handover_s": 0.053, "rms_recovery_s": 1.1, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 7, "handover_s": 0.066, "rms_recovery_s": 1.12, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 8, "handover_s": 0.055, "rms_recovery_s": 1.11, "min_sep_m": 6.67, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F4", "seed": 9, "handover_s": 0.051, "rms_recovery_s": 1.1, "min_sep_m": 9.27, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 0, "handover_s": 0.1, "rms_recovery_s": 14.6, "min_sep_m": 4.78, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 1, "handover_s": 0.1, "rms_recovery_s": 20.95, "min_sep_m": 4.73, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 2, "handover_s": 0.1, "rms_recovery_s": 19.6, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 3, "handover_s": 0.15, "rms_recovery_s": 17.9, "min_sep_m": 4.77, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 4, "handover_s": 0.1, "rms_recovery_s": 10.95, "min_sep_m": 4.97, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 5, "handover_s": 0.2, "rms_recovery_s": 11.15, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 6, "handover_s": 0.2, "rms_recovery_s": 11.05, "min_sep_m": 4.97, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 7, "handover_s": 0.1, "rms_recovery_s": 13.45, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "column", "kind": "F5", "seed": 8, "handover_s": 0.25, "rms_recovery_s": 11.2, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "none", "seed": 0, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "column", "kind": "F5", "seed": 9, "handover_s": 0.1, "rms_recovery_s": 16.7, "min_sep_m": 4.59, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "none", "seed": 1, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 2, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 3, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 4, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 5, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 6, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 7, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 8, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "none", "seed": 9, "false_changes": 0, "all_landed_leader_at_goal": true, "multi_leader_s": 0.0, "cruise_rms_max_m": 0.73, "cruise_rms_mean_m": 0.02, "min_sep_m": 9.5, "goal_reached": false}
+{"shape": "echelon", "kind": "F1", "seed": 0, "handover_s": 1.608, "rms_recovery_s": 10.71, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 1, "handover_s": 1.616, "rms_recovery_s": 10.82, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 2, "handover_s": 1.568, "rms_recovery_s": 11.17, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 3, "handover_s": 1.579, "rms_recovery_s": 10.48, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 4, "handover_s": 1.715, "rms_recovery_s": 11.37, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 5, "handover_s": 1.501, "rms_recovery_s": 10.6, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 6, "handover_s": 1.703, "rms_recovery_s": 11.65, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 7, "handover_s": 1.666, "rms_recovery_s": 11.77, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 9, "handover_s": 1.551, "rms_recovery_s": 11.7, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F1", "seed": 8, "handover_s": 1.705, "rms_recovery_s": 11.46, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 0, "handover_s": 0.058, "rms_recovery_s": 1.06, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 1, "handover_s": 0.066, "rms_recovery_s": 1.07, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 2, "handover_s": 0.068, "rms_recovery_s": 1.12, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 3, "handover_s": 0.079, "rms_recovery_s": 1.08, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 5, "handover_s": 0.051, "rms_recovery_s": 1.05, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 4, "handover_s": 0.065, "rms_recovery_s": 1.12, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 6, "handover_s": 0.053, "rms_recovery_s": 1.1, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 7, "handover_s": 0.066, "rms_recovery_s": 1.12, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 8, "handover_s": 0.055, "rms_recovery_s": 1.11, "min_sep_m": 6.62, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F4", "seed": 9, "handover_s": 0.051, "rms_recovery_s": 1.1, "min_sep_m": 9.5, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 0, "handover_s": 0.1, "rms_recovery_s": 14.0, "min_sep_m": 4.8, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 1, "handover_s": 0.1, "rms_recovery_s": 19.9, "min_sep_m": 4.95, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 2, "handover_s": 0.1, "rms_recovery_s": 18.8, "min_sep_m": 4.63, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 3, "handover_s": 0.15, "rms_recovery_s": 17.1, "min_sep_m": 4.88, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 4, "handover_s": 0.1, "rms_recovery_s": 10.85, "min_sep_m": 4.92, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 5, "handover_s": 0.2, "rms_recovery_s": 10.35, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 6, "handover_s": 0.2, "rms_recovery_s": 11.0, "min_sep_m": 4.92, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 7, "handover_s": 0.1, "rms_recovery_s": 13.4, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 8, "handover_s": 0.25, "rms_recovery_s": 9.35, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}
+{"shape": "echelon", "kind": "F5", "seed": 9, "handover_s": 0.1, "rms_recovery_s": 16.05, "min_sep_m": 4.6, "goal_reached": false, "all_landed_leader_at_goal": true}

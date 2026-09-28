@@ -161,7 +161,7 @@ Acceptance (10 trials per fault, random fault time during cruise):
 - F3: planned handover within 1.0 s of trigger; old master leaves and returns home.
 - F4: no master change; formation recovers.
 - F5: single master within 3.0 s after heal.
-- All: formation RMS back under 2 m within 15 s; min separation never < 5 m;
+- All: formation RMS back under 2 m within 15 s (F5: 20 s, set by the owner on 28 September 2026); min separation never < 5 m;
   goal reached in ≥ 9/10 trials per fault.
 - Report table: per fault — median/worst handover time, recovery time, min separation,
   success rate.

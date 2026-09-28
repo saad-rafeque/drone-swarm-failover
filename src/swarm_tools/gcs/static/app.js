@@ -220,6 +220,7 @@
     set("home_lat", p.home[0]); set("home_lon", p.home[1]); set("tgt_lat", p.target[0]); set("tgt_lon", p.target[1]);
     set("n", p.n); set("cruise", p.cruise_mps); set("endurance", p.endurance_min); set("seed", p.seed);
     set("obstacles", p.obstacles || "none"); set("avoider", p.avoider || "apf"); set("altitude", p.altitude || "auto");
+    set("shape", p.shape || "V");
     routeHint();
   }
   ["home_lat", "home_lon", "tgt_lat", "tgt_lon", "cruise", "endurance"].forEach((id) => $(id).addEventListener("input", routeHint));
@@ -368,6 +369,7 @@
     const r = await cmd({ cmd: "start", n: Number($("n").value), cruise_mps: Number($("cruise").value),
       endurance_min: Number($("endurance").value), seed: Number($("seed").value),
       obstacles: $("obstacles").value, avoider: $("avoider").value, altitude: $("altitude").value,
+      shape: $("shape").value,
       home: [Number($("home_lat").value), Number($("home_lon").value)], target: [Number($("tgt_lat").value), Number($("tgt_lon").value)] });
     if (r.ok) { fitted = false; zoomToSwarm = true; clearSwarm(); }
   });
@@ -419,6 +421,8 @@
         $("avoider").value = state.params.avoider || "apf";
         $("altitude").innerHTML = Object.entries(state.altitudes).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
         $("altitude").value = state.params.altitude || "auto";
+        $("shape").innerHTML = Object.entries(state.shapes).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+        $("shape").value = state.params.shape || "V";
         faultsFilled = true;
       }
       if (!drawPending) { drawPending = true; requestAnimationFrame(render); }

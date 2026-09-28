@@ -111,7 +111,8 @@ def main() -> int:
 
     frame = EnuFrame(cfg.origin_geo)
     heading = heading_of(*cfg.mission.goal_enu_m)
-    layout = initial_layout(ids, heading, cfg.formation.spacing_m, math.radians(cfg.formation.v_half_angle_deg))
+    layout = initial_layout(ids, heading, cfg.formation.spacing_m, math.radians(cfg.formation.v_half_angle_deg),
+                            cfg.formation.shape)
     homes = {i: frame.to_geodetic((e, n, 0.0)) for i, (e, n) in layout.items()}
     homes = {i: GeoPoint(g.lat_deg, g.lon_deg, cfg.origin.alt_m) for i, g in homes.items()}
 

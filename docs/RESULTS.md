@@ -20,7 +20,8 @@ Everything here is simulation. Each number points at the file it came from.
 
 Fault types, 10 drones, 20 runs each (fast simulator). On PX4, Phase 4 was started and stopped (this
 laptop is too weak for the 55-trial batch); its indicative results agree, except that F5's formation took
-about 17 s to recover after the heal (`reports/PHASE_4.md`):
+about 17 s to recover after the heal, within the 20 s the owner set for F5 on 28 September 2026
+(`reports/PHASE_4.md`):
 
 | Fault | New leader agreed (median / worst) | Formation back under 2 m | Closest pair | Goal reached |
 |---|---|---|---|---|
@@ -42,6 +43,40 @@ about 17 s to recover after the heal (`reports/PHASE_4.md`):
 With 10 % message loss, 150 ms delay and wind-like drift, 100 drones: new leader in 2.75 s median
 (worst 2.95 s), never two leaders at once, closest pair 8.14 m, all landed. Evidence:
 `reports/SCALING.md`, `reports/logs/scaling/`.
+
+## Radio sweep (Phase 5, fast simulator)
+Heartbeat delay 50 / 150 / 300 ms x loss 0 / 10 / 30 % (no jitter), 10 drones; per condition 20 missions
+without a fault, 20 with the leader killed (F1) and 20 with its radio cut (F2): 540 runs.
+
+- **No false leader change** in any of the 180 missions without a fault, even at 30 % loss.
+- **The Phase 4 limits hold in 8 of 9 conditions**, the worst being 300 ms with 10 % loss (new leader median
+  2.65 s, worst 3.09 s) and 150 ms with 30 % loss (2.59 s / 3.27 s). At 300 ms with 30 % loss the median
+  time to a new leader is 3.06 s against the 3.0 s limit (worst 3.80 s, within 4.0 s).
+- Formation back under 2 m within 9.47 s in every run (limit 15 s); closest pair 6.44 m or more; every
+  mission reached the goal.
+
+Evidence: `reports/PHASE_5.md`, `reports/logs/phase_5_fastsim/` (`summary.md`, `summary.json`,
+`radio_sweep.jsonl`), `reports/phase5_radio_sweep.png`. The same sweep on PX4 is scheduled in rounds.
+
+## Formation shapes (fast simulator)
+Four shapes with the same agent code, 10 drones, clean radio, 10 runs each of: no fault, F1 (leader killed),
+F4 (follower killed), F5 (radio split, then healed).
+
+| Shape | Formation back after F1, median (s) | After F5, worst (s) | Fault runs closer than 5 m | Closest pair (m) | Goal |
+|---|---|---|---|---|---|
+| V | 4.47 | 12.20 | 0 of 30 | 6.17 | 40/40 |
+| Line abreast | 4.71 | 12.45 | 8 of 30 | 0.57 | 40/40 |
+| Column | 25.62 | 20.95 | 20 of 30 | 4.59 | 40/40 |
+| Echelon (right) | 11.27 | 19.90 | 20 of 30 | 4.60 | 40/40 |
+
+In normal flight every shape holds its slots equally well (formation error 0.02 m mean), and losing a
+follower (F4) is handled the same way. After the leader is lost or a radio split heals, only the V keeps
+every pair at 5 m or more: the rules that move drones to their new slots were designed for the V. In a line
+abreast, drones slide sideways past each other at the same height (8 of 10 F5 runs under 5 m, worst
+0.57 m); in a column or echelon, moves along the line come to about 4.6 m and take up to 21 s. **The V
+stays the default**; the other shapes are available (`formation.shape`, and the Formation menu of the app)
+but marked experimental. Evidence: `reports/logs/formations/` (`summary.md`, `runs.jsonl`),
+`reports/formation_shapes.png`.
 
 ## Obstacle avoidance: learned policy vs classical
 Fair comparison: 90 courses never used in training or model selection (30 per density), 10 drones,
@@ -97,7 +132,7 @@ as RL + brake. Evidence of that run: `reports/logs/rl/route_eval/`.
 |---|---|---|
 | Islamabad F-9 Park -> Rawalpindi Saddar (33.5973, 73.0479), 12.01 km | normal height (30 m; the 266 OSM buildings and woods are all below 25 m), RL + brake, 2 charging stops | 10/10 drones landed at the target after 2,795 simulated seconds, no hits, both stops used; formation error while cruising max 1.42 m (mean 0.93 m); closest pair 8.53 m |
 | same route | low height (16 m; all 253 buildings and 13 woods are obstacles), RL + brake, 3 stops | leader route 13.51 km around them; mission completed after 3,131 s; drones 7, 9 and 10 hit buildings (7 of 10 landed); closest pair 5.67 m |
-| Islamabad -> Lahore, 272.55 km | normal height, 38 buildings of 25 m or more from OSM, RL + brake, 65 charging stops | stopped on purpose after 76.0 km: 18 of 65 stops used, 10/10 drones flying, no hits (below) |
+| Islamabad -> Lahore, 272.55 km | normal height, 38 buildings of 25 m or more from OSM, RL + brake, 65 charging stops | **flown to the end on 28 September 2026**: all 10 drones landed in Lahore after 64,988 simulated seconds (18 h 03 min), all 65 stops used, no hits; formation error while cruising mean 1.40 m, with one episode up to 201 m (drone 9 held at a tall building for about 2 minutes, below); closest pair 5.49 m |
 
 Both 12 km runs were repeated on 27 September 2026 with the current code (`scripts/run_route.py`)
 and gave the same outcome as the first runs of 26 September (2,794.6 s and 10 landed; 3 hits by the
@@ -107,7 +142,7 @@ building; this is why the formation error while cruising was above 50 m for 446 
 47 m, max 534 m) although the rest of the V held. Evidence: `reports/logs/long_route/rawalpindi_12km_auto.json`,
 `rawalpindi_12km_low.json`.
 
-### Islamabad -> Lahore (stopped early on purpose)
+### Islamabad -> Lahore, flown to the end (28 September 2026)
 Set-up: 10 drones from F-9 Park, Islamabad (33.7036, 73.0231) to Lahore (31.5204, 74.3587), seed 1,
 5 m/s, battery endurance 25 min, flight height "auto" (normal, 30 m on a route this long), avoidance
 RL + brake. Map data: OpenStreetMap buildings of 25 m or more along the route, downloaded in 14 boxes
@@ -115,24 +150,41 @@ of 20 km with the light "tall buildings only" query: 38 buildings are in the way
 flown over. Leader route 272.58 km around them; 65 charging stops about every 4.1 km (half a battery
 per leg, 3-minute battery swap).
 
-| When | Simulated time | Stops used | Flown | Left | Drones flying | Obstacle hits |
-|---|---|---|---|---|---|---|
-| progress check | 7,169 s | 7 of 65 | - | - | 10/10 | 0 |
-| progress check | 14,156 s | 14 of 65 | 59.4 km | 213.1 km | 10/10 | 0 |
-| **stopped** | **18,088 s (5 h 01 min)** | **18 of 65** | **76.0 km** | **196.6 km** | **10/10** | **0** |
+| Simulated time | Stops used | Drones landed in Lahore | Obstacle hits | Formation error while cruising | Closest pair |
+|---|---|---|---|---|---|
+| 64,987.6 s (18 h 03 min) | 65 of 65 | 10 of 10 | 0 | mean 1.40 m; above 2 m for 295 s in total; max 201.3 m | 5.49 m |
 
-Drone 1 was still the leader when it was stopped. The run went at about 16-38x real time (speed
-"Max"); the remaining ~48,000 simulated seconds would have taken about 20-25 more minutes at the
-38x it had reached.
+Drone 1 led the whole way. The run took 24 minutes on the laptop (45x real time, with other jobs
+running; the first run the same morning took 19 minutes at 57x and gave the same outcome and the same
+events, as the fast simulator is repeatable).
 
-Why it was stopped: it was a scale demonstration, not a new test - the charging-stop mechanism had
-already completed end to end on the 12 km route above and in `tests/test_long_route.py` - and the
-owner asked to stop it on 26 September 2026 so the laptop was free for the remaining work. What it
-shows: the long-route machinery (strip download, chunked route planning, 65 charging stops, landing
-and take-off at every stop, flying 76 km without a hit or a lost drone) works at city-to-city scale.
-Not measured: formation error and closest pair over the whole run (the app only shows them live), and
-the remaining 196.6 km. Evidence: `reports/logs/long_route/lahore_stopped_2026-09-26.json` (values read
-from the running app; the app keeps no log files). To finish it: `docs/RUNBOOK.md`, section 4.
+**The 201 m episode, explained.** About 90 s after the swarm left charging stop 5 (t = 5,036 s), a tall
+building beside the route pushed drone 9 more than 12 m from its slot, so it dropped to the 24 m crossing
+layer - still below the top of the building - and was held 1.4-1.7 m from the wall, almost stopped, for
+about 115 s while the V flew on. At the worst moment (t = 5,150 s) it was 599 m from its slot. It then got
+free, caught up at 10 m/s and was back in its slot at t = 5,271 s, without a hit. This is the dead-end
+weakness of the followers' avoider (`docs/KNOWN_ISSUES.md`), seen until now only when flying low. A second,
+shorter episode on the last leg (t = 64,690-64,731 s, max 43 m) was not analysed.
+Evidence: `reports/logs/long_route/lahore_full.json` (whole run: events, progress every 1,000 s, the
+episodes above 10 m), `lahore_full_stop5_detail.json` (every follower every 5 s from 5,000 to 5,300 s,
+recorded by replaying the mission with `scripts/route_window.py`).
+
+The earlier run in the app on 26 September 2026 was stopped on purpose after 76.0 km (18 of 65 stops,
+10/10 flying, 0 hits); its record is `reports/logs/long_route/lahore_stopped_2026-09-26.json`.
+
+## Hardware readiness (Phase 6, software only)
+- **Drone profiles** (`config/profiles/`): `sim.yaml`, `standin.yaml` (drone 1 behind the radio stand-in) and
+  `mixed.yaml` (drone 1 real, through a serial URL placeholder). `scripts/check_profile.py` checks them; a real
+  drone is checked as text only, and the simulation tools refuse to start a profile that has one
+  (`tests/test_profiles.py`, 12 tests).
+- **Telemetry-radio stand-in** (`src/swarm_tools/radio_proxy.py`): a relay between one drone's PX4 and MAVROS
+  with SiK defaults - 64 kbit/s air rate halved by error correction to 32 kbit/s shared by both directions,
+  transmit turns of up to 131 ms, 1 % loss, a 1 s buffer. Its tests (`tests/test_radio_proxy.py`, 6 tests)
+  measure the rate (2,000 bytes delivered in 0.45-0.75 s), the shared channel, the turn wait, loss and the
+  full buffer with local sockets. The PX4 test (F1 and F2 with drone 1 behind it, `scripts/phase6_runs.sh`)
+  is scheduled in rounds.
+- **Flight test plan**: `docs/FLIGHT_TEST_PLAN.md` (one real drone with simulated ones; PX4 safety
+  parameters checked in the PX4 source; go/no-go checklist; abort criteria; kill-switch procedure).
 
 ## Ground-control app
 Live 2-D map (Mapbox or Esri satellite, OSM streets), 3-D view (Cesium terrain, OpenStreetMap 3-D

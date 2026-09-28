@@ -1,0 +1,94 @@
+{
+ "seeds": 10,
+ "wall_s": 176,
+ "shapes": [
+  {
+   "shape": "V",
+   "runs": 40,
+   "cruise_rms_mean_m": 0.02,
+   "cruise_rms_max_m": 0.73,
+   "f1_new_leader_median_s": 1.61,
+   "f1_recovery_median_s": 4.47,
+   "f1_recovery_worst_s": 4.52,
+   "f4_recovery_median_s": 1.1,
+   "f5_one_leader_median_s": 0.1,
+   "f5_recovery_median_s": 8.93,
+   "f5_recovery_worst_s": 12.2,
+   "min_sep_m": 6.17,
+   "runs_under_5m": {
+    "none": 0,
+    "F1": 0,
+    "F4": 0,
+    "F5": 0
+   },
+   "runs_under_5m_total": 0,
+   "goal_reached": 40
+  },
+  {
+   "shape": "line",
+   "runs": 40,
+   "cruise_rms_mean_m": 0.02,
+   "cruise_rms_max_m": 0.73,
+   "f1_new_leader_median_s": 1.61,
+   "f1_recovery_median_s": 4.71,
+   "f1_recovery_worst_s": 4.82,
+   "f4_recovery_median_s": 1.1,
+   "f5_one_leader_median_s": 0.1,
+   "f5_recovery_median_s": 8.95,
+   "f5_recovery_worst_s": 12.45,
+   "min_sep_m": 0.57,
+   "runs_under_5m": {
+    "none": 0,
+    "F1": 0,
+    "F4": 0,
+    "F5": 8
+   },
+   "runs_under_5m_total": 8,
+   "goal_reached": 40
+  },
+  {
+   "shape": "column",
+   "runs": 40,
+   "cruise_rms_mean_m": 0.02,
+   "cruise_rms_max_m": 0.73,
+   "f1_new_leader_median_s": 1.61,
+   "f1_recovery_median_s": 25.62,
+   "f1_recovery_worst_s": 25.72,
+   "f4_recovery_median_s": 1.1,
+   "f5_one_leader_median_s": 0.1,
+   "f5_recovery_median_s": 14.02,
+   "f5_recovery_worst_s": 20.95,
+   "min_sep_m": 4.59,
+   "runs_under_5m": {
+    "none": 0,
+    "F1": 10,
+    "F4": 0,
+    "F5": 10
+   },
+   "runs_under_5m_total": 20,
+   "goal_reached": 40
+  },
+  {
+   "shape": "echelon",
+   "runs": 40,
+   "cruise_rms_mean_m": 0.02,
+   "cruise_rms_max_m": 0.73,
+   "f1_new_leader_median_s": 1.61,
+   "f1_recovery_median_s": 11.27,
+   "f1_recovery_worst_s": 11.77,
+   "f4_recovery_median_s": 1.1,
+   "f5_one_leader_median_s": 0.1,
+   "f5_recovery_median_s": 13.7,
+   "f5_recovery_worst_s": 19.9,
+   "min_sep_m": 4.6,
+   "runs_under_5m": {
+    "none": 0,
+    "F1": 10,
+    "F4": 0,
+    "F5": 10
+   },
+   "runs_under_5m_total": 20,
+   "goal_reached": 40
+  }
+ ]
+}

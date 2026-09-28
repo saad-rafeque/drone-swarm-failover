@@ -6,8 +6,8 @@ import math
 
 import pytest
 
-from swarm_agent.formation import (LEFT, RIGHT, assign_slots, follower_slot, follower_velocity,
-                                   formation_errors, initial_layout, rms, slot_position, v_slot_body)
+from swarm_agent.formation import (LEFT, RIGHT, SHAPES, assign_slots, follower_slot, follower_velocity,
+                                   formation_errors, initial_layout, rms, slot_body, slot_position, v_slot_body)
 from swarm_agent.geometry import dist
 
 SP, HALF = 10.0, math.radians(45.0)
@@ -117,3 +117,33 @@ def test_initial_layout_is_the_formation_and_well_spaced(n):
 def test_rms():
     assert rms([3.0, 4.0]) == pytest.approx(math.sqrt(12.5))
     assert rms([]) == 0.0
+
+
+@pytest.mark.parametrize("shape", SHAPES)
+@pytest.mark.parametrize("n", [2, 3, 5, 10])
+def test_every_shape_is_well_spaced_and_measured_from_its_own_slots(shape, n):
+    ids = list(range(1, n + 1))
+    layout = initial_layout(ids, NORTH, SP, HALF, shape)
+    pts = list(layout.values())
+    assert min(math.dist(a, b) for i, a in enumerate(pts) for b in pts[i + 1:]) >= SP - 1e-9
+    pos = {i: (e, nn, 30.0) for i, (e, nn) in layout.items()}
+    assert max(formation_errors(pos, 1, NORTH, ids, SP, HALF, shape).values(), default=0.0) < 1e-9
+
+
+def test_shape_geometry():
+    assert slot_body((LEFT, 2), SP, HALF, "V") == v_slot_body((LEFT, 2), SP, HALF)
+    assert slot_body((LEFT, 2), SP, HALF, "line") == (0.0, 2 * SP)            # side by side
+    assert slot_body((RIGHT, 1), SP, HALF, "line") == (0.0, -SP)
+    assert slot_body((LEFT, 1), SP, HALF, "column") == (-SP, 0.0)             # single file, arms interleaved
+    assert slot_body((RIGHT, 1), SP, HALF, "column") == (-2 * SP, 0.0)
+    f, l = slot_body((RIGHT, 2), SP, HALF, "echelon")                          # 4th place on the right diagonal
+    assert f == pytest.approx(-4 * SP * math.cos(HALF)) and l == pytest.approx(-4 * SP * math.sin(HALF))
+    with pytest.raises(ValueError):
+        slot_body((LEFT, 1), SP, HALF, "circle")
+
+
+@pytest.mark.parametrize("shape", SHAPES)
+def test_losing_a_drone_keeps_every_slot_distinct(shape):
+    ids = set(range(1, 11)) - {4}
+    offsets = [slot_body(s, SP, HALF, shape) for s in assign_slots(ids, 1).values()] + [(0.0, 0.0)]
+    assert min(math.dist(a, b) for i, a in enumerate(offsets) for b in offsets[i + 1:]) >= SP - 1e-9

@@ -13,7 +13,7 @@ skipped when those are not installed. The Phase 2 coverage record (`election.py`
 | File | What it checks |
 |---|---|
 | `test_election.py` | The leader election state machine against the rules in `docs/SPECIFICATION.md` and the documented design choices. |
-| `test_formation.py` | V formation: slot geometry, parity-arm assignment, reassignment and the control law. |
+| `test_formation.py` | Formations: slot geometry for every shape, parity-arm assignment, reassignment and the control law. |
 | `test_safety.py` | Separation (repulsion) and the geofence. |
 | `test_geometry.py` | Conversion from GPS to the shared East-North-Up frame, and the vector helpers. |
 | `test_heartbeat.py` | The heartbeat binary codec. |
@@ -26,6 +26,8 @@ skipped when those are not installed. The Phase 2 coverage record (`election.py`
 | `test_long_route.py` | Long routes: positions far from the origin, planning in chunks, charging stops. |
 | `test_gcs_backend.py` | The ground-control app: commands, faults, snapshots, takeover timing, and which files the Docs page may serve. |
 | `test_tools_scripts.py` | Safety checks on helper scripts: the Kaggle bundle never packs a key, and validation and test courses stay apart. |
+| `test_radio_proxy.py` | The telemetry-radio stand-in: shared rate, transmit-turn wait, loss, full buffer and order, with local sockets. |
+| `test_profiles.py` | Drone profiles: valid and invalid files, and that the simulation tools refuse a real drone. |
 | `test_ros_constants.py` | Constants the ROS node relies on, checked against their sources (needs ROS 2). |
 
 `conftest.py` holds the shared helpers: configuration loading and a small heartbeat bus for election

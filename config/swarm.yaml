@@ -83,6 +83,21 @@ link_emulator:
   loss_pct: 0.0
   seed: 1
 
+# Phase 6 telemetry-radio stand-in: one simulated drone's MAVROS <-> PX4 link runs through a relay that
+# behaves like a SiK radio pair (src/swarm_tools/radio_proxy.py). SiK defaults, from ArduPilot's "SiK
+# Radio - Advanced Configuration" page: AIR_SPEED 64 (kbit/s), ECC 1 ("the data rate you can support is
+# halved"), time-division turns ("each radio only transmits when it is 'their turn'"), MAX_WINDOW 131 (ms),
+# SERIAL_SPEED 57 (57600 baud).
+radio_standin:
+  air_rate_bps: 64000      # AIR_SPEED 64
+  ecc: 1                   # 1 = error correction on (SiK default): usable rate halved
+  max_window_ms: 131.0     # MAX_WINDOW: longest wait for this side's transmit turn
+  loss_pct: 1.0            # design choice (range, interference): packets lost in the air
+  max_queue_s: 1.0         # design choice: a packet that would wait longer than this is dropped (buffer full)
+  mavros_port_base: 15540  # MAVROS of a stand-in drone binds 15540 + PX4 instance
+  relay_port_base: 15580   # the relay listens for that MAVROS on 15580 + PX4 instance
+  seed: 1
+
 logging:
   rate_hz: 10.0            # agent_state publication rate (logger/metrics only)
 

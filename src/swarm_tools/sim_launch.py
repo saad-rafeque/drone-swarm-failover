@@ -15,14 +15,19 @@ from __future__ import annotations
 import os
 import signal
 import subprocess
+import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import psutil
 
 from swarm_agent.config import Config
 from swarm_agent.geometry import GeoPoint
+
+if TYPE_CHECKING:
+    from swarm_tools.profiles import Profile
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MAVROS_SHARE = Path("/opt/ros/jazzy/share/mavros/launch")
@@ -102,6 +107,7 @@ class DroneProcs:
     drone_id: int
     px4: subprocess.Popen
     mavros: subprocess.Popen | None = None
+    relay: subprocess.Popen | None = None      # telemetry-radio stand-in (profile link "standin")
 
 
 @dataclass
@@ -114,9 +120,13 @@ class SimLauncher:
     log_dir: Path = field(default_factory=lambda: REPO_ROOT / ".sim")
     pluginlists: Path = field(default_factory=lambda: REPO_ROOT / "config" / "mavros_pluginlists.yaml")
     procs: dict[int, DroneProcs] = field(default_factory=dict)
+    profile: "Profile | None" = None   # config/profiles/*.yaml; None: every drone plain simulated
     work_dir: Path = field(init=False)
 
     def __post_init__(self) -> None:
+        if self.profile is not None and self.profile.real:
+            raise RuntimeError(f"profile {self.profile.name!r} has real drones {self.profile.real}: the simulation "
+                               "tools never connect to a real flight controller (docs/SPECIFICATION.md, rule 7)")
         base = Path(os.path.expanduser(self.cfg.sim.work_dir))
         if " " in str(base):
             raise ValueError(f"sim.work_dir must not contain spaces (PX4 rcS limitation): {base}")
@@ -146,10 +156,33 @@ class SimLauncher:
         )
         self.procs[drone_id] = DroneProcs(drone_id, proc)
 
+    def start_relay(self, drone_id: int) -> None:
+        """The telemetry-radio stand-in between this drone's PX4 and its MAVROS (swarm_tools.radio_proxy)."""
+        log = open(self.log_dir / f"radio_standin_{drone_id}.log", "w", encoding="utf-8")
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "swarm_tools.radio_proxy", "--instance", str(instance_of(self.cfg, drone_id)),
+             "--stats", str(self.log_dir / f"radio_standin_{drone_id}.json")],
+            stdout=log, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True,
+            env={**os.environ, "PYTHONPATH": str(REPO_ROOT / "src")},
+        )
+        self.procs[drone_id].relay = proc
+        port = self.cfg.radio_standin.relay_port_base + instance_of(self.cfg, drone_id)
+        deadline = time.time() + 10.0
+        while not any(c.laddr and c.laddr.port == port for c in psutil.net_connections(kind="udp")):
+            if proc.poll() is not None or time.time() > deadline:
+                raise RuntimeError(f"radio stand-in for drone {drone_id} did not start (see its log in {self.log_dir})")
+            time.sleep(0.1)
+
+    def fcu_url(self, drone_id: int) -> str:
+        url = self.profile.of(drone_id).fcu_url if self.profile is not None else sim_fcu_url(self.cfg, drone_id)
+        assert_simulated_url(url)
+        return url
+
     def start_mavros(self, drone_id: int) -> None:
         require_ros_env()
-        url = sim_fcu_url(self.cfg, drone_id)
-        assert_simulated_url(url)
+        url = self.fcu_url(drone_id)
+        if self.profile is not None and self.profile.of(drone_id).link == "standin":
+            self.start_relay(drone_id)
         args = [
             str(MAVROS_NODE), "--ros-args",
             "-r", f"__ns:={namespace_of(drone_id)}",
@@ -215,7 +248,7 @@ class SimLauncher:
 
     def stop(self) -> None:
         for dp in self.procs.values():
-            for p in (dp.mavros, dp.px4):
+            for p in (dp.mavros, dp.px4, dp.relay):
                 if p is not None and p.poll() is None:
                     try:
                         os.killpg(p.pid, signal.SIGTERM)
@@ -223,7 +256,7 @@ class SimLauncher:
                         pass
         deadline = time.time() + 5.0
         for dp in self.procs.values():
-            for p in (dp.mavros, dp.px4):
+            for p in (dp.mavros, dp.px4, dp.relay):
                 if p is None:
                     continue
                 try:

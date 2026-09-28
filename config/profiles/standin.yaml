@@ -1,0 +1,8 @@
+# Phase 6 hardware stand-in: drone 1 is still simulated, but its MAVROS <-> PX4 link runs through the
+# telemetry-radio stand-in (src/swarm_tools/radio_proxy.py, settings in config/swarm.yaml radio_standin),
+# the way a real drone would talk to the ground computer over a SiK radio pair.
+name: standin
+description: Drone 1 simulated behind the telemetry-radio stand-in; the other drones simulated.
+default: {link: sim}
+drones:
+  1: {link: standin, note: "radio-like link: 32 kbit/s shared, turns up to 131 ms, 1 % loss"}

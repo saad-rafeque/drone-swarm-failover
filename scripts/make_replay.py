@@ -96,7 +96,7 @@ def scenario_from_run(run_dir: Path, name: str, subtitle: str) -> dict:
             dtm = t - ms.get("pos_t", ms["t"])
             mp = tuple(ms["pos"][k] + ms["vel"][k] * dtm for k in range(3))
             for i, slot in assign_slots(ms["members"], m).items():
-                sp = slot_position(mp, ms["heading"], slot, cfg.formation.spacing_m, half)
+                sp = slot_position(mp, ms["heading"], slot, cfg.formation.spacing_m, half, shape=cfg.formation.shape)
                 sc["se"][i][-1], sc["sn"][i][-1] = dm(sp[0]), dm(sp[1])
         sc["role"].append(roles)
         sc["master"].append(m or 0)
@@ -186,7 +186,8 @@ def scenario_puresim(n: int = 10, seed: int = 7) -> dict:
             ag = s.agents[m]
             for i, slot in assign_slots(ag.election.members(s.t), m).items():
                 if s.drones[i].alive:
-                    sp = slot_position(s.drones[m].pos, ag.heading, slot, cfg.formation.spacing_m, half)
+                    sp = slot_position(s.drones[m].pos, ag.heading, slot, cfg.formation.spacing_m, half,
+                                   shape=cfg.formation.shape)
                     sc["se"][i][-1], sc["sn"][i][-1] = dm(sp[0]), dm(sp[1])
         ph = PHASE_CODE[s.agents[m].phase.name] if m else (state["last_ph"] or "I")
         sc["role"].append(roles)

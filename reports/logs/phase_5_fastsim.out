@@ -1,0 +1,27 @@
+45/540 runs, 74 s
+90/540 runs, 151 s
+135/540 runs, 222 s
+180/540 runs, 281 s
+225/540 runs, 350 s
+270/540 runs, 410 s
+315/540 runs, 481 s
+360/540 runs, 547 s
+405/540 runs, 616 s
+450/540 runs, 694 s
+495/540 runs, 766 s
+540/540 runs, 831 s
+Fast simulator, 10 drones, 20 seeds per condition and kind (missions without a fault, F1, F2); no jitter. Limits: new leader median 3.0 s / worst 4.0 s, formation back within 15 s, closest pair >= 5 m, goal in >= 90 % of runs; no false leader change at <= 10 % loss.
+
+| Delay (ms) | Loss (%) | False leader changes (missions affected) | New leader median / worst (s) | Formation < 2 m median / worst (s) | Closest pair (m) | Goal | Phase 4 limits | No false change |
+|---|---|---|---|---|---|---|---|---|
+| 50 | 0 | 0 (0/20) | 1.66 / 1.74 | 4.47 / 4.59 | 8.23 | 60/60 | hold | yes |
+| 50 | 10 | 0 (0/20) | 1.86 / 2.30 | 4.51 / 4.85 | 8.23 | 60/60 | hold | yes |
+| 50 | 30 | 0 (0/20) | 2.26 / 3.25 | 4.72 / 5.55 | 6.82 | 60/60 | hold | yes |
+| 150 | 0 | 0 (0/20) | 1.95 / 2.04 | 4.61 / 4.74 | 8.23 | 60/60 | hold | yes |
+| 150 | 10 | 0 (0/20) | 2.16 / 2.60 | 4.70 / 5.05 | 8.23 | 60/60 | hold | yes |
+| 150 | 30 | 0 (0/20) | 2.59 / 3.27 | 4.95 / 5.67 | 6.44 | 60/60 | hold | yes |
+| 300 | 0 | 0 (0/20) | 2.40 / 2.49 | 4.92 / 5.04 | 8.24 | 60/60 | hold | yes |
+| 300 | 10 | 0 (0/20) | 2.65 / 3.09 | 5.03 / 5.71 | 8.24 | 60/60 | hold | yes |
+| 300 | 30 | 0 (0/20) | 3.06 / 3.80 | 5.56 / 9.47 | 7.68 | 60/60 | FAIL | yes |
+
+wrote reports/logs/phase_5_fastsim/radio_sweep.jsonl, summary.json, summary.md and reports/phase5_radio_sweep.png in 831 s

@@ -150,7 +150,7 @@ class PureSim:
         self.charge = charge_pct_per_s        # at a charging stop (default: a 3-minute battery swap)
         self.half_angle = math.radians(cfg.formation.v_half_angle_deg)
         heading = heading_of(*cfg.mission.goal_enu_m)
-        layout = initial_layout(cfg.drone_ids, heading, cfg.formation.spacing_m, self.half_angle)
+        layout = initial_layout(cfg.drone_ids, heading, cfg.formation.spacing_m, self.half_angle, cfg.formation.shape)
         self.drones = {i: SimDrone(i, (e, n, 0.0)) for i, (e, n) in layout.items()}
         self.boot = {i: self.rng.uniform(0.0, boot_spread_s) for i in cfg.drone_ids}
         self.world = world
@@ -159,7 +159,7 @@ class PureSim:
         if world is not None and world.route and len(world.route) > 1:
             (x0, y0), (x1, y1) = world.route[0], world.route[1]
             heading = heading_of(x1 - x0, y1 - y0)       # spawn the V facing the first leg of the route
-            layout = initial_layout(cfg.drone_ids, heading, cfg.formation.spacing_m, self.half_angle)
+            layout = initial_layout(cfg.drone_ids, heading, cfg.formation.spacing_m, self.half_angle, cfg.formation.shape)
             self.drones = {i: SimDrone(i, (e, n, 0.0)) for i, (e, n) in layout.items()}
         self.agents = {i: AgentCore(cfg, i, self.drones[i].pos, self.boot[i], world) for i in cfg.drone_ids}
         self.net = Network(self.rng, latency_s, jitter_s, loss)
@@ -217,7 +217,7 @@ class PureSim:
         members = ag.election.members(self.t)
         mp = self.drones[m].pos
         errs = [dist(self.drones[i].pos, slot_position(mp, ag.heading, slot, self.cfg.formation.spacing_m,
-                                                         self.half_angle))
+                                                         self.half_angle, shape=self.cfg.formation.shape))
                 for i, slot in assign_slots(members, m).items()
                 if self.drones[i].alive and self.role(i) == Role.FOLLOWER]
         return rms(errs) if errs else None

@@ -1,0 +1,6 @@
+# Every drone simulated: PX4 SIH on this computer, MAVROS over UDP (PX4's own port plan).
+# The default for every phase; checked by scripts/check_profile.py.
+name: sim
+description: All drones simulated (PX4 SIH on this computer).
+default: {link: sim}
+drones: {}

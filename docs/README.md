@@ -8,6 +8,7 @@
 | [RESULTS.md](RESULTS.md) | Every result with its numbers and the evidence file it comes from. |
 | [DECISIONS.md](DECISIONS.md) | The design decisions that shape the system and the reasons behind them. |
 | [KNOWN_ISSUES.md](KNOWN_ISSUES.md) | Known limitations, open work, the road to real drones, and the fixes made in the final check. |
+| [FLIGHT_TEST_PLAN.md](FLIGHT_TEST_PLAN.md) | The plan for a first test with one real drone and simulated ones: roles, PX4 safety settings, go/no-go checklist, abort rules and the kill-switch procedure. Not flown. |
 | [KAGGLE_GUIDE.md](KAGGLE_GUIDE.md) | Long reinforcement-learning training on a Kaggle GPU, step by step. |
 | [HANDOVER.pdf](HANDOVER.pdf) | All of the above, the key figures and every phase report in one printable file. |
 | [KAGGLE_GUIDE.pdf](KAGGLE_GUIDE.pdf) | The Kaggle guide as a printable file. |

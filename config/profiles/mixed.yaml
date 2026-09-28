@@ -1,0 +1,12 @@
+# Mixed reality, for the flight test in docs/FLIGHT_TEST_PLAN.md: drone 1 real, the other drones simulated.
+# VALIDATION ONLY in this repository: scripts/check_profile.py checks this file as text. The simulation
+# tools refuse to start it, and nothing here opens the serial port (docs/SPECIFICATION.md, rule 7).
+name: mixed
+description: Drone 1 real (Pixhawk 6C through a SiK telemetry radio on the ground computer's USB port); the other drones simulated.
+default: {link: sim}
+drones:
+  1:
+    link: real
+    fcu_url: "serial:///dev/ttyUSB0:57600"   # placeholder: the ground radio's USB device; SiK SERIAL_SPEED 57600
+    mav_sys_id: 1                            # the real drone's PX4 MAV_SYS_ID must equal its swarm ID
+    note: "placeholder device path: confirm the real one on the ground computer before the flight test"

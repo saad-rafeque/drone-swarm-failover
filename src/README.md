@@ -10,7 +10,7 @@ everything around it for simulation and testing, and never runs onboard. Every t
 |---|---|
 | `agent_core.py` | The per-drone agent: mission phases, leader election, formation and safety in one class. |
 | `election.py` | Leader election state machine with a term counter and planned handover. |
-| `formation.py` | V formation: slot geometry, slot assignment and the follower velocity command. |
+| `formation.py` | Formations (V, line abreast, column, echelon): slot geometry, slot assignment and the follower velocity command. |
 | `safety.py` | Separation (repulsion from nearby drones) and geofence. |
 | `geometry.py` | WGS-84 latitude, longitude and altitude to one shared East-North-Up frame, and vector helpers. |
 | `heartbeat.py` | The heartbeat message and its compact binary codec (45 bytes for 10 drones). |
@@ -27,7 +27,9 @@ without ROS.
 
 | Module | Purpose |
 |---|---|
-| `sim_launch.py` | Start and stop N PX4 SIH instances and N MAVROS nodes (simulation only). |
+| `sim_launch.py` | Start and stop N PX4 SIH instances and N MAVROS nodes (simulation only); refuses any real drone. |
+| `profiles.py` | Drone profiles: for every drone, simulated, simulated behind the radio stand-in, or real (checked as text only). |
+| `radio_proxy.py` | The telemetry-radio stand-in: a relay between one drone's PX4 and MAVROS that behaves like a SiK radio pair (shared 32 kbit/s, transmit turns, loss, full buffer). |
 | `link_emulator.py` | The simulated radio between drones: delay, jitter, loss, a cut transmitter, network splits. |
 | `logger_node.py`, `logfmt.py` | Record every drone's state to `states.jsonl`, and its flat CSV form. |
 | `mavros_link.py` | Test-harness handle for one drone's MAVROS namespace. |

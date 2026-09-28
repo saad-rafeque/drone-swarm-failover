@@ -107,7 +107,8 @@ def compute(run_dir: Path) -> dict:
                 pos = {i: position_at(s, t) for i, s in cur.items() if i in ms["members"]}
                 pos = {i: p for i, p in pos.items() if p is not None}
                 if m in pos:
-                    errs = formation_errors(pos, m, ms["heading"], ms["members"], cfg.formation.spacing_m, half)
+                    errs = formation_errors(pos, m, ms["heading"], ms["members"], cfg.formation.spacing_m, half,
+                                            cfg.formation.shape)
                     if errs:
                         rms_series.append((t, rms(errs.values())))
         air = {i: position_at(s, t) for i, s in cur.items() if not s.get("landed", True)}

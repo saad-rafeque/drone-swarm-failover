@@ -29,14 +29,17 @@ SECTIONS = [
     ("run", "Installation and operation", "docs/RUNBOOK.md"),
     ("decisions", "Design decisions", "docs/DECISIONS.md"),
     ("issues", "Known issues, open work and roadmap", "docs/KNOWN_ISSUES.md"),
+    ("flight", "Flight test plan (not flown)", "docs/FLIGHT_TEST_PLAN.md"),
     ("kaggle", "Kaggle training guide", "docs/KAGGLE_GUIDE.md"),
     ("p0", "Appendix A - Phase 0 report", "reports/PHASE_0.md"),
     ("p1", "Appendix B - Phase 1 report", "reports/PHASE_1.md"),
     ("p2", "Appendix C - Phase 2 report", "reports/PHASE_2.md"),
     ("p3", "Appendix D - Phase 3 report", "reports/PHASE_3.md"),
     ("p4", "Appendix E - Phase 4 report (not completed)", "reports/PHASE_4.md"),
-    ("scaling", "Appendix F - Scaling test", "reports/SCALING.md"),
-    ("spec", "Appendix G - Project specification", "docs/SPECIFICATION.md"),
+    ("p5", "Appendix F - Phase 5 report (fast simulator; PX4 in rounds)", "reports/PHASE_5.md"),
+    ("p6", "Appendix G - Phase 6 report (software parts)", "reports/PHASE_6.md"),
+    ("scaling", "Appendix H - Scaling test", "reports/SCALING.md"),
+    ("spec", "Appendix I - Project specification", "docs/SPECIFICATION.md"),
 ]
 FIGURES = [
     ("reports/gcs_3d_view.jpg", "The 3D view of the ground-control app: ten drones in V formation over F-9 Park, Islamabad "
@@ -47,6 +50,10 @@ FIGURES = [
                                    "ideal slot, formation error over time (Phase 3, cross-check run 2)."),
     ("reports/logs/rl/eval/comparison.png", "Obstacle avoidance on 90 unseen courses: success rate, crashes and drones left "
                                             "behind for five methods at three obstacle densities."),
+    ("reports/phase5_radio_sweep.png", "Phase 5 in the fast simulator: false leader changes, time to a new leader and "
+                                       "formation recovery for heartbeat delay 50-300 ms and loss 0-30 % (540 runs)."),
+    ("reports/formation_shapes.png", "Formation shapes: V, line abreast, column and echelon seen from above, and how they "
+                                     "compare after faults; only the V stayed 5 m apart (the others are experimental)."),
     ("reports/rl_training.png", "RL training on the laptop: return per episode and held-out scores; still improving at 6 "
                                 "million steps."),
     ("reports/phase1_resources.png", "PX4 + MAVROS resources for 3, 5 and 10 drones on this laptop (Phase 1)."),

@@ -25,9 +25,10 @@ All numbers come from logged simulation runs; each row names the report that hol
 | Swarm size | 1 to 100 drones in the fast simulator; after the leader is killed, a new leader is agreed in 1.60–1.75 s (median) at every size from 2 to 100; heartbeat of 45 bytes for 10 drones and 56 bytes for 100 | [reports/SCALING.md](reports/SCALING.md) |
 | Obstacle avoidance | on 90 unseen courses the learned policy with a brake completes 26/30 sparse and 18/30 medium courses, against 15/30 and 7/30 for the tuned classical controller | [docs/RESULTS.md](docs/RESULTS.md) |
 | Real city map | 3.2 km across Islamabad among 932 OpenStreetMap buildings: no drone hit anything in 10 of 10 runs, including 5 in which the leader is killed halfway | [docs/RESULTS.md](docs/RESULTS.md) |
-| Long routes | 12 km Islamabad to Rawalpindi with 2 charging stops: all 10 drones landed, no hits. Islamabad to Lahore (272.55 km, 65 stops): stopped on purpose after 76 km with 10 of 10 drones flying and no hits | [docs/RESULTS.md](docs/RESULTS.md) |
+| Long routes | 12 km Islamabad to Rawalpindi with 2 charging stops: all 10 drones landed, no hits. Islamabad to Lahore (272.55 km, 65 stops): flown to the end, all 10 drones landed, no hits | [docs/RESULTS.md](docs/RESULTS.md) |
+| Radio realism (fast simulator) | no false leader change in 180 missions with up to 300 ms delay and 30 % loss; the Phase 4 limits hold in 8 of 9 radio conditions | [reports/PHASE_5.md](reports/PHASE_5.md) |
 
-## Project status (27 September 2026)
+## Project status (28 September 2026)
 
 | Work package | Status | Report |
 |---|---|---|
@@ -38,11 +39,12 @@ All numbers come from logged simulation runs; each row names the report that hol
 | Scaling to 100 drones (fast simulator) | Passed | [reports/SCALING.md](reports/SCALING.md) |
 | Obstacle avoidance: learned policy against a classical controller | First results | [docs/RESULTS.md](docs/RESULTS.md) |
 | City-to-city routes with charging stops | Working; 12 km route completed end to end | [docs/RESULTS.md](docs/RESULTS.md) |
-| Islamabad to Lahore run (272.55 km) | Stopped on purpose after 76 km (10/10 drones, 0 hits) | [docs/RESULTS.md](docs/RESULTS.md) |
+| Islamabad to Lahore run (272.55 km, 65 charging stops) | Completed on 28 September 2026: 10/10 drones landed, 0 hits | [docs/RESULTS.md](docs/RESULTS.md) |
 | Ground-control app: 2-D map, 3-D view, fault injection, results, documents | Working | [docs/RUNBOOK.md](docs/RUNBOOK.md) |
-| Phase 4: fault trials on PX4 | Started, then stopped by the owner because the laptop is too weak; indicative results and the full procedure are recorded | [reports/PHASE_4.md](reports/PHASE_4.md) |
-| Phase 5: radio realism sweep | Not started | [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) |
-| Phase 6: mixed-reality readiness and flight test plan | Not started | [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) |
+| Phase 4: fault trials on PX4 | In progress on this laptop, one round at a time (the owner's decision of 28 September 2026); indicative results recorded | [reports/PHASE_4.md](reports/PHASE_4.md) |
+| Phase 5: radio realism sweep | Passed in the fast simulator; the PX4 sweep runs in rounds | [reports/PHASE_5.md](reports/PHASE_5.md) |
+| Phase 6: mixed-reality readiness and flight test plan | Software parts done (drone profiles, telemetry-radio stand-in, flight test plan); the PX4 stand-in test runs in rounds | [reports/PHASE_6.md](reports/PHASE_6.md) |
+| Formation shapes: line abreast, column, echelon | Added and compared; experimental, because only the V stays 5 m apart after faults | [docs/RESULTS.md](docs/RESULTS.md) |
 | Long RL training on a Kaggle GPU | Kit ready and checked; not run | [docs/KAGGLE_GUIDE.md](docs/KAGGLE_GUIDE.md) |
 | Real drones | Never flown | — |
 
@@ -78,7 +80,8 @@ The full history is in [CHANGELOG.md](CHANGELOG.md).
 - **Failover.** If nobody hears the leader for 1.5 s, the next eligible drone takes over. At 30 %
   battery the leader hands over on purpose, leaves the formation and flies home.
 - **Formation.** A V with 10 m between neighbours. Each follower copies the leader's velocity and
-  corrects toward its slot; when a drone is lost, the drones behind it on the same arm move up.
+  corrects toward its slot; when a drone is lost, the drones behind it on the same arm move up. Line
+  abreast, column and echelon are available as experimental options.
 - **Safety layer.** A hard 5 m minimum distance between drones (repulsion starts at 7.5 m), a
   geofence around home, and an emergency landing on GPS loss or at 10 % battery.
 - **One shared frame.** Each drone converts its GPS position to one East-North-Up frame; the MAVROS
@@ -149,6 +152,7 @@ Every folder has its own README describing its contents.
 | [docs/RESULTS.md](docs/RESULTS.md) | Every result with its numbers and the evidence file behind it |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | The design decisions and the reasons for them |
 | [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) | Limitations, open work and the road to real drones |
+| [docs/FLIGHT_TEST_PLAN.md](docs/FLIGHT_TEST_PLAN.md) | The plan for a first test with one real drone: roles, PX4 safety settings, go/no-go checklist, abort rules, kill switch |
 | [docs/KAGGLE_GUIDE.md](docs/KAGGLE_GUIDE.md) | Long RL training on a Kaggle GPU, step by step (also as `docs/KAGGLE_GUIDE.pdf`) |
 | [docs/HANDOVER.pdf](docs/HANDOVER.pdf) | All documents, the key figures and every phase report in one PDF |
 | [reports/README.md](reports/README.md) | Phase reports, figures and the raw logs they were computed from |
@@ -164,15 +168,14 @@ Leaflet and CesiumJS 1.145 in the browser. Development machine: Intel i3-1115G4 
 
 ## Roadmap
 
-1. Finish Phase 4 on a computer with 8 or more cores (about 7 hours), or with 5 drones on the laptop,
-   and choose how the formation should re-form faster after a network split heals.
-2. Phase 5: sweep radio delay (50, 150, 300 ms) and loss (0, 10, 30 %) and look for false failovers.
-3. Phase 6: one real drone with simulated ones (configuration only), a telemetry-radio stand-in and a
-   flight test plan.
-4. Long RL training on a Kaggle GPU with several seeds.
-5. Keep drones apart when they cannot hear each other; handle dense obstacle clutter.
-6. Real drones: a companion computer on every Pixhawk 6C, a radio bridge for the heartbeats, a stable
-   PX4 release, bench tests, then legal permission before any outdoor flight.
+1. Finish the PX4 tests on this laptop, one round at a time on the charger: Phase 4 (fault trials), Phase 5
+   (radio sweep) and the Phase 6 radio stand-in test.
+2. Long RL training on a Kaggle GPU with several seeds.
+3. Keep drones apart when they cannot hear each other; give followers a way out of dead ends at buildings;
+   slot-change rules that make the line, column and echelon as safe as the V.
+4. Real drones: a companion computer on every Pixhawk 6C, a radio bridge for the heartbeats, a stable PX4
+   release, bench tests, then the first flight by [docs/FLIGHT_TEST_PLAN.md](docs/FLIGHT_TEST_PLAN.md), after
+   legal permission.
 
 The complete list with evidence and effort estimates: [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md).
 

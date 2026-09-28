@@ -1,0 +1,23 @@
+Fresh-copy check, 2026-09-28T12:05:09+05:00: the files that git would publish (tracked and new, not ignored),
+copied into an empty folder; no .venv, no map keys, no PX4 build. Python: Python 3.12.3
+files copied: 1093
+
+== python3 -m pytest (system Python, as in the README)
+........................................................................ [ 80%]
+........................ss.........                                      [100%]
+176 passed, 4 skipped in 37.75s
+
+== python3 scripts/check_profile.py config/profiles/mixed.yaml
+profile 'mixed': Drone 1 real (Pixhawk 6C through a SiK telemetry radio on the ground computer's USB port); the other drones simulated.
+  drone  1  real     serial:///dev/ttyUSB0:57600  (checked as text only; never opened)  - placeholder device path: confirm the real one on the ground computer before the flight test
+VALID. Real drones [1]: the simulation tools refuse to start this profile (simulation only).
+
+== python3 scripts/gcs.py --port 8097 (the ground-control app), then its pages
+/                          HTTP 200
+/static/tests.html         HTTP 200
+/static/3d.html            HTTP 200
+/api/tests                 HTTP 200
+/docs/README.md            HTTP 200
+/docs/SPECIFICATION.md     HTTP 200
+{"ok":true,"msg":"Mission started"}
+mission running in the copy: phase TAKEOFF | drones 5 | leader 1

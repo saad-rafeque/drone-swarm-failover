@@ -54,6 +54,7 @@ def main() -> None:
     events: list[list] = []
     seen = 0
     rms_max, rms_sum, rms_n, sep_min = 0.0, 0.0, 0, math.inf
+    above_2m_s, episodes, open_ep = 0.0, [], None      # cruise stretches with formation error above 10 m
     progress, next_row = [], 1000.0
     t_run = time.time()
     while not b._done and sim.t < args.max_sim_hours * 3600.0:
@@ -68,6 +69,16 @@ def main() -> None:
         if m is not None and sim.agents[m].phase.name == "CRUISE":
             if st.formation_rms is not None:
                 rms_max, rms_sum, rms_n = max(rms_max, st.formation_rms), rms_sum + st.formation_rms, rms_n + 1
+                above_2m_s += sim.dt if st.formation_rms > 2.0 else 0.0
+                if open_ep is None and st.formation_rms > 10.0:
+                    open_ep = {"start_s": round(sim.t, 1), "next_stop": b.snapshot()["next_stop"], "peak_m": 0.0}
+                if open_ep is not None:
+                    if st.formation_rms > open_ep["peak_m"]:
+                        open_ep["peak_m"], open_ep["peak_at_s"] = round(st.formation_rms, 1), round(sim.t, 1)
+                    if st.formation_rms < 5.0:
+                        open_ep["end_s"] = round(sim.t, 1)
+                        episodes.append(open_ep)
+                        open_ep = None
             if math.isfinite(st.min_sep):
                 sep_min = min(sep_min, st.min_sep)
         if sim.t >= next_row:
@@ -85,7 +96,9 @@ def main() -> None:
         "outcome": next((e[3] for e in reversed(events) if e[3].startswith("Mission")), "time limit reached"),
         "alive": s["alive"], "total": s["total"], "obstacle_hits": s["hits"],
         "stops_total": len(s["stops"]), "stop_landings": landings, "route_km": round(s["dist_total"] / 1000, 2),
-        "cruise_formation_rms_m": {"max": round(rms_max, 2), "mean": round(rms_sum / rms_n, 2) if rms_n else None},
+        "cruise_formation_rms_m": {"max": round(rms_max, 2), "mean": round(rms_sum / rms_n, 2) if rms_n else None,
+                                   "time_above_2m_s": round(above_2m_s, 1),
+                                   "episodes_above_10m": episodes + ([open_ep] if open_ep else [])},
         "cruise_min_separation_m": None if math.isinf(sep_min) else round(sep_min, 2),
         "progress": progress, "events": events,
     }

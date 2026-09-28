@@ -9,7 +9,8 @@ far (indicative only), why the runs were stopped, and exactly how to run Phase 4
 > 100 %) until the battery ran out; the second, on the charger, still overloaded the laptop and was
 > stopped by the owner. So far: a new leader takes over in about 1.6–2.2 s (limit 3 s), the planned
 > battery handover in 0.35–0.80 s (limit 1 s), and no two drones came closer than 5 m. Only F5 (after the
-> radio split heals) needed about 17 s to re-form (limit 15 s). How to run it later is in
+> radio split heals) needed about 17 s to re-form; on 28 September 2026 the owner set F5's limit to 20 s
+> (it was 15 s), so that is now within the limit. How to run it later is in
 > "How to run Phase 4 later" below.
 
 ## What Phase 4 must show (`docs/SPECIFICATION.md`, section 7)
@@ -37,8 +38,9 @@ partial runs indicate (conditions below):
   at home both times.
 - [NOT MEASURED] F4 no master change — indicative: 2 of 2 without a change; formation back in 7.4–8.5 s.
 - [NOT MEASURED] F5 single master after the heal — indicative: 0.30 and 1.55 s (limit 3.0 s).
-- [NOT MEASURED] Formation under 2 m within 15 s — indicative: yes for F1–F4 (5.7–8.5 s); **no for F5**
-  (16.7 and 17.1 s, see "Why F5 is slow").
+- [NOT MEASURED] Formation under 2 m within 15 s (F5: 20 s, the owner's decision of 28 September 2026) —
+  indicative: yes for F1–F4 (5.7–8.5 s) and for F5 (16.7 and 17.1 s, see "Why F5 is slow"; it would
+  fail the original 15 s).
 - [NOT MEASURED] Minimum separation >= 5 m — indicative: 6.11 m or more in every trial.
 - [NOT MEASURED] Goal reached >= 9/10 per fault — indicative: every trial that ran to the end reached
   the goal (10 of 10).
@@ -51,7 +53,7 @@ partial runs indicate (conditions below):
 | 14:26 | Batch restarted with a charger check | It waited for the charger and a non-power-saver profile. |
 | 14:50 | Charger connected, Performance profile | The first trial started with a wrong fault name (a variable clash in the new charger check) and stopped at once; fixed in `a31f1f0`. |
 | 14:52–14:57 | Second attempt, on the charger | F1 trial 1 flew: new leader after 1.62 s, formation back under 2 m after 5.71 s, closest pair 7.90 m. The load average still rose from 19 to about 40. |
-| 14:58 | Stopped by the owner | "This laptop can't handle it." The trial was in the hover at the goal, not yet landed. `reports/logs/phase_4/F1_t1/`. |
+| 14:58 | Stopped by the owner | "This laptop can't handle it." The trial was in the hover at the goal, not yet landed. `reports/logs/phase_4_stopped/F1_t1/`. |
 
 ## Key numbers so far (indicative only)
 First attempt, on battery with a saturated CPU (`reports/logs/phase_4_on_battery/phase4_on_battery_table.md`,
@@ -65,7 +67,7 @@ made by `scripts/phase4_metrics.py` from the trial logs):
 | F4 | 2 | no change | no change | 7.90 / 8.45 | 2/2 | 7.96 | 2/2 | leader changed: 0/2 |
 | F5 | 2 | 0.93 / 1.55 | 3.0 (after the heal) | 16.89 / 17.08 | 0/2 | 6.11 | 2/2 |  |
 
-Second attempt, on the charger (`reports/logs/phase_4/phase4_stopped_table.json`): F1 trial 1 — new
+Second attempt, on the charger (`reports/logs/phase_4_stopped/phase4_stopped_table.json`): F1 trial 1 — new
 leader 1.62 s, formation back 5.71 s, closest pair 7.90 m, reached the goal hover. The same fault with
 the same seed on battery took 2.23 s and 7.54 s: the power-saver CPU made everything slower.
 
@@ -88,7 +90,7 @@ below), about 6 s crossing, about 4–5 s climbing back. The height offset count
 error, so the error only falls under 2 m after the climb: about 17 s in total. In the fast simulator
 (faster vertical response) the same fault recovered in about 10 s.
 
-Options (none applied):
+Options considered:
 1. Keep the rules; make the move faster: allow sideways motion from half the transit depth, and/or a
    faster descent limit (PX4 `MPC_Z_VEL_MAX_DN` and `mission.descent_rate_mps`). Expected: 3–5 s less;
    smaller vertical margin during the move.
@@ -96,6 +98,10 @@ Options (none applied):
    in F3), so only the back group re-slots. Changes the election behaviour written in `docs/SPECIFICATION.md`,
    so it needs the owner's approval.
 3. Accept a longer limit for F5 (for example 20 s).
+
+**Decision (28 September 2026): option 3.** The owner set the F5 formation-recovery limit to 20 s and kept
+the election rule and the transit layer unchanged. `scripts/phase4_metrics.py` and `scripts/plot_phase4.py`
+use 20 s for F5 and 15 s for the other faults.
 
 ## How to run Phase 4 later
 ### What the computer needs
@@ -222,7 +228,7 @@ the round number as the seed, so a round can be repeated exactly).
   recovery slower (compare the charger trial); the 12th ran on the charger and was stopped in the hover
   at the goal.
 - Two trials per fault cannot show a median or a worst case; F5's 17 s is consistent across both
-  trials and explained by the transit layer, so it is likely to fail the 15 s limit as the system stands.
+  trials and explained by the transit layer; it is within the 20 s limit the owner set for F5.
 - The earlier Phase 3 harness stall came back once (F1_t3), this time caused by the whole machine
   stalling on battery, not by the harness.
 

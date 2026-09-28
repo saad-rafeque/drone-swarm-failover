@@ -46,7 +46,7 @@ def test_default_config_loads_with_section5_values():
     (lambda d: d["formation"].update(transit_exit_m=20.0), "transit_exit_m"),
     (lambda d: d["mission"].update(goal_enu_m=[0.0, 1600.0]), "outside the geofence"),
     (lambda d: d["formation"].update(spacing_m=4.0), "spacing"),
-    (lambda d: d["formation"].update(shape="line"), "unsupported formation"),
+    (lambda d: d["formation"].update(shape="circle"), "unsupported formation"),
     (lambda d: d["heartbeat"].update(master_timeout_s=0.3), "two heartbeat periods"),
     (lambda d: d["link_emulator"].update(loss_pct=120.0), "loss_pct"),
 ])

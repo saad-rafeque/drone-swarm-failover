@@ -51,8 +51,11 @@ PHASE_TEXT = {Phase.TAKEOFF: "Takeoff to cruise altitude", Phase.CRUISE: "Cruise
 DEFAULTS = {
     "n": 10, "home": [33.7036, 73.0231], "target": [33.7299, 73.0373],   # example: F-9 Park -> Faisal Mosque
     "cruise_mps": 5.0, "endurance_min": 25.0, "seed": 1, "drift": 0.15, "obstacles": "none", "avoider": "apf",
-    "altitude": "auto",
+    "altitude": "auto", "shape": "V",
 }
+# Only the V is safe after faults; the others came closer than 5 m while re-forming (reports/logs/formations/)
+SHAPES = {"V": "V (recommended)", "line": "Line abreast (experimental)", "column": "Column (experimental)",
+          "echelon": "Echelon, right (experimental)"}
 ALTITUDES = {"auto": "Auto (low in town, normal on long routes)",
              "low": "Low, 16 m: every building and tree is in the way",
              "normal": "Normal, 30 m: only buildings of 25 m or more are in the way"}
@@ -72,7 +75,7 @@ MAX_DRONES = 100      # the logic allows 250 (PX4 system IDs); above ~100 the fa
 
 
 def mission_config(base: Config, n: int, home: list[float], target: list[float], cruise_mps: float,
-                   cruise_alt_m: float | None = None) -> Config:
+                   cruise_alt_m: float | None = None, shape: str = "V") -> Config:
     """Base config re-anchored at a real home position, with a real GPS target."""
     frame = EnuFrame(GeoPoint(home[0], home[1], 0.0))
     ge, gn, _ = frame.to_enu(GeoPoint(target[0], target[1], 0.0))
@@ -85,7 +88,7 @@ def mission_config(base: Config, n: int, home: list[float], target: list[float],
             origin=OriginCfg(home[0], home[1], 0.0),
             mission=r(base.mission, goal_enu_m=(ge, gn), cruise_speed_mps=cruise_mps,
                       cruise_alt_m=base.mission.cruise_alt_m if cruise_alt_m is None else cruise_alt_m),
-            formation=r(base.formation, max_speed_mps=max(base.formation.max_speed_mps, cruise_mps + 5.0)),
+            formation=r(base.formation, shape=shape, max_speed_mps=max(base.formation.max_speed_mps, cruise_mps + 5.0)),
             safety=r(base.safety, geofence_radius_m=max(base.safety.geofence_radius_m, dist * 1.2 + 500.0)))
     validate(cfg)
     return cfg
@@ -165,7 +168,8 @@ class FastSimBackend:
         alt_mode = self._alt_mode(p, dist)
         cruise_alt = LOW_ALT_M if alt_mode == "low" else NORMAL_ALT_M
         min_h = 0.0 if alt_mode == "low" else cruise_alt - 5.0
-        cfg = mission_config(self.base, int(p["n"]), p["home"], p["target"], float(p["cruise_mps"]), cruise_alt)
+        cfg = mission_config(self.base, int(p["n"]), p["home"], p["target"], float(p["cruise_mps"]), cruise_alt,
+                             p.get("shape", "V"))
         goal = cfg.mission.goal_enu_m
         leg_m = max(1000.0, LEG_FRACTION * float(p["endurance_min"]) * 60.0 * float(p["cruise_mps"]))
         omap, counts, kinds = ObstacleMap(), None, []
@@ -252,7 +256,8 @@ class FastSimBackend:
         self._debt = 0.0
         dist = math.hypot(*cfg.mission.goal_enu_m)
         self._event("info", f"Mission ready: {len(cfg.drone_ids)} drones, route {dist / 1000:.2f} km, "
-                            f"battery endurance {p['endurance_min']:.0f} min (seed {p['seed']})")
+                            f"battery endurance {p['endurance_min']:.0f} min (seed {p['seed']})"
+                            + ("" if p.get("shape", "V") == "V" else f", formation: {SHAPES[p['shape']]}"))
         if prep.get("data_note"):
             self._event("fault", prep["data_note"])
         if prep["counts"] is not None:
@@ -407,6 +412,7 @@ class FastSimBackend:
                 "obstacles_version": self._obstacles["version"], "route": self.route_ll, "hits": len(sim.obstacle_hits),
                 "loading": self.loading, "avoiders": AVOIDERS, "policy_available": POLICY_PATH.exists(),
                 "stops": self.stops_ll, "next_stop": sim.agents[m].next_stop if m else None, "altitudes": ALTITUDES,
+                "shapes": SHAPES,
             }
 
     def _prepare_then_start(self, p: dict) -> None:
@@ -439,15 +445,15 @@ class FastSimBackend:
             if kind == "start":
                 p = dict(self.params)
                 for key in ("n", "home", "target", "cruise_mps", "endurance_min", "seed", "drift", "obstacles", "avoider",
-                            "altitude"):
+                            "altitude", "shape"):
                     if key in c:
                         p[key] = c[key]
                 p["n"] = max(1, min(int(p["n"]), MAX_DRONES))
                 p["cruise_mps"] = max(1.0, min(float(p["cruise_mps"]), 12.0))
                 p["endurance_min"] = max(1.0, min(float(p["endurance_min"]), 10000.0))
                 if p.get("obstacles") not in ("none", "osm") or p.get("avoider") not in AVOIDERS \
-                        or p.get("altitude", "auto") not in ALTITUDES:
-                    return {"ok": False, "msg": "unknown obstacles, avoidance or flight-height setting"}
+                        or p.get("altitude", "auto") not in ALTITUDES or p.get("shape", "V") not in SHAPES:
+                    return {"ok": False, "msg": "unknown obstacles, avoidance, flight-height or formation setting"}
                 if self.loading:
                     return {"ok": False, "msg": self.loading}
                 ge, gn, _ = EnuFrame(GeoPoint(p["home"][0], p["home"][1], 0.0)).to_enu(

@@ -4,12 +4,11 @@
 
 | Item | State | What it takes |
 |---|---|---|
-| Phase 4: fault trials on PX4 (leader killed, radio lost, low battery, follower killed, radio split; 10 trials each) | started twice on 27 September 2026, stopped by the owner: this laptop saturates with 10 PX4 drones (indicative results: all takeovers within limits; F5 formation recovery ~17 s against 15 s) | `bash scripts/phase4_all.sh 1` on a machine with 8+ cores (~7 h), or `N=5` on this laptop; step by step in `reports/PHASE_4.md` |
-| Phase 5: radio realism sweep (50/150/300 ms x 0/10/30 % loss) | not started | a sweep driver around `scripts/run_mission.py` with the link emulator settings; several hours |
-| Phase 6: mixed-reality readiness (1 real + N simulated drones, telemetry-radio stand-in, flight test plan, go/no-go checklist) | not started | profiles in `config/profiles/`, a UDP proxy that limits bandwidth, `FLIGHT_TEST_PLAN.md` |
-| Other formations (line, column, echelon, diamond, squads) and their comparison | not started | generalise `formation.py` beyond the V; compare formation error, failover and obstacle results |
+| Phase 4: fault trials on PX4 (leader killed, radio lost, low battery, follower killed, radio split; 10 trials each) | stopped twice on 27 September 2026 (the laptop saturated); on 28 September 2026 the owner chose to run it on this laptop with 10 drones, one round at a time, only on the charger (indicative results so far: all takeovers within limits; F5 formation recovery ~17 s, within the 20 s the owner set for F5) | `bash scripts/phase4_runs.sh <round> <round>` for one round (5 trials, ~40 min), rounds 1-10, then the clean-shell cross-check; step by step in `reports/PHASE_4.md` |
+| Phase 5: radio realism sweep (50/150/300 ms x 0/10/30 % loss) | **done in the fast simulator** on 28 September 2026 (540 runs: no false leader change; Phase 4 limits hold in 8 of 9 conditions); the PX4 sweep is scheduled in rounds | `bash scripts/phase5_runs.sh <first> <last>` (9 conditions, 2 missions each, ~16 min per condition); `reports/PHASE_5.md` |
+| Phase 6: mixed-reality readiness (1 real + N simulated drones, telemetry-radio stand-in, flight test plan, go/no-go checklist) | **software parts done** on 28 September 2026: profiles, radio stand-in, `docs/FLIGHT_TEST_PLAN.md`; the PX4 stand-in test (F1 and F2 with drone 1 behind the stand-in) is scheduled in rounds | `bash scripts/phase6_runs.sh <round> <round>` (F1 + F2, ~16 min per round), rounds 1-10; `reports/PHASE_6.md` |
+| Other formations (line, column, echelon, diamond, squads) and their comparison | **line abreast, column and echelon added and compared** on 28 September 2026: in normal flight as good as the V, but after the leader is lost or a radio split heals they come closer than 5 m (line down to 0.57 m), so they are marked experimental and the V stays the default. Diamond and squads: not done | shape-specific rules for moving to new slots (for example every slot change on the transit layer for single-line shapes), then the same comparison (`scripts/formation_compare.py`) |
 | Longer RL training, several seeds | kit ready and checked on 27 September 2026, **not run** | one ~11-hour Kaggle GPU session per seed, step by step in `docs/KAGGLE_GUIDE.md` |
-| Islamabad -> Lahore run to the end | stopped on purpose at 76 km (18 of 65 stops, 10/10 drones, 0 hits) | `PYTHONPATH=src python3 scripts/run_route.py --target 31.5204 74.3587 --out reports/logs/long_route/lahore.json` (no browser, about 30-60 min), or in the app |
 
 ## Known limitations
 - **No real drone has flown this code.** The Pixhawk 6C cannot run it alone; each drone needs a
@@ -38,17 +37,25 @@
 - **PX4 on this laptop is limited to 10 drones** (CPU, and PX4's default port plan).
 - **Phase 3 harness:** two runs ended with the harness's watcher thread stalled (flights fine);
   the fix is in the code but has not been re-run on PX4.
-- **Followers can get stuck against buildings when flying low.** On the 12 km route at 16 m, three
-  followers got stuck about 1.5 m from a wall, crawled, fell 100-1,250 m behind the formation and
-  finally hit the building (7 of 10 landed). At the normal 30 m the same route is clean (formation
-  error max 1.42 m, no hits). A fix needs a way out of dead ends (for example re-planning a short
-  path for a stuck follower) - the learned avoider only sees 25 m around it. Evidence:
-  `reports/logs/long_route/`.
+- **Followers can get stuck against buildings.** On the 12 km route at 16 m, three followers got stuck
+  about 1.5 m from a wall, crawled, fell 100-1,250 m behind the formation and finally hit the building
+  (7 of 10 landed). At the normal 30 m the same route is clean (formation error max 1.42 m, no hits).
+  On the full Islamabad -> Lahore run at 30 m it happened once: after charging stop 5 a tall building
+  pushed drone 9 onto the 24 m crossing layer, below the rooftop, where it was held at the wall for about
+  2 minutes and fell 600 m behind before it got free and caught up, without a hit. A fix needs a way out
+  of dead ends (for example re-planning a short path for a stuck follower, or crossing above a tall
+  building instead of below) - the learned avoider only sees 25 m around it. Evidence:
+  `reports/logs/long_route/` (`lahore_full_stop5_detail.json`).
+- **Formation shapes other than the V are experimental.** Line abreast, column and echelon fly as well as
+  the V in normal flight, but the rules that move drones to new slots after the leader is lost or a radio
+  split heals were designed for the V: the line came down to 0.57 m between two drones (8 of 10 split
+  runs under 5 m), the column and echelon to about 4.6 m (`reports/logs/formations/`).
 - **The classical avoider depends on its update rate.** On the real map it hit 4 and 7 buildings when
   run every 0.05 s but 10 and 8 at 10 Hz, its tuned rate; RL + brake had 0 in both (`docs/RESULTS.md`).
 - **F5 on PX4: the formation re-forms slowly after a radio split heals.** The group with the newer
   leader wins (the term rule), so the whole V re-forms around it; the transit layer and PX4's vertical
-  speeds make that take about 17 s against a 15 s target (`reports/PHASE_4.md`, three options).
+  speeds make that take about 17 s. On 28 September 2026 the owner set F5's limit to 20 s instead of
+  changing the rules (`reports/PHASE_4.md`, "Why F5 is slow").
 - **This laptop's power.** On battery the power-saver profile throttles the CPU and 10 PX4 drones
   saturate it; the battery also ran out twice on 27 September 2026. Run long PX4 jobs only on the
   charger (`scripts/phase4_runs.sh` waits for it).

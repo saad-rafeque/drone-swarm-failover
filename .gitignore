@@ -23,3 +23,9 @@ id_ed25519*
 
 # compiled launcher (built by scripts/install_launcher.sh)
 /Swarm Control
+
+# PX4 test queue: live state files (the queue's history stays in runner.log)
+reports/logs/px4_queue/control.json
+reports/logs/px4_queue/status.json
+reports/logs/px4_queue/runner.lock
+reports/logs/px4_queue/*.tmp
