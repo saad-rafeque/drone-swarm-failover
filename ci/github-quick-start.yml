@@ -1,3 +1,8 @@
+# PAUSED: GitHub runs workflows only from .github/workflows/. This file was moved here on 29 September 2026 because
+# GitHub would not start it ("recent account payments have failed"): every push produced a "startup failure".
+# To switch it on again (after the account's billing is fixed, or once the repository is public, where Actions is
+# free): mkdir -p .github/workflows && git mv ci/github-quick-start.yml .github/workflows/quick-start.yml
+#
 # Checks on every push and pull request that a fresh copy installs with ./setup.sh, passes the tests, and that the
 # ground-control app starts. ROS 2 and PX4 are not installed here; their tests are skipped.
 name: Quick start

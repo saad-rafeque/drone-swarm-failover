@@ -8,7 +8,7 @@ figures are estimates, not measurements.
 **In short:**
 
 - **One-click setup is possible.** Level 1 is done: `./setup.sh` installs everything the app, the fast
-  simulator and the tests need, in about 3 minutes, and a GitHub check tests it on every push. The full PX4 +
+  simulator and the tests need, in about 3 minutes. A GitHub check for it is ready but paused (section 1). The full PX4 +
   ROS 2 system can be one command with a container (Docker), or one click in the browser with GitHub
   Codespaces, in about 2–3 days.
 - **Before going public:** the licence (Apache-2.0), the secrets scan and a responsible-use note are done. The old
@@ -64,8 +64,12 @@ planned:
   - Build the image once and publish it on GitHub's container registry, so users download it instead of building
     it for an hour.
 
-**The automatic check (GitHub Actions) is added** for level 1: `.github/workflows/quick-start.yml` runs
-`./setup.sh` on a fresh copy after every push to `main` and every pull request, and checks that the app starts.
+**The automatic check (GitHub Actions) is written but paused.** `ci/github-quick-start.yml` runs `./setup.sh` on
+a fresh copy after every push to `main` and every pull request, and checks that the app starts. GitHub refused to
+start it ("recent account payments have failed or your spending limit needs to be increased"), so it is kept out of
+`.github/workflows/` until the account's billing is fixed or the repository is public (Actions is free for public
+repositories). The file's first lines say how to switch it on. The same steps pass on a fresh copy without PX4 or
+ROS 2.
 When the container exists, add its build to the same check. Without such a check, setup scripts break quietly
 as packages change.
 
@@ -193,7 +197,7 @@ control (PX4 does this well).
 | # | Item | Why | Effort (estimate) | Who |
 |---|---|---|---|---|
 | 1 | Licence, secrets scan, responsible-use note | nothing can be shared safely without these | **done** (29 September 2026); for going public, a clean copy without the old history | owner decides when |
-| 2 | Level 1 one-click setup + automatic check | anyone can try the project in minutes | **done** (29 September 2026) | — |
+| 2 | Level 1 one-click setup + automatic check | anyone can try the project in minutes | **done** (29 September 2026); the check waits for GitHub billing | owner: fix billing, then switch the check on |
 | 3 | Hold-down rule against leader flapping | the one known weak point of the election | about 1 day + re-runs (about 8 h of PX4 trials) | owner approves the spec change |
 | 4 | Height layers when drones cannot hear each other | the main separation risk before real flights | 1–2 days + re-runs | development |
 | 5 | Container and Codespaces (level 3) | the full PX4 system in one step on any computer | 2–3 days | development |
