@@ -106,7 +106,7 @@ the `px4_sitl_sih` target); move to a stable PX4 release for the real drones and
   Settings -> Deploy keys. Git-ignored files are not on GitHub and need their own copy if wanted:
   `config/map_keys.local.yaml` (keys), `.venv/`, `kaggle/swarm-rl-code.zip` (rebuilt by a script) and
   the `Swarm Control` launcher (rebuilt by `scripts/install_launcher.sh`).
-- **No licence file.** Choose a licence before sharing the code outside the team. Third-party data keep
+- **Licence: Apache-2.0** (`LICENSE`, `NOTICE`), chosen on 29 September 2026. Third-party data keep
   their own terms: OpenStreetMap data (ODbL, attribution), Mapbox and Cesium ion / Google tiles (their
   terms of service, shown as credits in the app).
 - **The online project brief is out of date** (published 26 September 2026; see `docs/RUNBOOK.md`,
