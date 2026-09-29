@@ -1,9 +1,12 @@
 # Kaggle training guide: long RL training on a GPU
 
-**Status (27 September 2026): everything is ready, nothing has been run on Kaggle yet.** The kit
-has only been tested on this laptop with tiny settings (a few hundred training steps on the CPU, 16
-courses), so the first real Kaggle run may still show a problem that only appears there (paths, GPU
-memory, time). This file explains, step by step: which files to take, how to start the training on
+**Status (29 September 2026): done once, with two seeds.** Two 10.5-hour runs on a T4 GPU (28-29 September,
+about 143,000 steps per second, 5.5 and 5.8 billion steps). Seed 2's policy passed the checks of section 8 and
+is now `models/avoid_policy.npz`: RL + brake completes 30, 23 and 18 of 30 unseen courses (few, medium, dense),
+against 26, 18 and 5 for the laptop policy. Both runs stopped improving after about 2.5 hours, so a next run
+should change the set-up (section 11) rather than only run longer. One lesson: the uploaded zip must contain
+`reports/logs/rl/apf_tuning.jsonl`, or Kaggle's classical row runs untuned; re-test on the laptop (section 9).
+Results: `docs/RESULTS.md`, "Obstacle avoidance". This file explains, step by step: which files to take, how to start the training on
 Kaggle, what gets trained, what problem it solves, how to change things, where to paste every file
 when training is finished, and what you get at the end. Section 12 has the whole procedure on one page.
 

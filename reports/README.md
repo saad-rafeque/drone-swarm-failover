@@ -13,7 +13,7 @@ made from the logs, and the raw logs themselves.
 | [PHASE_3.md](PHASE_3.md) | Passed | ROS 2 integration: 10-drone PX4 formation flights, three acceptance runs and three clean-shell cross-checks. |
 | [PHASE_4.md](PHASE_4.md) | Passed | Fault trials F1 to F5 on PX4: 55 trials, every limit met; the earlier attempts; how each number is measured. |
 | [PHASE_5.md](PHASE_5.md) | Passed | Radio realism: delay 50-300 ms x loss 0-30 %, in the fast simulator (540 runs) and on PX4 (18 missions). |
-| [PHASE_6.md](PHASE_6.md) | Software done; PX4 stand-in test fixed, acceptance trials pending | Drone profiles, the telemetry-radio stand-in, why the first stand-in runs failed and the fix, the flight test plan, a fresh-clone check. |
+| [PHASE_6.md](PHASE_6.md) | Passed: 22 of 22 PX4 stand-in trials | Drone profiles, the telemetry-radio stand-in, why the first stand-in runs failed and the fix, the flight test plan, a fresh-clone check. |
 | [SCALING.md](SCALING.md) | Passed (fast simulator) | 1 to 100 drones: failover time, formation recovery, separation, heartbeat size and radio load. |
 
 ## Figures
@@ -29,6 +29,7 @@ made from the logs, and the raw logs themselves.
 | `phase5_radio_sweep.png` | Phase 5 in the fast simulator: false leader changes, time to a new leader and formation recovery for every radio condition. |
 | `formation_shapes.png` | The four formation shapes seen from above, and how they compare after faults. |
 | `rl_training.png` | Reinforcement-learning training on the laptop: return per episode and scores on the validation courses. |
+| `rl_training_kaggle_seed1.png`, `rl_training_kaggle_seed2.png` | The two 10.5-hour Kaggle GPU training runs, the same plots. |
 | `logs/rl/eval/comparison.png` | The fair comparison of obstacle avoiders on 90 unseen courses. |
 
 ## Generated pages
@@ -53,11 +54,12 @@ made from the logs, and the raw logs themselves.
 | `logs/phase_4_on_battery/` | The first Phase 4 attempt on battery power: 12 trials, not used for acceptance (see the folder's README). |
 | `logs/phase_5_fastsim/` | Phase 5 in the fast simulator: every run (`radio_sweep.jsonl`) and the summary. |
 | `logs/phase_5/` | Phase 5 on PX4: one mission without a fault and one with the leader killed per radio condition (`d<delay>_l<loss>_{none,F1}`), and `phase5_px4_table.md`. |
-| `logs/phase_6/` | Phase 6 on PX4: the stand-in trials (when they run), the check flights after the radio fix (`dev_radio_*`), `fresh_clone_check.txt`. |
+| `logs/phase_6/` | Phase 6 on PX4: the 20 stand-in trials (`F1_t1`-`F2_t10`, table `phase6_table.md`), the check flights after the radio fix (`dev_radio_*`), `fresh_clone_check.txt`. |
+| `logs/phase_6_crosscheck/` | Phase 6 clean-shell cross-check (`F1_t11`, `F2_t11`). |
 | `logs/phase_6_radio_saturated/` | The first four Phase 6 runs, with the overloaded radio link (not used for acceptance). |
 | `logs/formations/` | The formation-shape comparison: every run and the summary. |
 | `logs/scaling/` | The 1 to 100 drone scaling test, with clean and with harder radio, and the machine description. |
-| `logs/rl/` | Tuning of the classical avoider, training run `run1`, the fair comparison (`eval/`) and the real-map evaluations (`route_eval/`, `route_eval_10hz/`). |
+| `logs/rl/` | Tuning of the classical avoider, training run `run1`, the fair comparison (`eval/`) and the real-map evaluations (`route_eval/`, `route_eval_10hz/`). The Kaggle GPU runs: training records `kaggle_seed1/`, `kaggle_seed2/`; Kaggle's own tests `eval_kaggle_seed*/`, `route_eval_kaggle_seed*/` (their classical row is untuned); the laptop re-test of the chosen policy with the tuned classical controller `eval_kaggle_check/`, `route_eval_kaggle_check/`. |
 | `logs/long_route/` | The 12 km route records, the full Islamabad to Lahore run (`lahore_full.json`, with `lahore_full_stop5_detail.json` for the stop-5 episode) and the earlier stopped run. |
 
 ### Naming conventions

@@ -5,7 +5,7 @@
 | Item | State | What it takes |
 |---|---|---|
 | Other formations (line, column, echelon, diamond, squads) and their comparison | **line abreast, column and echelon added and compared** on 28 September 2026: in normal flight as good as the V, but after the leader is lost or a radio split heals they come closer than 5 m (line down to 0.57 m), so they are marked experimental and the V stays the default. Diamond and squads: not done | shape-specific rules for moving to new slots (for example every slot change on the transit layer for single-line shapes), then the same comparison (`scripts/formation_compare.py`) |
-| Longer RL training, several seeds | kit ready and checked on 27 September 2026, **not run** | one ~11-hour Kaggle GPU session per seed, step by step in `docs/KAGGLE_GUIDE.md` |
+| Longer RL training, several seeds | **done** on 28-29 September 2026: two 10.5-hour Kaggle GPU runs (seeds 1 and 2); seed 2's policy is now `models/avoid_policy.npz` (`docs/RESULTS.md`). Both runs stopped improving after about 2.5 hours, so more hours with the same settings will not help | a changed set-up (learning-rate decay, more dense courses, a third seed) for dense clutter, which no method solves yet; about 11 GPU hours per run |
 
 ## Known limitations
 - **No real drone has flown this code.** The Pixhawk 6C cannot run it alone; each drone needs a

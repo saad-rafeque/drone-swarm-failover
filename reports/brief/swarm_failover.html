@@ -292,20 +292,22 @@
             <td><span class="chip ok">passed</span> 135&nbsp;MB RAM</td></tr>
           <tr><td>Ten drones</td><td>10 PX4 autopilots on one laptop (i3, 8&nbsp;GB): all take off, hover 30&nbsp;s and land</td>
             <td><span class="chip ok">passed</span> 1.07&nbsp;GB RAM, 77&nbsp;% CPU in total</td></tr>
-          <tr><td>Swarm logic</td><td>190 automated tests; 1,000 random runs with crashes, radio loss, delays and splits</td>
+          <tr><td>Swarm logic</td><td>187 automated tests; 1,000 random runs with crashes, radio loss, delays and splits</td>
             <td><span class="chip ok">passed</span> exactly one leader in 1,000 of 1,000</td></tr>
           <tr><td>Formation flight</td><td>10 PX4 drones fly 1&nbsp;km in a V and land at the target, 4 clean runs</td>
             <td><span class="chip ok">passed</span> error &le; 1.56&nbsp;m (limit 2), gap &ge; 8.0&nbsp;m (limit 5)</td></tr>
           <tr><td>Swarm size</td><td>1 to 100 drones in the fast simulator, leader killed mid-flight; 24 runs</td>
             <td><span class="chip ok">passed</span> all landed, one leader each time</td></tr>
           <tr><td>Obstacle avoidance</td><td>Learned policy vs tuned classical controller, 90 unseen routes with buildings and trees</td>
-            <td><span class="chip ok">RL + brake ahead</span> at low and medium density</td></tr>
+            <td><span class="chip ok">RL + brake ahead</span> at every density: 30, 23, 18 of 30</td></tr>
           <tr><td>Bad radio</td><td>Heartbeat delay 50&ndash;300&nbsp;ms and loss 0&ndash;30&nbsp;%: 540 runs in the fast simulator, 18 missions on PX4</td>
             <td><span class="chip ok">passed</span> no false leader change; on PX4 a new leader in 1.6&ndash;2.5&nbsp;s</td></tr>
           <tr><td>Formation shapes</td><td>Line abreast, column and echelon against the V, with the same faults</td>
             <td><span class="chip warn">V only</span> the others come closer than 5&nbsp;m after faults</td></tr>
           <tr><td>Faults on PX4</td><td>Leader killed, radio lost, low battery, follower lost, radio split; 10 trials each</td>
             <td><span class="chip ok">55 of 55 passed</span> new leader in 1.4&ndash;1.7&nbsp;s, every goal reached</td></tr>
+          <tr><td>Telemetry radio</td><td>Leader behind a simulated 64&nbsp;kbit/s telemetry radio, then killed or cut off; 22 PX4 trials</td>
+            <td><span class="chip ok">22 of 22 passed</span> new leader in 1.4&ndash;1.6&nbsp;s, every goal reached</td></tr>
         </tbody>
       </table>
     </div>
@@ -370,32 +372,33 @@
   </section>
 
   <section aria-labelledby="h-rl">
-    <h2 id="h-rl">Reinforcement learning: first results</h2>
+    <h2 id="h-rl">Reinforcement learning</h2>
     <p>The learned part is local obstacle avoidance: how each follower dodges buildings and trees while it keeps its slot
       in the V. The leader flies a route planned around the buildings (A*), and the brake and the 5&nbsp;m separation
       rule stay on as hard safety layers. Every drone runs the same small network (two layers of 128), trained with PPO
-      for 6 million steps in 38 minutes on the laptop CPU.</p>
+      on a Kaggle T4 GPU: 5.84 billion steps in 10.5 hours (the first version had 6 million steps, 38 minutes on the
+      laptop CPU).</p>
     <p>All five methods flew the same 90 routes that neither training nor model selection had seen, 30 at each obstacle
       density, 10 drones each. A mission counts as successful when no drone hits anything and the whole V re-forms at the
       target.</p>
     <figure>
-      <div class="scroll panel"><svg viewBox="0 0 720 270" role="img" aria-labelledby="crl-t"><title id="crl-t">Share of held-out missions with no crash and the formation restored, per obstacle density and method</title><line class="grid" x1="56" x2="704" y1="222.0" y2="222.0"/><text class="tick" x="46" y="226.0" text-anchor="end">0%</text><line class="grid" x1="56" x2="704" y1="172.0" y2="172.0"/><text class="tick" x="46" y="176.0" text-anchor="end">25%</text><line class="grid" x1="56" x2="704" y1="122.0" y2="122.0"/><text class="tick" x="46" y="126.0" text-anchor="end">50%</text><line class="grid" x1="56" x2="704" y1="72.0" y2="72.0"/><text class="tick" x="46" y="76.0" text-anchor="end">75%</text><line class="grid" x1="56" x2="704" y1="22.0" y2="22.0"/><text class="tick" x="46" y="26.0" text-anchor="end">100%</text><rect class="b-none" x="80.8" y="202.0" width="31.7" height="20.0"/><text class="bar-v" x="96.6" y="197.0" text-anchor="middle">10</text><rect class="b-brake" x="114.5" y="168.7" width="31.7" height="53.3"/><text class="bar-v" x="130.3" y="163.7" text-anchor="middle">27</text><rect class="b-apf" x="148.2" y="122.0" width="31.7" height="100.0"/><text class="bar-v" x="164.0" y="117.0" text-anchor="middle">50</text><rect class="b-rl" x="181.8" y="135.3" width="31.7" height="86.7"/><text class="bar-v" x="197.7" y="130.3" text-anchor="middle">43</text><rect class="b-rlb" x="215.5" y="48.7" width="31.7" height="173.3"/><text class="bar-v" x="231.4" y="43.7" text-anchor="middle">87</text><text class="tick" x="164.0" y="244" text-anchor="middle">Few obstacles</text><rect class="b-none" x="296.8" y="222.0" width="31.7" height="0.0"/><text class="bar-v" x="312.6" y="217.0" text-anchor="middle">0</text><rect class="b-brake" x="330.5" y="202.0" width="31.7" height="20.0"/><text class="bar-v" x="346.3" y="197.0" text-anchor="middle">10</text><rect class="b-apf" x="364.2" y="175.3" width="31.7" height="46.7"/><text class="bar-v" x="380.0" y="170.3" text-anchor="middle">23</text><rect class="b-rl" x="397.8" y="175.3" width="31.7" height="46.7"/><text class="bar-v" x="413.7" y="170.3" text-anchor="middle">23</text><rect class="b-rlb" x="431.5" y="102.0" width="31.7" height="120.0"/><text class="bar-v" x="447.4" y="97.0" text-anchor="middle">60</text><text class="tick" x="380.0" y="244" text-anchor="middle">Medium</text><rect class="b-none" x="512.8" y="222.0" width="31.7" height="0.0"/><text class="bar-v" x="528.6" y="217.0" text-anchor="middle">0</text><rect class="b-brake" x="546.5" y="222.0" width="31.7" height="0.0"/><text class="bar-v" x="562.3" y="217.0" text-anchor="middle">0</text><rect class="b-apf" x="580.2" y="202.0" width="31.7" height="20.0"/><text class="bar-v" x="596.0" y="197.0" text-anchor="middle">10</text><rect class="b-rl" x="613.8" y="215.3" width="31.7" height="6.7"/><text class="bar-v" x="629.7" y="210.3" text-anchor="middle">3</text><rect class="b-rlb" x="647.5" y="188.7" width="31.7" height="33.3"/><text class="bar-v" x="663.4" y="183.7" text-anchor="middle">17</text><text class="tick" x="596.0" y="244" text-anchor="middle">Dense</text><text class="axlab" x="14" y="122" text-anchor="middle" transform="rotate(-90 14 122)">missions fully successful</text></svg></div>
+      <div class="scroll panel"><svg viewBox="0 0 720 270" role="img" aria-labelledby="crl-t"><title id="crl-t">Share of held-out missions with no crash and the formation restored, per obstacle density and method</title><line class="grid" x1="56" x2="704" y1="222.0" y2="222.0"/><text class="tick" x="46" y="226.0" text-anchor="end">0%</text><line class="grid" x1="56" x2="704" y1="172.0" y2="172.0"/><text class="tick" x="46" y="176.0" text-anchor="end">25%</text><line class="grid" x1="56" x2="704" y1="122.0" y2="122.0"/><text class="tick" x="46" y="126.0" text-anchor="end">50%</text><line class="grid" x1="56" x2="704" y1="72.0" y2="72.0"/><text class="tick" x="46" y="76.0" text-anchor="end">75%</text><line class="grid" x1="56" x2="704" y1="22.0" y2="22.0"/><text class="tick" x="46" y="26.0" text-anchor="end">100%</text><rect class="b-none" x="80.8" y="202.0" width="31.7" height="20.0"/><text class="bar-v" x="96.6" y="197.0" text-anchor="middle">10</text><rect class="b-brake" x="114.5" y="168.7" width="31.7" height="53.3"/><text class="bar-v" x="130.3" y="163.7" text-anchor="middle">27</text><rect class="b-apf" x="148.2" y="122.0" width="31.7" height="100.0"/><text class="bar-v" x="164.0" y="117.0" text-anchor="middle">50</text><rect class="b-rl" x="181.8" y="35.3" width="31.7" height="186.7"/><text class="bar-v" x="197.7" y="30.3" text-anchor="middle">93</text><rect class="b-rlb" x="215.5" y="22.0" width="31.7" height="200.0"/><text class="bar-v" x="231.4" y="17.0" text-anchor="middle">100</text><text class="tick" x="164.0" y="244" text-anchor="middle">Few obstacles</text><rect class="b-none" x="296.8" y="222.0" width="31.7" height="0.0"/><text class="bar-v" x="312.6" y="217.0" text-anchor="middle">0</text><rect class="b-brake" x="330.5" y="202.0" width="31.7" height="20.0"/><text class="bar-v" x="346.3" y="197.0" text-anchor="middle">10</text><rect class="b-apf" x="364.2" y="175.3" width="31.7" height="46.7"/><text class="bar-v" x="380.0" y="170.3" text-anchor="middle">23</text><rect class="b-rl" x="397.8" y="95.3" width="31.7" height="126.7"/><text class="bar-v" x="413.7" y="90.3" text-anchor="middle">63</text><rect class="b-rlb" x="431.5" y="68.7" width="31.7" height="153.3"/><text class="bar-v" x="447.4" y="63.7" text-anchor="middle">77</text><text class="tick" x="380.0" y="244" text-anchor="middle">Medium</text><rect class="b-none" x="512.8" y="222.0" width="31.7" height="0.0"/><text class="bar-v" x="528.6" y="217.0" text-anchor="middle">0</text><rect class="b-brake" x="546.5" y="222.0" width="31.7" height="0.0"/><text class="bar-v" x="562.3" y="217.0" text-anchor="middle">0</text><rect class="b-apf" x="580.2" y="202.0" width="31.7" height="20.0"/><text class="bar-v" x="596.0" y="197.0" text-anchor="middle">10</text><rect class="b-rl" x="613.8" y="148.7" width="31.7" height="73.3"/><text class="bar-v" x="629.7" y="143.7" text-anchor="middle">37</text><rect class="b-rlb" x="647.5" y="102.0" width="31.7" height="120.0"/><text class="bar-v" x="663.4" y="97.0" text-anchor="middle">60</text><text class="tick" x="596.0" y="244" text-anchor="middle">Dense</text><text class="axlab" x="14" y="122" text-anchor="middle" transform="rotate(-90 14 122)">missions fully successful</text></svg></div>
       <div class="legend"><span><i class="key b-none"></i>No avoidance</span><span><i class="key b-brake"></i>Brake only</span><span><i class="key b-apf"></i>Classical</span><span><i class="key b-rl"></i>RL</span><span><i class="key b-rlb"></i>RL + brake</span></div>
       <figcaption>Classical = potential field with the same brake, its parameters tuned on training routes. Paired on the
-        same routes: few obstacles: 13 routes only RL + brake completed, 2 only classical (p&nbsp;=&nbsp;0.007); medium: 11 routes only RL + brake completed, 0 only classical (p&nbsp;=&nbsp;0.001); dense: 5 routes only RL + brake completed, 3 only classical (p&nbsp;=&nbsp;0.727) (exact McNemar test).</figcaption>
+        same routes: few obstacles: 15 routes only RL + brake completed, 0 only classical (p&nbsp;=&nbsp;0.000); medium: 16 routes only RL + brake completed, 0 only classical (p&nbsp;=&nbsp;0.000); dense: 16 routes only RL + brake completed, 1 only classical (p&nbsp;=&nbsp;0.000) (exact McNemar test).</figcaption>
     </figure>
     <div class="tbl">
       <table>
         <thead><tr><th>Method</th><th class="num">Few obstacles</th><th class="num">Medium</th><th class="num">Dense</th>
           <th class="num">Crashes per mission (medium)</th><th class="num">Drones left behind (medium)</th>
           <th class="num">Closest pair (m)</th></tr></thead>
-        <tbody><tr><td><span class="sw b-none"></span>No avoidance</td><td class="num">3/30</td><td class="num">0/30</td><td class="num">0/30</td><td class="num">6.30</td><td class="num">0.00</td><td class="num">9.0</td></tr><tr><td><span class="sw b-brake"></span>Brake only</td><td class="num">8/30</td><td class="num">3/30</td><td class="num">0/30</td><td class="num">2.63</td><td class="num">0.80</td><td class="num">3.9</td></tr><tr><td><span class="sw b-apf"></span>Classical</td><td class="num">15/30</td><td class="num">7/30</td><td class="num">3/30</td><td class="num">0.57</td><td class="num">1.20</td><td class="num">0.9</td></tr><tr><td><span class="sw b-rl"></span>RL</td><td class="num">13/30</td><td class="num">7/30</td><td class="num">1/30</td><td class="num">1.80</td><td class="num">0.00</td><td class="num">2.6</td></tr><tr><td><span class="sw b-rlb"></span>RL + brake</td><td class="num">26/30</td><td class="num">18/30</td><td class="num">5/30</td><td class="num">0.47</td><td class="num">0.23</td><td class="num">3.0</td></tr></tbody>
+        <tbody><tr><td><span class="sw b-none"></span>No avoidance</td><td class="num">3/30</td><td class="num">0/30</td><td class="num">0/30</td><td class="num">6.30</td><td class="num">0.00</td><td class="num">9.0</td></tr><tr><td><span class="sw b-brake"></span>Brake only</td><td class="num">8/30</td><td class="num">3/30</td><td class="num">0/30</td><td class="num">2.63</td><td class="num">0.80</td><td class="num">3.9</td></tr><tr><td><span class="sw b-apf"></span>Classical</td><td class="num">15/30</td><td class="num">7/30</td><td class="num">3/30</td><td class="num">0.57</td><td class="num">1.20</td><td class="num">0.9</td></tr><tr><td><span class="sw b-rl"></span>RL</td><td class="num">28/30</td><td class="num">19/30</td><td class="num">11/30</td><td class="num">0.67</td><td class="num">0.00</td><td class="num">2.7</td></tr><tr><td><span class="sw b-rlb"></span>RL + brake</td><td class="num">30/30</td><td class="num">23/30</td><td class="num">18/30</td><td class="num">0.23</td><td class="num">0.10</td><td class="num">2.9</td></tr></tbody>
       </table>
     </div>
-    <p>What this shows. The policy on its own is not better than the classical controller; they fail differently. The
-      classical one crashes less but leaves drones stuck behind buildings and lets drones squeeze closer than 5&nbsp;m.
-      The policy keeps every drone with the formation but crashes more. Put the same brake on the policy and it wins
-      clearly at low and medium density. Dense clutter is still unsolved by every method.</p>
+    <p>What this shows. After the long GPU training the policy beats the classical controller at every density, even
+      without the brake; with the brake it completes 30, 23 and 18 of 30 missions against 15, 7 and 3. The classical one
+      leaves drones stuck behind buildings and lets drones squeeze closer than 5&nbsp;m. Dense clutter is still the
+      hardest case: 12 of 30 dense missions fail. The laptop policy, for comparison: 26, 18 and 5 of 30 with the brake.</p>
     <h3>On the real map</h3>
     <p class="sub">The agent code of every drone (election, formation, safety and the avoider) flying F-9 Park to Faisal
       Mosque through the OpenStreetMap buildings and woods, 5 runs per method with wind-like drift; in the
@@ -404,26 +407,26 @@
       <table>
         <thead><tr><th>Method</th><th class="num">Drones that hit something</th><th class="num">Runs with no hit</th>
           <th class="num">Leader killed: drones hit</th><th class="num">Leader killed: runs with no hit</th></tr></thead>
-        <tbody><tr><td>No avoidance</td><td class="num">45</td><td class="num">0/5</td><td class="num">40</td><td class="num">0/5</td></tr><tr><td>Classical (tuned)</td><td class="num">10</td><td class="num">1/5</td><td class="num">8</td><td class="num">0/5</td></tr><tr><td>Classical (default)</td><td class="num">3</td><td class="num">2/5</td><td class="num">3</td><td class="num">3/5</td></tr><tr><td>RL</td><td class="num">20</td><td class="num">0/5</td><td class="num">18</td><td class="num">0/5</td></tr><tr><td>RL + brake</td><td class="num">0</td><td class="num">5/5</td><td class="num">0</td><td class="num">5/5</td></tr></tbody>
+        <tbody><tr><td>No avoidance</td><td class="num">45</td><td class="num">0/5</td><td class="num">40</td><td class="num">0/5</td></tr><tr><td>Classical (tuned)</td><td class="num">10</td><td class="num">1/5</td><td class="num">8</td><td class="num">0/5</td></tr><tr><td>Classical (default)</td><td class="num">3</td><td class="num">2/5</td><td class="num">3</td><td class="num">3/5</td></tr><tr><td>RL</td><td class="num">13</td><td class="num">0/5</td><td class="num">12</td><td class="num">0/5</td></tr><tr><td>RL + brake</td><td class="num">0</td><td class="num">5/5</td><td class="num">0</td><td class="num">5/5</td></tr></tbody>
       </table>
     </div>
-    <p>On the real map, RL + brake was the only method with no hit in all 10 runs (10 of 10 clean, leader killed or not). The tuned classical controller had 18 drones hit something, the policy alone 38, no avoidance 85. The classical controller with default settings hit less (6) but left many drones stuck far behind the formation.</p>
-    <h3>What longer training (for example on Kaggle) should improve</h3>
+    <p>On the real map, RL + brake was the only method with no hit in all 10 runs (10 of 10 clean, leader killed or not). The tuned classical controller had 18 drones hit something, the policy alone 25, no avoidance 85. The classical controller with default settings hit less (6) but left many drones stuck far behind the formation.</p>
+    <h3>What the long training gave, and what is next</h3>
     <ul class="limits">
-      <li>More steps: held-out success was still rising at the end of this run (5 of 8 medium-density missions at
-        6 million steps). Planned: 20&ndash;50 million.</li>
-      <li>Several seeds, so a result is not one lucky run; a paper-grade claim needs 3&ndash;5.</li>
-      <li>Training on real OpenStreetMap neighbourhoods instead of random boxes and tree clusters, the likely cause of the
-        gap on the real map.</li>
-      <li>The brake inside training, so the policy learns to work with it instead of meeting it only at test time.</li>
+      <li>Two independent 10.5-hour runs (seeds 1 and 2). Seed 2 is better on every count and now flies in the app and the
+        agents; seed 1 reached 27, 18 and 14 of 30 with the brake.</li>
+      <li>Both runs stopped improving after about 2.5 hours, so more hours with the same settings will not help. Next: a
+        changed set-up (learning-rate decay, more dense courses), real OpenStreetMap neighbourhoods as training areas, the
+        brake inside training.</li>
+      <li>One caveat on the real map: two drones once came to 4.77&nbsp;m of each other (limit 5&nbsp;m).</li>
       <li>What it will not fix: the simplified physics, two-dimensional obstacles, and perfect range sensing.</li>
     </ul>
     <div class="tbl rl">
       <table>
         <thead><tr><th>Part of the system</th><th>Use RL?</th><th>Reason</th></tr></thead>
         <tbody>
-          <tr><td>Avoiding buildings and trees in formation</td><td><span class="chip ok">yes, in progress</span></td>
-            <td>First policy trained; ahead of the classical controller when both use the brake.</td></tr>
+          <tr><td>Avoiding buildings and trees in formation</td><td><span class="chip ok">yes, in use</span></td>
+            <td>Ahead of the classical controller at every density after 10.5 hours of GPU training.</td></tr>
           <tr><td>Drone-to-drone avoidance when the radio is patchy</td><td><span class="chip next">yes, next</span></td>
             <td>The known weak spot today (see limitations): drones that cannot hear each other cannot be pushed apart by the current rules.</td></tr>
           <tr><td>Re-forming after losses, battery-aware routes</td><td><span class="chip warn">maybe, later</span></td>
@@ -445,22 +448,23 @@
       <li class="done"><div class="st"><b>Swarm logic and tests</b><span class="chip ok">done</span></div>
         <p>Leader election, formation, safety; 1,000 random fault runs.</p></li>
       <li class="done"><div class="st"><b>Ten PX4 drones in formation</b><span class="chip ok">flown</span></div>
-        <p>1&nbsp;km V flights with the real autopilot in simulation; formal report pending.</p></li>
+        <p>1&nbsp;km V flights with the real autopilot in simulation.</p></li>
       <li class="done"><div class="st"><b>Live map and fault buttons</b><span class="chip ok">done</span></div>
         <p>Real GPS targets, per-drone crash, battery, GPS and radio faults, repeatable runs, 1&ndash;100 drones.</p></li>
-      <li class="done"><div class="st"><b>RL for obstacle avoidance, first version</b><span class="chip ok">trained</span></div>
+      <li class="done"><div class="st"><b>RL for obstacle avoidance</b><span class="chip ok">trained</span></div>
         <p>Real-map obstacles, tuned classical baseline, learned policy, fair comparison on unseen routes.</p></li>
-      <li><div class="st"><b>Longer RL training</b><span class="chip next">ready</span></div>
-        <p>More steps, several seeds, real-map training areas, brake inside training.</p></li>
+      <li class="done"><div class="st"><b>Longer RL training</b><span class="chip ok">done</span></div>
+        <p>Two 10.5-hour runs on a Kaggle GPU, about 5.5 billion steps each; the better one now flies in the app and the
+          agents. Next ideas: real-map training areas, the brake inside training.</p></li>
       <li class="done"><div class="st"><b>Fault and bad-radio trials on PX4</b><span class="chip ok">passed</span></div>
         <p>73 PX4 missions with 10 drones, run one at a time on this laptop. All five faults, 55 trials: a new leader in
           1.4&ndash;1.7&nbsp;s, the planned battery handover within 0.01&nbsp;s, no two drones closer than 6&nbsp;m, every
           goal reached. Bad radio, 18 missions: no false leader change, even at 300&nbsp;ms delay and 30&nbsp;% loss.</p></li>
-      <li class="done"><div class="st"><b>Hardware readiness</b><span class="chip ok">software done</span></div>
+      <li class="done"><div class="st"><b>Hardware readiness</b><span class="chip ok">passed</span></div>
         <p>A telemetry-radio stand-in, drone profiles where a real drone only needs its connection address, and a flight
           test plan with go/no-go checklist and kill-switch procedure. The first stand-in flights showed that the
-          simulated autopilot flooded the radio. The radio drone is now set up like a real telemetry port, two check
-          flights passed, and the 22 acceptance trials are next.</p></li>
+          simulated autopilot flooded the radio. With the radio drone set up like a real telemetry port, all 22 PX4 trials
+          passed: a new leader in 1.4&ndash;1.6&nbsp;s after the leader was killed or cut off, every goal reached.</p></li>
       <li><div class="st"><b>Hardware</b></div>
         <p>A small companion computer on each drone wired to its Pixhawk 6C, a radio link for heartbeats, a bench test with
           propellers off, then one real drone with nine simulated ones, then three real drones in an open field with

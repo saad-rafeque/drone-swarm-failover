@@ -135,7 +135,9 @@ print(json.dumps(facts))
 
 # ---------------------------------------------------------------- RL results (held-out synthetic + real route)
 RL = REPO / "reports/logs/rl"
-rl_sum = json.loads((RL / "eval/summary.json").read_text())
+# the policy in use: Kaggle seed 2, re-tested on the laptop with the tuned classical controller
+EVAL_DIR = RL / "eval_kaggle_check" if (RL / "eval_kaggle_check/summary.json").exists() else RL / "eval"
+rl_sum = json.loads((EVAL_DIR / "summary.json").read_text())
 METHODS = [("none", "No avoidance", "b-none"), ("none+shield", "Brake only", "b-brake"),
            ("apf", "Classical", "b-apf"), ("rl", "RL", "b-rl"), ("rl+shield", "RL + brake", "b-rlb")]
 LEVELS = [("low", "Few obstacles"), ("medium", "Medium"), ("high", "Dense")]
@@ -169,7 +171,7 @@ for m, name, cls in METHODS:
         + f'<td class="num">{g["medium"]["crashes_per_episode"]:.2f}</td><td class="num">{g["medium"]["stuck_per_episode"]:.2f}</td>'
         + f'<td class="num">{min(g[lv]["min_sep_m"] for lv, _ in LEVELS):.1f}</td></tr>')
 table_rl = "".join(rows_rl)
-eps = [json.loads(l) for l in (RL / "eval/episodes.jsonl").read_text().splitlines() if l.strip()]
+eps = [json.loads(l) for l in (EVAL_DIR / "episodes.jsonl").read_text().splitlines() if l.strip()]
 ok = {(r["level"], r["method"], r["seed"]): r["success"] for r in eps}
 
 
@@ -186,9 +188,9 @@ for lv, lvname in LEVELS:
     x, y, pv = mcnemar(lv, "rl+shield", "apf")
     paired.append(f"{lvname.lower()}: {x} routes only RL + brake completed, {y} only classical (p&nbsp;=&nbsp;{pv:.3f})")
 rl_paired = "; ".join(paired)
-train_ev = [json.loads(l) for l in (RL / "run1/eval.jsonl").read_text().splitlines() if l.strip()]
-# real-map comparison: the re-run with the current code (avoider at 10 Hz) when present, else the first run
-ROUTE_DIR = RL / "route_eval_10hz" if (RL / "route_eval_10hz/episodes.jsonl").exists() else RL / "route_eval"
+# real-map comparison: the policy in use when present, else the laptop policy's re-run at 10 Hz
+ROUTE_DIR = RL / "route_eval_kaggle_check" if (RL / "route_eval_kaggle_check/episodes.jsonl").exists() \
+    else RL / "route_eval_10hz"
 route_rows = [json.loads(l) for l in (ROUTE_DIR / "episodes.jsonl").read_text().splitlines()] \
     if (ROUTE_DIR / "episodes.jsonl").exists() else []
 RMETH = [("none", "No avoidance"), ("apf", "Classical (tuned)"), ("apf-default", "Classical (default)"),
@@ -229,8 +231,7 @@ for k, v in {"CHART_FAILOVER": chart_failover, "CHART_RADIO": chart_radio, "TABL
              "RR100": f"{facts['rr100']:.1f}", "SP100": f"{facts['sp100']:.0f}", "SP10": f"{facts['sp10']:.0f}",
              "FAR100": f"{facts['far100']:.0f}", "RUNS": str(facts["runs"]), "RUNS_RADIO": str(facts["runs_radio"]),
              "CROSS": str(cross), "CHART_RL": chart_rl, "LEGEND_RL": legend_rl, "TABLE_RL": table_rl, "RL_PAIRED": rl_paired,
-             "TABLE_ROUTE": table_route, "ROUTE_N": str(route_n), "ROUTE_TEXT": route_text, "TRAIN_LAST": f"{train_ev[-1]['success']} of {train_ev[-1]['n']}",
-             "TRAIN_FIRST_STEP": f"{train_ev[0]['steps'] / 1e6:.1f}"}.items():
+             "TABLE_ROUTE": table_route, "ROUTE_N": str(route_n), "ROUTE_TEXT": route_text}.items():
     page = page.replace("{{" + k + "}}", v)
 assert "{{" not in page, page[page.index("{{"):page.index("{{") + 40]
 OUT.parent.mkdir(parents=True, exist_ok=True)
