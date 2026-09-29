@@ -157,6 +157,7 @@ Every folder has its own README describing its contents.
 | [docs/RESULTS.md](docs/RESULTS.md) | Every result with its numbers and the evidence file behind it |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | The design decisions and the reasons for them |
 | [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) | Limitations, open work and the road to real drones |
+| [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md) | Future work and recommendations: one-click setup, going public, next RL run, real drones (also as `docs/FUTURE_WORK.pdf`) |
 | [docs/FLIGHT_TEST_PLAN.md](docs/FLIGHT_TEST_PLAN.md) | The plan for a first test with one real drone: roles, PX4 safety settings, go/no-go checklist, abort rules, kill switch |
 | [docs/KAGGLE_GUIDE.md](docs/KAGGLE_GUIDE.md) | Long RL training on a Kaggle GPU, step by step (also as `docs/KAGGLE_GUIDE.pdf`) |
 | [docs/HANDOVER.pdf](docs/HANDOVER.pdf) | All documents, the key figures and every phase report in one PDF |
@@ -181,7 +182,8 @@ Leaflet and CesiumJS 1.145 in the browser. Development machine: Intel i3-1115G4 
    release, bench tests, then the first flight by [docs/FLIGHT_TEST_PLAN.md](docs/FLIGHT_TEST_PLAN.md), after
    legal permission.
 
-The complete list with evidence and effort estimates: [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md).
+The complete list with evidence and effort estimates: [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md). Recommendations,
+including a one-click setup for people who copy the repository: [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md).
 
 ## Credits and licence
 
