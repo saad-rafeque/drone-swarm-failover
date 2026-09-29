@@ -1,0 +1,26 @@
+# Checks on every push and pull request that a fresh copy installs with ./setup.sh, passes the tests, and that the
+# ground-control app starts. ROS 2 and PX4 are not installed here; their tests are skipped.
+name: Quick start
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  setup-and-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: One-command setup and tests
+        run: ./setup.sh --no-start
+      - name: The app starts and serves the swarm state
+        run: |
+          SWARM_NO_BROWSER=1 bash scripts/start_swarm.sh
+          curl -sf http://localhost:8080/api/state | head -c 200; echo
+          bash scripts/stop_swarm.sh

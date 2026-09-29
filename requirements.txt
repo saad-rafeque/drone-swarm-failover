@@ -1,0 +1,9 @@
+# Python packages for the quick start (./setup.sh): the ground-control app, the fast simulator, the RL policy
+# (plain numpy), the report scripts and the tests. ROS 2, MAVROS and PX4 are installed separately
+# (docs/RUNBOOK.md, section 1); PyTorch only for RL training.
+numpy>=1.26,<2
+scipy>=1.11
+matplotlib>=3.6
+PyYAML>=6.0
+psutil>=5.9
+pytest>=7.4
