@@ -15,7 +15,6 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import px4_queue as q  # noqa: E402
 
-from swarm_tools.gcs.server import queue_control, queue_status  # noqa: E402
 
 
 @pytest.fixture
@@ -91,29 +90,22 @@ def test_runner_exits_when_stopped_and_battery_is_the_owners_choice(repo, monkey
     assert q.power_ok() == (True, "")                       # the owner allowed battery: run anyway
 
 
-def test_app_endpoints(tmp_path):
-    assert not queue_control("explode", tmp_path)["ok"]
-    assert queue_control("stop_after", tmp_path)["ok"]
-    assert json.loads((tmp_path / "control.json").read_text())["mode"] == "stop_after"
-    assert queue_control("battery", tmp_path, value=False)["ok"]
-    st = queue_status(tmp_path)
-    assert st["mode"] == "stop_after" and st["allow_battery"] is False and st["runner_alive"] is False
-    started = []
-    assert queue_control("start", tmp_path, start=lambda: started.append(1) or "Started")["msg"] == "Started"
-    assert started == [1]
-    (tmp_path / "status.json").write_text(json.dumps({"state": "running", "pid": 1, "updated": "2000-01-01T00:00:00"}))
-    assert queue_status(tmp_path)["runner_alive"] is False                  # stale status: not alive
-
-
-def test_the_app_can_load_the_queue_script():
-    """The Start button loads scripts/px4_queue.py inside the app (this is what failed on 28 September 2026)."""
-    import sys as _sys
-    from swarm_tools.gcs import server
-    saved = _sys.modules.pop("px4_queue", None)
+def test_leftover_radio_relays_are_stopped_and_nothing_else():
+    """Stop now once left a telemetry-radio relay running (its own session), and the next trial's relay could
+    not bind its ports. The queue stops relays by their exact module argument, and nothing that only looks
+    similar; the launcher's clean-up uses the same rule."""
+    from swarm_tools.sim_launch import is_radio_relay
+    sleep = "import time; time.sleep(60)"
+    relay = subprocess.Popen([sys.executable, "-c", sleep, "-m", "swarm_tools.radio_proxy"])
+    other = subprocess.Popen([sys.executable, "-c", sleep, "-m", "swarm_tools.radio_proxy_x"])
     try:
-        mod = server._queue_module()
-        assert len(mod.queue()) == 95 and callable(mod.start_runner)
+        time.sleep(0.3)
+        stopped = q.stop_radio_relays()
+        assert relay.pid in stopped and other.pid not in stopped
+        assert relay.wait(timeout=5) != 0 and other.poll() is None
     finally:
-        _sys.modules.pop("px4_queue", None)
-        if saved is not None:
-            _sys.modules["px4_queue"] = saved
+        for p in (relay, other):
+            p.kill()
+            p.wait()
+    assert is_radio_relay(["python3", "-m", "swarm_tools.radio_proxy", "--instance", "0"])
+    assert not is_radio_relay(["python3", "scripts/radio_proxy.py"])

@@ -1,0 +1,77 @@
+[INFO] [1790597628.460770790] [uav4.mavros_node]: Starting mavros_node container
+[INFO] [1790597628.460850359] [uav4.mavros_node]: FCU URL: udp://:14543@127.0.0.1:14583
+[INFO] [1790597628.460859308] [uav4.mavros_node]: GCS URL: 
+[INFO] [1790597628.460864242] [uav4.mavros_node]: UAS Prefix: /uas4
+[INFO] [1790597628.460869284] [uav4.mavros_node]: Starting mavros router node
+[INFO] [1790597628.613735159] [uav4.mavros_router]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790597628.613793045] [uav4.mavros_router]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790597628.613804594] [uav4.mavros_router]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790597628.613812145] [uav4.mavros_router]: MAVROS Router started
+[INFO] [1790597628.613970849] [uav4.mavros_node]: Starting mavros uas node
+[INFO] [1790597628.786885252] [uav4.mavros_router]: Requested to add endpoint: type: 0, url: udp://:14543@127.0.0.1:14583
+[INFO] [1790597628.786953197] [uav4.mavros_router]: Endpoint link[1000] created
+[INFO] [1790597628.787196773] [uav4.mavros_router]: link[1000] opened successfully
+[INFO] [1790597628.787215564] [uav4.mavros_router]: Requested to add endpoint: type: 2, url: /uas4
+[INFO] [1790597628.787229186] [uav4.mavros_router]: Endpoint link[1001] created
+[INFO] [1790597628.794734571] [uav4.mavros_router]: link[1000] detected remote address 4.1
+[INFO] [1790597628.798037355] [uav4.mavros]: Plugin actuator_control ignored
+[INFO] [1790597628.798112518] [uav4.mavros]: Plugin altitude ignored
+[INFO] [1790597628.798117398] [uav4.mavros]: UAS Executor started, threads: 4
+[INFO] [1790597628.830769755] [uav4.mavros_router]: link[1001] opened successfully
+[INFO] [1790597629.093105900] [uav4.mavros]: Plugin command created
+[INFO] [1790597629.093176831] [uav4.mavros]: Plugin command initialized
+[INFO] [1790597629.093193455] [uav4.mavros]: Plugin ftp ignored
+[INFO] [1790597629.093202609] [uav4.mavros]: Plugin geofence ignored
+[INFO] [1790597629.252994407] [uav4.mavros]: Plugin global_position created
+[INFO] [1790597629.254801908] [uav4.mavros]: Plugin global_position initialized
+[INFO] [1790597629.257229925] [uav4.mavros]: Plugin home_position ignored
+[INFO] [1790597629.258184707] [uav4.mavros]: Plugin imu ignored
+[INFO] [1790597629.737531534] [uav4.mavros]: Plugin local_position created
+[INFO] [1790597629.737595603] [uav4.mavros]: Plugin local_position initialized
+[INFO] [1790597629.737612020] [uav4.mavros]: Plugin manual_control ignored
+[INFO] [1790597629.737620822] [uav4.mavros]: Plugin nav_controller_output ignored
+[INFO] [1790597629.737629677] [uav4.mavros]: Plugin param ignored
+[INFO] [1790597629.737638147] [uav4.mavros]: Plugin rallypoint ignored
+[INFO] [1790597629.737646032] [uav4.mavros]: Plugin rc_io ignored
+[INFO] [1790597629.737658902] [uav4.mavros]: Plugin setpoint_accel ignored
+[INFO] [1790597629.737666495] [uav4.mavros]: Plugin setpoint_attitude ignored
+[INFO] [1790597629.737674200] [uav4.mavros]: Plugin setpoint_position ignored
+[INFO] [1790597629.737681012] [uav4.mavros]: Plugin setpoint_raw ignored
+[INFO] [1790597629.737688948] [uav4.mavros]: Plugin setpoint_trajectory ignored
+[INFO] [1790597630.132683765] [uav4.mavros]: Plugin setpoint_velocity created
+[INFO] [1790597630.132753099] [uav4.mavros]: Plugin setpoint_velocity initialized
+[INFO] [1790597630.378945120] [uav4.mavros]: Plugin sys_status created
+[INFO] [1790597630.379027865] [uav4.mavros]: Plugin sys_status initialized
+[INFO] [1790597630.563180675] [uav4.mavros.time]: TM: Timesync mode: MAVLINK
+[INFO] [1790597630.704611306] [uav4.mavros]: Plugin sys_time created
+[INFO] [1790597630.704677695] [uav4.mavros]: Plugin sys_time initialized
+[INFO] [1790597630.704699781] [uav4.mavros]: Plugin waypoint ignored
+[INFO] [1790597630.704707215] [uav4.mavros]: Plugin wind_estimation ignored
+[INFO] [1790597630.748078960] [uav4.mavros]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790597630.762848641] [uav4.mavros]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790597630.775265704] [uav4.mavros]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790597630.775286892] [uav4.mavros]: MAVROS UAS via /uas4 started. MY ID 4.191, TARGET ID 4.1
+[INFO] [1790597630.840682740] [uav4.mavros]: CON: Got HEARTBEAT, connected. FCU: PX4 Autopilot
+[INFO] [1790597630.840839135] [uav4.mavros_router]: link[1001] detected remote address 4.191
+[INFO] [1790597631.872832099] [uav4.mavros.sys]: VER: 4.1: Capabilities         0x000000000000e8ff
+[INFO] [1790597631.872980029] [uav4.mavros.sys]: VER: 4.1: Flight software:     011200c0 (fca3df865a000000)
+[INFO] [1790597631.872990608] [uav4.mavros.sys]: VER: 4.1: Middleware software: 011200c0 (fca3df865a000000)
+[INFO] [1790597631.872996421] [uav4.mavros.sys]: VER: 4.1: OS software:         070000ff (17040b9f87cb1791)
+[INFO] [1790597631.873001604] [uav4.mavros.sys]: VER: 4.1: Board hardware:      00000001
+[INFO] [1790597631.873007311] [uav4.mavros.sys]: VER: 4.1: VID/PID:             0000:0000
+[INFO] [1790597631.873013014] [uav4.mavros.sys]: VER: 4.1: UID:                 4954414c44494e52
+[WARN] [1790597631.878742271] [uav4.mavros.cmd]: CMD: Unexpected command 512, result 0
+[WARN] [1790597643.004377528] [uav4.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790597643.004505917] [uav4.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790597643.004550958] [uav4.mavros.sys]: FCU: EVENT 453929 with args -255-255-255-255-7-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790597643.004594770] [uav4.mavros.sys]: FCU: EVENT 6801787 with args -255-255-255-255-12-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790597643.004638910] [uav4.mavros.sys]: FCU: UNK(8): EVENT 1914663 with args -0-10-13-2-56-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790597643.697885580] [uav4.mavros.cmd]: CMD: Unexpected command 176, result 0
+[INFO] [1790597644.495033299] [uav4.mavros.sys]: FCU: EVENT 9489139 with args -4-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790597646.431770331] [uav4.mavros.sys]: FCU: EVENT 4277609 with args -0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790597899.897689083] [uav4.mavros.cmd]: CMD: Unexpected command 176, result 0
+[INFO] [1790597934.156734451] [uav4.mavros.sys]: FCU: EVENT 9844908 with args -0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790597936.265301990] [uav4.mavros.sys]: FCU: EVENT 16017271 with args -6-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790597939.448981776] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[WARN] [1790597939.449707297] [uav4.mavros]: UAS Executor terminated
+Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:423

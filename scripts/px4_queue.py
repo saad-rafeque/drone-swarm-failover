@@ -18,8 +18,8 @@ removed and it runs again from its start (this never counts as a failed attempt)
 
 Control and state (reports/logs/px4_queue/):
   control.json   {"mode": "run" | "stop_after" | "stop_now", "allow_battery": true | false}; written by the
-                 Start / Stop buttons and the battery switch on the "PX4 tests" page of the ground-control app,
-                 or by the commands below
+                 commands below (the app's "PX4 tests" page did this until it was removed on 29 September 2026,
+                 when all 95 trials had finished)
   status.json    what the runner is doing: state, current trial, progress, recent trials; rewritten every 5 s
   runner.log     one line per event
 With allow_battery off, trials run only on the charger in a power profile other than power saver, and a trial
@@ -27,7 +27,7 @@ stops (to run again later) if the charger is unplugged. With it on (the owner's 
 battery; every trial records the power state in its run_summary.json, because a throttled CPU on battery can
 slow the drones' messages (reports/PHASE_4.md, the first attempt). At least 800 MB of memory must be free.
 
-Usage: python3 scripts/px4_queue.py start                   start the runner in the background (the Start button)
+Usage: python3 scripts/px4_queue.py start                   start the runner in the background
        python3 scripts/px4_queue.py stop [--now]            stop after the running trial, or at once
        python3 scripts/px4_queue.py battery on|off | status
        python3 scripts/px4_queue.py run                     the runner itself, in the foreground
@@ -95,6 +95,26 @@ def queue() -> list[Trial]:
         out.append(Trial("phase_6", f"{f}_t11", f"reports/logs/phase_6_crosscheck/{f}_t11",
                          ("--fault", f, "--fault-seed", "11") + prof, clean_shell=True))
     return out
+
+
+def stop_radio_relays() -> list[int]:
+    """Stop leftover telemetry-radio relays (`python -m swarm_tools.radio_proxy`), matched by their exact
+    module argument in /proc/<pid>/cmdline; they run in their own session, outside a trial's process group."""
+    pids = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            args = (entry / "cmdline").read_bytes().split(b"\0")
+        except OSError:
+            continue
+        if any(a == b"-m" and b == b"swarm_tools.radio_proxy" for a, b in zip(args, args[1:])):
+            try:
+                os.kill(int(entry.name), signal.SIGTERM)
+                pids.append(int(entry.name))
+            except ProcessLookupError:
+                pass
+    return pids
 
 
 def result_of(t: Trial) -> str | None:
@@ -227,7 +247,7 @@ def runner_running() -> bool:
 
 
 def start_runner() -> str:
-    """The Start button: set the mode to run and start a runner in the background if none is running."""
+    """`start`: set the mode to run and start a runner in the background if none is running."""
     set_mode("run")
     if runner_running():
         return "The tests are already running."
@@ -304,6 +324,7 @@ class Runner:
             env = dict(os.environ)
         subprocess.run(["pkill", "-x", "px4"], check=False)
         subprocess.run(["pkill", "-x", "mavros_node"], check=False)
+        stop_radio_relays()
         self.current, self.state, self.detail = t, "running", ""
         self._t0, self.started = time.time(), dt.datetime.now().isoformat(timespec="seconds")
         log(f"{t.phase}/{t.name}: start" + (" (clean shell)" if t.clean_shell else ""))
@@ -344,8 +365,8 @@ class Runner:
     @staticmethod
     def stop(proc: subprocess.Popen) -> None:
         try:
-            os.killpg(proc.pid, signal.SIGTERM)
-            proc.wait(timeout=20)
+            os.killpg(proc.pid, signal.SIGTERM)      # run_mission.py then stops PX4, MAVROS, the launch, relays
+            proc.wait(timeout=40)
         except (ProcessLookupError, subprocess.TimeoutExpired):
             try:
                 os.killpg(proc.pid, signal.SIGKILL)
@@ -354,13 +375,14 @@ class Runner:
             proc.wait()
         subprocess.run(["pkill", "-x", "px4"], check=False)
         subprocess.run(["pkill", "-x", "mavros_node"], check=False)
+        stop_radio_relays()
 
     def loop(self) -> None:
         log(f"runner started (pid {os.getpid()}); mode {mode()}, running on battery "
             f"{'allowed' if control()['allow_battery'] else 'not allowed'}")
         while True:
             if mode() != "run":
-                self.state, self.detail, self.current = "stopped", "press Start to continue", None
+                self.state, self.detail, self.current = "stopped", "run `px4_queue.py start` to continue", None
                 self.write_status()
                 log("runner stopped, as asked")
                 return
@@ -412,7 +434,7 @@ def main() -> int:
     except BlockingIOError:
         print("another runner is already active")
         return 1
-    if mode() != "run":           # the runner only runs when started (the Start button sets the mode first)
+    if mode() != "run":           # the runner only runs when started (`start` sets the mode first)
         set_mode("run")
     Runner().loop()
     return 0

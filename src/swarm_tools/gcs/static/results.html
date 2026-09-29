@@ -17,7 +17,6 @@
       <a href="/">Mission</a>
       <a href="/static/3d.html">3D view</a>
       <a href="/static/results.html" aria-current="page">Results</a>
-      <a href="/static/tests.html">PX4 tests</a>
       <a href="/reports/replay/swarm_replay.html">PX4 flights</a>
       <a href="/static/docs.html">Docs</a>
     </nav>
@@ -41,9 +40,10 @@
   </section>
   <section class="card">
     <h2>RL training</h2>
-    <img class="chart" src="/reports/rl_training.png" alt="Training return and held-out scores over training steps">
-    <p class="hint">PPO, 6 million steps, 38 minutes on the laptop CPU; still improving at the end of the run.
-      Longer training is planned on Kaggle (see Docs &rarr; Kaggle).</p>
+    <img class="chart" src="/reports/rl_training_kaggle_seed2.png" alt="Training return and held-out scores over training steps">
+    <p class="hint">PPO on a Kaggle T4 GPU, seed 2: 5.84 billion steps in 10.5 hours. The held-out scores stopped
+      rising after about 2.5 hours; the best checkpoint is the policy in use. Seed 1 and the first laptop run:
+      <a href="/reports/rl_training_kaggle_seed1.png">seed 1</a>, <a href="/reports/rl_training.png">laptop</a>.</p>
   </section>
   <section class="card">
     <h2>Swarm size: 1 to 100 drones</h2>

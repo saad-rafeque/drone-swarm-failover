@@ -56,3 +56,169 @@
 2026-09-28T14:41:17 phase_4/F4_t5: partial files of an interrupted attempt removed (interrupted: charger unplugged or power saver on)
 2026-09-28T15:10:19 runner started (pid 137925); mode run, running on battery allowed
 2026-09-28T15:10:19 phase_4/F4_t5: start
+2026-09-28T15:15:47 phase_4/F4_t5: COMPLETED after 5.5 min
+2026-09-28T15:15:47 phase_4/F5_t5: start
+2026-09-28T15:21:25 phase_4/F5_t5: COMPLETED after 5.6 min
+2026-09-28T15:21:25 phase_4/F1_t6: start
+2026-09-28T15:26:52 phase_4/F1_t6: COMPLETED after 5.5 min
+2026-09-28T15:26:52 phase_4/F2_t6: start
+2026-09-28T15:32:25 phase_4/F2_t6: COMPLETED after 5.5 min
+2026-09-28T15:32:25 phase_4/F3_t6: start
+2026-09-28T15:39:10 phase_4/F3_t6: COMPLETED after 6.7 min
+2026-09-28T15:39:10 phase_4/F4_t6: start
+2026-09-28T15:44:38 phase_4/F4_t6: COMPLETED after 5.5 min
+2026-09-28T15:44:39 phase_4/F5_t6: start
+2026-09-28T15:50:23 phase_4/F5_t6: COMPLETED after 5.7 min
+2026-09-28T15:50:23 phase_4/F1_t7: start
+2026-09-28T15:55:52 phase_4/F1_t7: COMPLETED after 5.5 min
+2026-09-28T15:55:52 phase_4/F2_t7: start
+2026-09-28T16:01:26 phase_4/F2_t7: COMPLETED after 5.6 min
+2026-09-28T16:01:26 phase_4/F3_t7: start
+2026-09-28T16:07:05 phase_4/F3_t7: COMPLETED after 5.6 min
+2026-09-28T16:07:05 phase_4/F4_t7: start
+2026-09-28T16:12:43 phase_4/F4_t7: COMPLETED after 5.6 min
+2026-09-28T16:12:43 phase_4/F5_t7: start
+2026-09-28T16:18:17 phase_4/F5_t7: COMPLETED after 5.6 min
+2026-09-28T16:18:17 phase_4/F1_t8: start
+2026-09-28T16:23:55 phase_4/F1_t8: COMPLETED after 5.6 min
+2026-09-28T16:23:56 phase_4/F2_t8: start
+2026-09-28T16:29:36 phase_4/F2_t8: COMPLETED after 5.7 min
+2026-09-28T16:29:37 phase_4/F3_t8: start
+2026-09-28T16:35:10 phase_4/F3_t8: COMPLETED after 5.6 min
+2026-09-28T16:35:10 phase_4/F4_t8: start
+2026-09-28T16:40:43 phase_4/F4_t8: COMPLETED after 5.5 min
+2026-09-28T16:40:43 phase_4/F5_t8: start
+2026-09-28T16:46:17 phase_4/F5_t8: COMPLETED after 5.6 min
+2026-09-28T16:46:17 phase_4/F1_t9: start
+2026-09-28T16:51:39 phase_4/F1_t9: COMPLETED after 5.4 min
+2026-09-28T16:51:39 phase_4/F2_t9: start
+2026-09-28T16:57:12 phase_4/F2_t9: COMPLETED after 5.5 min
+2026-09-28T16:57:12 phase_4/F3_t9: start
+2026-09-28T17:02:40 phase_4/F3_t9: COMPLETED after 5.5 min
+2026-09-28T17:02:40 phase_4/F4_t9: start
+2026-09-28T17:08:02 phase_4/F4_t9: COMPLETED after 5.4 min
+2026-09-28T17:08:02 phase_4/F5_t9: start
+2026-09-28T17:13:37 phase_4/F5_t9: COMPLETED after 5.6 min
+2026-09-28T17:13:37 phase_4/F1_t10: start
+2026-09-28T17:19:04 phase_4/F1_t10: COMPLETED after 5.5 min
+2026-09-28T17:19:04 phase_4/F2_t10: start
+2026-09-28T17:24:32 phase_4/F2_t10: COMPLETED after 5.5 min
+2026-09-28T17:24:32 phase_4/F3_t10: start
+2026-09-28T17:30:15 phase_4/F3_t10: COMPLETED after 5.7 min
+2026-09-28T17:30:15 phase_4/F4_t10: start
+2026-09-28T17:35:38 phase_4/F4_t10: COMPLETED after 5.4 min
+2026-09-28T17:35:38 phase_4/F5_t10: start
+2026-09-28T17:41:11 phase_4/F5_t10: COMPLETED after 5.6 min
+2026-09-28T17:41:11 phase_4/F1_t11: start (clean shell)
+2026-09-28T17:46:33 phase_4/F1_t11: COMPLETED after 5.4 min
+2026-09-28T17:46:33 phase_4/F2_t11: start (clean shell)
+2026-09-28T17:52:01 phase_4/F2_t11: COMPLETED after 5.5 min
+2026-09-28T17:52:01 phase_4/F3_t11: start (clean shell)
+2026-09-28T17:57:24 phase_4/F3_t11: COMPLETED after 5.4 min
+2026-09-28T17:57:24 phase_4/F4_t11: start (clean shell)
+2026-09-28T17:58:10 phase_4/F4_t11: WATCHER_STALLED after 0.8 min
+2026-09-28T17:58:10 phase_4/F4_t11: attempt kept in reports/logs/phase_4_incomplete/F4_t11_20260928-175810 (WATCHER_STALLED)
+2026-09-28T17:58:10 phase_4/F4_t11: start (clean shell)
+2026-09-28T18:03:32 phase_4/F4_t11: COMPLETED after 5.4 min
+2026-09-28T18:03:32 phase_4/F5_t11: start (clean shell)
+2026-09-28T18:09:00 phase_4/F5_t11: COMPLETED after 5.5 min
+2026-09-28T18:09:00 phase_5/d50_l0_none: start
+2026-09-28T19:08:58 phase_5/d50_l0_none: WATCHER_STALLED after 60.0 min
+2026-09-28T19:08:58 phase_5/d50_l0_none: attempt kept in reports/logs/phase_5_incomplete/d50_l0_none_20260928-190858 (WATCHER_STALLED)
+2026-09-28T19:08:58 phase_5/d50_l0_none: start
+2026-09-28T19:14:33 phase_5/d50_l0_none: COMPLETED after 5.6 min
+2026-09-28T19:14:33 phase_5/d50_l0_F1: start
+2026-09-28T19:20:01 phase_5/d50_l0_F1: COMPLETED after 5.5 min
+2026-09-28T19:20:01 phase_5/d50_l10_none: start
+2026-09-28T19:25:24 phase_5/d50_l10_none: COMPLETED after 5.4 min
+2026-09-28T19:25:24 phase_5/d50_l10_F1: start
+2026-09-28T19:30:57 phase_5/d50_l10_F1: COMPLETED after 5.5 min
+2026-09-28T19:30:58 phase_5/d50_l30_none: start
+2026-09-28T19:36:20 phase_5/d50_l30_none: COMPLETED after 5.4 min
+2026-09-28T19:36:20 phase_5/d50_l30_F1: start
+2026-09-28T19:41:37 phase_5/d50_l30_F1: COMPLETED after 5.3 min
+2026-09-28T19:41:37 phase_5/d150_l0_none: start
+2026-09-28T19:47:00 phase_5/d150_l0_none: COMPLETED after 5.4 min
+2026-09-28T19:47:00 phase_5/d150_l0_F1: start
+2026-09-28T19:52:23 phase_5/d150_l0_F1: COMPLETED after 5.4 min
+2026-09-28T19:52:23 phase_5/d150_l10_none: start
+2026-09-28T19:57:47 phase_5/d150_l10_none: COMPLETED after 5.4 min
+2026-09-28T19:57:47 phase_5/d150_l10_F1: start
+2026-09-28T20:03:16 phase_5/d150_l10_F1: COMPLETED after 5.5 min
+2026-09-28T20:03:16 phase_5/d150_l30_none: start
+2026-09-28T20:08:39 phase_5/d150_l30_none: COMPLETED after 5.4 min
+2026-09-28T20:08:39 phase_5/d150_l30_F1: start
+2026-09-28T20:14:08 phase_5/d150_l30_F1: COMPLETED after 5.5 min
+2026-09-28T20:14:08 phase_5/d300_l0_none: start
+2026-09-28T20:19:36 phase_5/d300_l0_none: COMPLETED after 5.5 min
+2026-09-28T20:19:36 phase_5/d300_l0_F1: start
+2026-09-28T20:25:05 phase_5/d300_l0_F1: COMPLETED after 5.5 min
+2026-09-28T20:25:05 phase_5/d300_l10_none: start
+2026-09-28T20:30:33 phase_5/d300_l10_none: COMPLETED after 5.5 min
+2026-09-28T20:30:33 phase_5/d300_l10_F1: start
+2026-09-28T20:36:02 phase_5/d300_l10_F1: COMPLETED after 5.5 min
+2026-09-28T20:36:02 phase_5/d300_l30_none: start
+2026-09-28T20:41:25 phase_5/d300_l30_none: COMPLETED after 5.4 min
+2026-09-28T20:41:25 phase_5/d300_l30_F1: start
+2026-09-28T20:46:58 phase_5/d300_l30_F1: COMPLETED after 5.6 min
+2026-09-28T20:46:58 phase_6/F1_t1: start
+2026-09-28T20:53:01 phase_6/F1_t1: COMPLETED after 6.1 min
+2026-09-28T20:53:02 phase_6/F2_t1: start
+2026-09-28T21:03:27 phase_6/F2_t1: TIMEOUT after 10.4 min
+2026-09-28T21:03:27 phase_6/F1_t2: start
+2026-09-28T21:13:55 phase_6/F1_t2: TIMEOUT after 10.5 min
+2026-09-28T21:13:55 phase_6/F2_t2: start
+2026-09-28T21:23:23 runner started (pid 4141); mode run, running on battery allowed
+2026-09-28T21:23:23 phase_6/F2_t2: partial files of an interrupted attempt removed (no result: stopped before the end)
+2026-09-28T21:23:23 phase_6/F2_t2: start
+2026-09-28T21:33:49 phase_6/F2_t2: TIMEOUT after 10.4 min
+2026-09-28T21:33:49 phase_6/F1_t3: start
+2026-09-28T21:37:47 phase_6/F1_t3: interrupted: stopped by the owner after 4.0 min
+2026-09-28T21:37:47 phase_6/F1_t3: partial files of an interrupted attempt removed (interrupted: stopped by the owner)
+2026-09-28T21:37:47 runner stopped, as asked
+2026-09-29T08:26:14 runner started (pid 32355); mode run, running on battery allowed
+2026-09-29T08:26:14 phase_6/F1_t1: start
+2026-09-29T08:32:04 phase_6/F1_t1: COMPLETED after 5.8 min
+2026-09-29T08:32:04 phase_6/F2_t1: start
+2026-09-29T08:37:43 phase_6/F2_t1: COMPLETED after 5.6 min
+2026-09-29T08:37:43 phase_6/F1_t2: start
+2026-09-29T08:43:16 phase_6/F1_t2: COMPLETED after 5.6 min
+2026-09-29T08:43:16 phase_6/F2_t2: start
+2026-09-29T08:48:50 phase_6/F2_t2: COMPLETED after 5.6 min
+2026-09-29T08:48:50 phase_6/F1_t3: start
+2026-09-29T08:54:28 phase_6/F1_t3: COMPLETED after 5.6 min
+2026-09-29T08:54:28 phase_6/F2_t3: start
+2026-09-29T09:00:02 phase_6/F2_t3: COMPLETED after 5.6 min
+2026-09-29T09:00:02 phase_6/F1_t4: start
+2026-09-29T09:05:30 phase_6/F1_t4: COMPLETED after 5.5 min
+2026-09-29T09:05:30 phase_6/F2_t4: start
+2026-09-29T09:10:59 phase_6/F2_t4: COMPLETED after 5.5 min
+2026-09-29T09:10:59 phase_6/F1_t5: start
+2026-09-29T09:16:27 phase_6/F1_t5: COMPLETED after 5.5 min
+2026-09-29T09:16:27 phase_6/F2_t5: start
+2026-09-29T09:21:56 phase_6/F2_t5: COMPLETED after 5.5 min
+2026-09-29T09:21:56 phase_6/F1_t6: start
+2026-09-29T09:27:30 phase_6/F1_t6: COMPLETED after 5.6 min
+2026-09-29T09:27:30 phase_6/F2_t6: start
+2026-09-29T09:33:05 phase_6/F2_t6: COMPLETED after 5.6 min
+2026-09-29T09:33:05 phase_6/F1_t7: start
+2026-09-29T09:38:39 phase_6/F1_t7: COMPLETED after 5.6 min
+2026-09-29T09:38:39 phase_6/F2_t7: start
+2026-09-29T09:44:29 phase_6/F2_t7: COMPLETED after 5.8 min
+2026-09-29T09:44:29 phase_6/F1_t8: start
+2026-09-29T09:50:08 phase_6/F1_t8: COMPLETED after 5.7 min
+2026-09-29T09:50:08 phase_6/F2_t8: start
+2026-09-29T09:55:53 phase_6/F2_t8: COMPLETED after 5.8 min
+2026-09-29T09:55:53 phase_6/F1_t9: start
+2026-09-29T10:01:35 phase_6/F1_t9: COMPLETED after 5.7 min
+2026-09-29T10:01:35 phase_6/F2_t9: start
+2026-09-29T10:07:26 phase_6/F2_t9: COMPLETED after 5.9 min
+2026-09-29T10:07:26 phase_6/F1_t10: start
+2026-09-29T10:13:06 phase_6/F1_t10: COMPLETED after 5.7 min
+2026-09-29T10:13:07 phase_6/F2_t10: start
+2026-09-29T10:19:04 phase_6/F2_t10: COMPLETED after 6.0 min
+2026-09-29T10:19:04 phase_6/F1_t11: start (clean shell)
+2026-09-29T10:24:50 phase_6/F1_t11: COMPLETED after 5.8 min
+2026-09-29T10:24:50 phase_6/F2_t11: start (clean shell)
+2026-09-29T10:30:36 phase_6/F2_t11: COMPLETED after 5.8 min
+2026-09-29T10:30:36 queue finished

@@ -1,0 +1,2 @@
+{"t": 1790605543.831, "cmd": "start", "loss_pct": 10.0, "latency_ms": 50.0, "jitter_ms": 0.0, "seed": 1, "ids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+{"t": 1790605853.488, "cmd": "summary", "forwarded": 102877, "dropped": 11387, "drop_pct": 9.966}

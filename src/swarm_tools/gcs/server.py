@@ -8,15 +8,12 @@
   GET  /api/config    map service keys from config/map_keys.local.yaml (git-ignored), read on every call
   GET  /reports/<f>   result files (charts, reports, logs summaries, the PX4 replay page)
   GET  /docs/<f>      handover documents (docs/ and the README)
-  GET  /api/tests     status of the PX4 test queue (scripts/px4_queue.py), for the PX4 tests page
   POST /api/cmd       JSON command (start, pause, resume, reset, speed, fault, partition, heal)
-  POST /api/tests     {"action": "start" | "stop_after" | "stop_now" | "battery", "value": bool} for the test queue
 Bound to 127.0.0.1: only this laptop can open it.
 """
 from __future__ import annotations
 
 import json
-import os
 import time
 import urllib.parse
 from http import HTTPStatus
@@ -34,83 +31,6 @@ TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=u
          ".csv": "text/csv; charset=utf-8", ".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8",
          ".glb": "model/gltf-binary"}
 SHARED = {"/reports/": REPO / "reports", "/docs/": REPO / "docs"}   # read-only file areas
-QUEUE_DIR = REPO / "reports" / "logs" / "px4_queue"                 # scripts/px4_queue.py: control and status
-QUEUE_SCRIPT = REPO / "scripts" / "px4_queue.py"
-
-
-def _queue_module():
-    """scripts/px4_queue.py as a module (registered first: its dataclasses look their module up)."""
-    import importlib.util
-    import sys
-    if "px4_queue" in sys.modules:
-        return sys.modules["px4_queue"]
-    spec = importlib.util.spec_from_file_location("px4_queue", QUEUE_SCRIPT)
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules["px4_queue"] = mod
-    try:
-        spec.loader.exec_module(mod)
-    except BaseException:
-        del sys.modules["px4_queue"]
-        raise
-    return mod
-
-
-def queue_status(qdir: Path = QUEUE_DIR) -> dict:
-    """The runner's latest status, the owner's settings, whether the runner is alive, and the power state."""
-    try:
-        st = json.loads((qdir / "status.json").read_text())
-    except (OSError, ValueError):
-        st = {"state": "not started", "detail": "the tests have not run yet"}
-    try:
-        c = json.loads((qdir / "control.json").read_text())
-    except (OSError, ValueError):
-        c = {}
-    st["mode"] = {"pause_after": "stop_after", "pause_now": "stop_now"}.get(c.get("mode"), c.get("mode", "stopped"))
-    st["allow_battery"] = bool(c.get("allow_battery", True))
-    pid, alive = st.get("pid"), False
-    try:
-        fresh = time.time() - time.mktime(time.strptime(st.get("updated", ""), "%Y-%m-%dT%H:%M:%S")) < 90.0
-    except (TypeError, ValueError):
-        fresh = False                      # the runner rewrites status.json every 5 s while it lives
-    if isinstance(pid, int) and fresh and st.get("state") not in ("stopped", "finished"):
-        try:
-            os.kill(pid, 0)
-            alive = True
-        except OSError:
-            pass
-    st["runner_alive"] = alive
-    try:
-        from swarm_tools.resources import power_state
-        st["power"] = power_state()
-    except Exception:                      # noqa: BLE001 - the page works without it
-        st["power"] = {}
-    return st
-
-
-def queue_control(action: str, qdir: Path = QUEUE_DIR, value=None, start=None) -> dict:
-    """The buttons of the PX4 tests page: start, stop_after, stop_now, battery (value: true or false)."""
-    def write(**changes) -> None:
-        qdir.mkdir(parents=True, exist_ok=True)
-        try:
-            c = json.loads((qdir / "control.json").read_text())
-        except (OSError, ValueError):
-            c = {"mode": "stopped", "allow_battery": True}
-        c.update(changes, set_at=time.strftime("%Y-%m-%dT%H:%M:%S"), set_by="PX4 tests page")
-        tmp = qdir / "control.tmp"
-        tmp.write_text(json.dumps(c) + "\n")
-        os.replace(tmp, qdir / "control.json")
-    if action == "start":
-        msg = (start or (lambda: _queue_module().start_runner()))()
-        return {"ok": True, "msg": msg}
-    if action in ("stop_after", "stop_now"):
-        write(mode=action)
-        return {"ok": True, "msg": "Stopping after the running trial." if action == "stop_after" else
-                "Stopping now: the running trial ends and will run again from its start next time."}
-    if action == "battery":
-        write(allow_battery=bool(value))
-        return {"ok": True, "msg": "Running on battery allowed." if value else
-                "Running on battery switched off: trials wait for the charger."}
-    return {"ok": False, "msg": f"unknown action {action!r}"}
 
 
 def shared_file(path: str) -> Path | None:
@@ -180,8 +100,6 @@ def make_handler(backend):
                 self._json(backend.obstacles_payload())
             elif path == "/api/config":
                 self._json(map_keys())
-            elif path == "/api/tests":
-                self._json(queue_status())
             elif path.startswith(("/reports/", "/docs/")):
                 f = shared_file(urllib.parse.unquote(path))
                 if f is None:
@@ -206,18 +124,12 @@ def make_handler(backend):
                 self._send(404, b"not found", "text/plain")
 
         def do_POST(self) -> None:
-            if self.path not in ("/api/cmd", "/api/tests"):
+            if self.path != "/api/cmd":
                 self._send(404, b"not found", "text/plain")
                 return
             try:
                 n = int(self.headers.get("Content-Length", "0"))
                 cmd = json.loads(self.rfile.read(n) or b"{}")
-                if self.path == "/api/tests":
-                    try:
-                        self._json(queue_control(str(cmd.get("action", "")), value=cmd.get("value")))
-                    except Exception as exc:          # noqa: BLE001 - show it on the page instead of no answer
-                        self._json({"ok": False, "msg": f"The tests could not be started: {exc}"}, 500)
-                    return
                 self._json(backend.command(cmd))
             except (ValueError, TypeError, KeyError) as exc:
                 self._json({"ok": False, "msg": f"bad command: {exc}"}, 400)

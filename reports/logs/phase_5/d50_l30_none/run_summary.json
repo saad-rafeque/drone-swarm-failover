@@ -1,0 +1,128 @@
+{
+  "n": 10,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_5/d50_l30_none",
+  "fault": "",
+  "loss_pct": 30.0,
+  "latency_ms": 50.0,
+  "jitter_ms": null,
+  "profile": null,
+  "available_mb_before": 5294,
+  "power_before": {
+    "ac_online": true,
+    "battery_pct": 51,
+    "battery_status": "Charging",
+    "profile": "performance",
+    "cpu_mhz": 3678
+  },
+  "t_sim_ready_s": 14.0,
+  "result": "COMPLETED",
+  "mission_wall_s": 301.4,
+  "killed": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 94.0,
+    "mavros": 1000.8
+  },
+  "power_after": {
+    "ac_online": false,
+    "battery_pct": 48,
+    "battery_status": "Discharging",
+    "profile": "performance",
+    "cpu_mhz": 4100
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 61.9,
+      "max": 77.3,
+      "min": 57.1
+    },
+    "cpu_px4_pct_core": {
+      "mean": 69.8,
+      "max": 74.3,
+      "min": 62.0
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 51.8,
+      "max": 89.9,
+      "min": 43.1
+    },
+    "cpu_agents_pct_core": {
+      "mean": 82.4,
+      "max": 95.3,
+      "min": 76.8
+    },
+    "cpu_tools_pct_core": {
+      "mean": 34.2,
+      "max": 37.6,
+      "min": 30.8
+    },
+    "rss_agents_mb": {
+      "mean": 1015.9,
+      "max": 1016.3,
+      "min": 1015.2
+    },
+    "mem_available_mb": {
+      "mean": 3953.9,
+      "max": 3989,
+      "min": 3920
+    },
+    "load1": {
+      "mean": 14.2,
+      "max": 21.8,
+      "min": 7.0
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 99.2,
+      "max": 100.0,
+      "min": 94.9
+    },
+    "cpu_px4_pct_core": {
+      "mean": 67.6,
+      "max": 71.1,
+      "min": 61.3
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 137.0,
+      "max": 288.4,
+      "min": 59.6
+    },
+    "cpu_agents_pct_core": {
+      "mean": 167.2,
+      "max": 323.5,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 33.1,
+      "max": 58.4,
+      "min": 3.3
+    },
+    "rss_agents_mb": {
+      "mean": 610.7,
+      "max": 1014.6,
+      "min": 0.0
+    },
+    "mem_available_mb": {
+      "mean": 4272.1,
+      "max": 4728,
+      "min": 3981
+    },
+    "load1": {
+      "mean": 14.0,
+      "max": 16.2,
+      "min": 10.5
+    }
+  }
+}

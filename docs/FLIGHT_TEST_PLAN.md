@@ -64,6 +64,8 @@ Standard callouts, repeated back by the person addressed: **"Taking control"** (
 | Goal | about 100 m from home, inside the geofence | `config/swarm.yaml`, `mission` |
 | Real drone | its swarm ID, the ground radio's serial device and baud rate (57600), `mav_sys_id` equal to its ID; check with `scripts/check_profile.py` | `config/profiles/mixed.yaml` |
 | Telemetry radio | the same settings as in the Phase 6 stand-in test (air rate, error correction, MAX_WINDOW) | the radio's own settings; `config/swarm.yaml`, `radio_standin` |
+| The real drone's agent | started with `--radio-link`, so it asks PX4 for position at 5 Hz and allows 1 s without autopilot data, as in the Phase 6 stand-in test | `launch/swarm.launch.py` `radio_ids:=<id>`; `config/swarm.yaml`, `radio_standin` |
+| MAVROS of the real drone | time sync at 1 Hz instead of 10 Hz (`/**/time` `timesync_rate`) | `src/swarm_tools/sim_launch.py`, `mavros_radio_params` |
 
 ### 5.2 The real drone (PX4 parameters)
 
@@ -74,6 +76,8 @@ is flown. Export the full parameter file after setting them and keep it with the
 |---|---|---|
 | `MAV_SYS_ID` | the drone's swarm ID | the swarm software addresses the drone by it |
 | `SER_TEL1_BAUD` | 57600 | the radio's serial speed (SiK default `SERIAL_SPEED` 57) |
+| `MAV_0_MODE` | 7 (Minimal) | the set of messages PX4 sends over the radio; the default 0 (Normal) sends many the swarm does not use, and at 1200 B/s leaves position at about 1 Hz |
+| `MAV_0_RATE` | 1200 B/s (default) | PX4's cap on the radio link; it lowers every message rate to stay under it. With 20 Hz setpoints, the swarm's radio traffic plans for 65 % of the radio (`config/swarm.yaml`, `radio_standin`) |
 | `GF_ACTION` | 3 (Return) | the autopilot's own geofence, independent of the swarm software (default 2, Hold) |
 | `GF_MAX_HOR_DIST` / `GF_MAX_VER_DIST` | 200 m / 40 m (*proposal*) | larger than the software geofence; the default 0 means off |
 | `COM_OBL_RC_ACT` | 0 (Position mode, default) | what the drone does when the offboard setpoint stream stops |

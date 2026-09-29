@@ -1,0 +1,140 @@
+{
+  "per_fault": {
+    "F1": {
+      "trials": 1,
+      "handover_median_s": 1.414,
+      "handover_worst_s": 1.414,
+      "handover_measured": 1,
+      "recovery_median_s": 5.48,
+      "recovery_worst_s": 5.48,
+      "recovery_limit_s": 15.0,
+      "recovered_within_limit": 1,
+      "min_sep_m": 8.06,
+      "goal_reached": 1
+    },
+    "F2": {
+      "trials": 1,
+      "handover_median_s": 1.597,
+      "handover_worst_s": 1.597,
+      "handover_measured": 1,
+      "recovery_median_s": 5.75,
+      "recovery_worst_s": 5.75,
+      "recovery_limit_s": 15.0,
+      "recovered_within_limit": 1,
+      "min_sep_m": 8.093,
+      "goal_reached": 1
+    },
+    "F3": {
+      "trials": 1,
+      "handover_median_s": 0.001,
+      "handover_worst_s": 0.001,
+      "handover_measured": 1,
+      "recovery_median_s": 3.75,
+      "recovery_worst_s": 3.75,
+      "recovery_limit_s": 15.0,
+      "recovered_within_limit": 1,
+      "min_sep_m": 8.548,
+      "goal_reached": 1,
+      "retiree_home": 1
+    },
+    "F4": {
+      "trials": 1,
+      "handover_median_s": null,
+      "handover_worst_s": null,
+      "handover_measured": 0,
+      "recovery_median_s": 0.01,
+      "recovery_worst_s": 0.01,
+      "recovery_limit_s": 15.0,
+      "recovered_within_limit": 1,
+      "min_sep_m": 8.535,
+      "goal_reached": 1,
+      "master_changed": 0
+    },
+    "F5": {
+      "trials": 1,
+      "handover_median_s": 0.1,
+      "handover_worst_s": 0.1,
+      "handover_measured": 1,
+      "recovery_median_s": 12.47,
+      "recovery_worst_s": 12.47,
+      "recovery_limit_s": 20.0,
+      "recovered_within_limit": 1,
+      "min_sep_m": 6.049,
+      "goal_reached": 1
+    }
+  },
+  "trials": [
+    {
+      "trial": "F1_t11",
+      "dir": "reports/logs/phase_4_crosscheck/F1_t11",
+      "fault": "F1",
+      "t_fault_s": 111.82,
+      "master_before": 1,
+      "target": 1,
+      "min_sep_m": 8.06,
+      "goal_reached": true,
+      "handover_s": 1.414,
+      "new_master": 2,
+      "recovery_s": 5.48,
+      "max_rms_after_m": 7.303
+    },
+    {
+      "trial": "F2_t11",
+      "dir": "reports/logs/phase_4_crosscheck/F2_t11",
+      "fault": "F2",
+      "t_fault_s": 112.85,
+      "master_before": 1,
+      "target": 1,
+      "min_sep_m": 8.093,
+      "goal_reached": true,
+      "handover_s": 1.597,
+      "new_master": 2,
+      "recovery_s": 5.75,
+      "max_rms_after_m": 7.322
+    },
+    {
+      "trial": "F3_t11",
+      "dir": "reports/logs/phase_4_crosscheck/F3_t11",
+      "fault": "F3",
+      "t_fault_s": 111.15,
+      "master_before": 1,
+      "target": 1,
+      "min_sep_m": 8.548,
+      "goal_reached": true,
+      "t_trigger_s": 125.85,
+      "handover_s": 0.001,
+      "new_master": 2,
+      "retiree_home": true,
+      "retiree_dist_home_m": 1.0,
+      "recovery_s": 3.75,
+      "max_rms_after_m": 7.085
+    },
+    {
+      "trial": "F4_t11",
+      "dir": "reports/logs/phase_4_crosscheck/F4_t11",
+      "fault": "F4",
+      "t_fault_s": 110.99,
+      "master_before": 1,
+      "target": 9,
+      "min_sep_m": 8.535,
+      "goal_reached": true,
+      "master_changed": false,
+      "recovery_s": 0.01,
+      "max_rms_after_m": 1.02
+    },
+    {
+      "trial": "F5_t11",
+      "dir": "reports/logs/phase_4_crosscheck/F5_t11",
+      "fault": "F5",
+      "t_fault_s": 109.9,
+      "master_before": 1,
+      "target": null,
+      "min_sep_m": 6.049,
+      "goal_reached": true,
+      "t_heal_s": 125.53,
+      "handover_s": 0.1,
+      "recovery_s": 12.47,
+      "max_rms_after_m": 28.188
+    }
+  ]
+}

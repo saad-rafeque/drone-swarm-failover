@@ -4,11 +4,8 @@
 
 | Item | State | What it takes |
 |---|---|---|
-| Phase 4: fault trials on PX4 (leader killed, radio lost, low battery, follower killed, radio split; 10 trials each) | **23 of 55 trials done** on 28 September 2026, every limit met (`reports/PHASE_4.md`); the owner runs the rest when it suits | press Start on the PX4 tests page of the app (`scripts/px4_queue.py`); about 5.5 minutes per trial, 32 left |
-| Phase 5: radio realism sweep (50/150/300 ms x 0/10/30 % loss) | **done in the fast simulator** on 28 September 2026 (540 runs: no false leader change; Phase 4 limits hold in 8 of 9 conditions); the PX4 sweep (18 missions) runs when the owner starts it | the PX4 tests page (the queue runs Phase 5 after Phase 4); `reports/PHASE_5.md` |
-| Phase 6: mixed-reality readiness (1 real + N simulated drones, telemetry-radio stand-in, flight test plan, go/no-go checklist) | **software parts done** on 28 September 2026: profiles, radio stand-in, `docs/FLIGHT_TEST_PLAN.md`, fresh-copy check; the PX4 stand-in test (22 trials) runs when the owner starts it | the PX4 tests page (the queue runs Phase 6 last); `reports/PHASE_6.md` |
 | Other formations (line, column, echelon, diamond, squads) and their comparison | **line abreast, column and echelon added and compared** on 28 September 2026: in normal flight as good as the V, but after the leader is lost or a radio split heals they come closer than 5 m (line down to 0.57 m), so they are marked experimental and the V stays the default. Diamond and squads: not done | shape-specific rules for moving to new slots (for example every slot change on the transit layer for single-line shapes), then the same comparison (`scripts/formation_compare.py`) |
-| Longer RL training, several seeds | kit ready and checked on 27 September 2026, **not run** | one ~11-hour Kaggle GPU session per seed, step by step in `docs/KAGGLE_GUIDE.md` |
+| Longer RL training, several seeds | **done** on 28-29 September 2026: two 10.5-hour Kaggle GPU runs (seeds 1 and 2); seed 2's policy is now `models/avoid_policy.npz` (`docs/RESULTS.md`). Both runs stopped improving after about 2.5 hours, so more hours with the same settings will not help | a changed set-up (learning-rate decay, more dense courses, a third seed) for dense clutter, which no method solves yet; about 11 GPU hours per run |
 
 ## Known limitations
 - **No real drone has flown this code.** The Pixhawk 6C cannot run it alone; each drone needs a
@@ -18,6 +15,15 @@
   two drones came closer than 5 m; every such run had a random radio split or random link drops.
   The rules cannot push apart drones that do not hear each other. Needs onboard proximity sensing
   or sticky formation references before real flights.
+- **A drone that keeps dropping out takes the lead back each time.** The election gives the lead to the
+  lowest alive ID, so a leader whose own link drops in and out (seen in the first Phase 6 attempt, with an
+  overloaded radio) keeps losing and retaking the lead. The overloaded link is fixed (`reports/PHASE_6.md`).
+  A rule that makes a returning drone wait before it can lead again would change `docs/SPECIFICATION.md`
+  section 6, and Phases 2–5 would have to be repeated; this is for the owner to decide.
+- **A drone on a telemetry radio needs the radio settings.** PX4 on TELEM1 in Minimal mode at 1,200 B/s
+  (`MAV_0_MODE` 7, `MAV_0_RATE` 1200), its agent started with `--radio-link`, and MAVROS time sync at 1 Hz
+  (`config/swarm.yaml`, `radio_standin`; `docs/FLIGHT_TEST_PLAN.md`). With PX4's default Normal mode at
+  1,200 B/s, position arrives at only about 1 Hz.
 - **Dense clutter is unsolved.** In the densest obstacle courses the best method (RL + brake)
   completes 5 of 30; followers still hit buildings in dense city blocks at 16 m.
 - **Simplified physics.** PX4 SIH uses a simple aircraft model; the fast simulators use point

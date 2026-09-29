@@ -63,12 +63,12 @@ last events are listed at the top right.
 | 1: N drones hover | `scripts/ros_env.sh python3 scripts/phase1_scale_test.py --n 10` | `reports/logs/phase_1/n10/` |
 | 3: formation mission | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir reports/logs/phase_3/run1` | run folder: `states.jsonl`, `metrics.json`, ... |
 | 3: acceptance batch (3 runs + 3 clean-shell cross-checks) | `bash scripts/phase3_runs.sh` | `reports/logs/phase_3/` |
-| **Run the remaining PX4 tests (Phases 4, 5 and 6), started and stopped by you** | the **PX4 tests** page of the app: Start, Stop after this trial, Stop now, and the switch for running without the charger; or `python3 scripts/px4_queue.py start`, `stop [--now]`, `battery on\|off`, `status` | the trial folders in `reports/logs/phase_4/`, `phase_5/`, `phase_6/` (and `*_crosscheck/`); the queue's log `reports/logs/px4_queue/runner.log` |
+| **Re-run the PX4 tests of Phases 4, 5 and 6** (all 95 finished on 29 September 2026; the queue skips finished trials, so move or delete a trial folder to run it again) | `python3 scripts/px4_queue.py start`, `stop [--now]`, `battery on\|off`, `status` | the trial folders in `reports/logs/phase_4/`, `phase_5/`, `phase_6/` (and `*_crosscheck/`); the queue's log `reports/logs/px4_queue/runner.log` |
 | 4: fault trials without the queue, one round at a time (F1-F5 once, ~30 min; 10 drones; waits for the charger) | `bash scripts/phase4_runs.sh <r> <r>` for round r = 1..10, then the clean-shell cross-check round (`scripts/phase4_all.sh` does all of it in one go, ~7 h); then `python3 scripts/phase4_metrics.py --out ... --md ... reports/logs/phase_4/F?_t*` and `python3 scripts/plot_phase4.py` | `reports/logs/phase_4/`; how-to: `reports/PHASE_4.md` |
 | 5: radio sweep on PX4 (9 conditions, one mission without a fault and one F1 mission each, ~16 min per condition) | `bash scripts/phase5_runs.sh <first> <last>` (conditions 1-9) | `reports/logs/phase_5/d<delay>_l<loss>_<none\|F1>` |
 | 6: radio stand-in test on PX4 (F1 and F2 with drone 1 behind the stand-in, ~16 min per round) | `bash scripts/phase6_runs.sh <r> <r>` for round r = 1..10 | `reports/logs/phase_6/` |
 | Check a drone profile (never opens a serial port) | `PYTHONPATH=src python3 scripts/check_profile.py config/profiles/mixed.yaml` | console |
-| One mission with a profile, for example drone 1 behind the radio stand-in | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir <dir> --profile config/profiles/standin.yaml` | run folder, `proc_logs/radio_standin_1.json` (link statistics) |
+| One mission with a profile, for example drone 1 behind the radio stand-in | `scripts/ros_env.sh python3 scripts/run_mission.py --n 10 --run-dir <dir> --profile config/profiles/standin.yaml` | run folder, `proc_logs/radio_standin_1.json` (link statistics); drone 1's PX4 log shows `mode: Minimal, data rate: 1200 B/s` (its radio link set-up) |
 | Metrics / plots of a run | `python3 scripts/metrics.py <run_dir>`; `python3 scripts/plot_mission.py <run_dir> out.png` | |
 | Replay page from a run | `python3 scripts/make_replay.py <run_dir> scripts/replay_template.html reports/replay/swarm_replay.html` | open in the app: PX4 flights |
 | Logs as CSV | `PYTHONPATH=src python3 -c "from swarm_tools.logfmt import jsonl_to_csv; jsonl_to_csv('<run>/states.jsonl', '<run>/states.csv')"` | |
@@ -103,7 +103,7 @@ instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refu
 | Fair comparison, 90 unseen courses | `PYTHONPATH=src python3 scripts/rl_eval.py --policy models/avoid_policy.npz --episodes 30 --jobs 3` | ~9 min |
 | Real map, full agent code | `PYTHONPATH=src python3 scripts/rl_eval_route.py --policy models/avoid_policy.npz --seeds 5 --jobs 3` | ~8 min |
 | Use a policy in the app | copy its `best_policy.npz` to `models/avoid_policy.npz` | |
-| Long training on a GPU | step by step in `docs/KAGGLE_GUIDE.md` | ~11 h per seed on Kaggle |
+| Long training on a GPU | step by step in `docs/KAGGLE_GUIDE.md` | ~11 h per seed on Kaggle (two seeds can run at once) |
 | Learning curve of a Kaggle run | `python3 scripts/plot_rl_training.py reports/logs/rl/kaggle_seed1 --out reports/rl_training_kaggle_seed1.png` | seconds |
 
 ## 6. Documents

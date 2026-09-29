@@ -13,6 +13,21 @@ import yaml
 from .geometry import GeoPoint
 from .heartbeat import MAX_ID as MAX_DRONE_ID  # PX4 MAV_SYS_ID range is 1..250
 
+# MAVLink message IDs of the streams the agent may set (mavros/set_message_interval), from MAVLink
+# common.xml (PX4 v1.18.0-rc1: src/modules/mavlink/mavlink/message_definitions/v1.0/common.xml)
+MAVLINK_MSG_IDS = {"SYS_STATUS": 1, "GPS_RAW_INT": 24, "ATTITUDE": 30, "ATTITUDE_QUATERNION": 31,
+                   "LOCAL_POSITION_NED": 32, "GLOBAL_POSITION_INT": 33, "VFR_HUD": 74, "HIGHRES_IMU": 105,
+                   "ALTITUDE": 141, "HOME_POSITION": 242, "EXTENDED_SYS_STATE": 245, "STATUSTEXT": 253,
+                   "ODOMETRY": 331}
+# PX4 `mavlink start -m` modes a radio link may use ("normal" = PX4's default, started without -m)
+PX4_LINK_MODES = ("normal", "minimal", "low_bandwidth", "onboard_low_bandwidth")
+# MAVLink v2 frame sizes (payload + 12 bytes header and checksum, common.xml) of what MAVROS sends
+SETPOINT_FRAME_B = 65      # SET_POSITION_TARGET_LOCAL_NED (payload 53 B)
+TIMESYNC_FRAME_B = 30      # TIMESYNC (payload 18 B), sent by MAVROS and answered by PX4
+SYSTEM_TIME_FRAME_B = 24   # SYSTEM_TIME (payload 12 B), 1 Hz from MAVROS
+HEARTBEAT_FRAME_B = 21     # HEARTBEAT (payload 9 B), 1 Hz from MAVROS
+RADIO_MAX_LOAD = 0.8       # design choice: planned traffic may use at most 80 % of the radio's usable rate
+
 
 @dataclass(frozen=True)
 class SwarmCfg:
@@ -109,11 +124,25 @@ class RadioStandinCfg:
     mavros_port_base: int
     relay_port_base: int
     seed: int
+    # how a drone on a telemetry radio is set up (the stand-in, and later a real drone on a radio)
+    px4_link_mode: str                        # PX4 MAVLink mode of that link (MAV_0_MODE on TELEM1)
+    px4_link_rate_bytes_s: int                # PX4's cap on that link (MAV_0_RATE)
+    timesync_rate_hz: float                   # MAVROS time sync over the radio (MAVROS default 10 Hz)
+    fcu_timeout_s: float                      # replaces heartbeat.fcu_timeout_s for that drone
+    autopilot_streams_hz: dict[str, float]    # replaces autopilot_streams_hz for that drone
 
     @property
     def usable_rate_bps(self) -> float:
         """Both directions share this rate (time-division turns); error correction halves it."""
         return self.air_rate_bps / (2.0 if self.ecc else 1.0)
+
+    def planned_load_bytes_s(self, setpoint_rate_hz: float) -> float:
+        """Worst-case traffic of one radio drone, both directions: PX4's capped telemetry, MAVROS's
+        setpoints, time sync (request and answer), system time and heartbeat."""
+        up = (setpoint_rate_hz * SETPOINT_FRAME_B + self.timesync_rate_hz * TIMESYNC_FRAME_B
+              + SYSTEM_TIME_FRAME_B + HEARTBEAT_FRAME_B)
+        down = self.px4_link_rate_bytes_s + self.timesync_rate_hz * TIMESYNC_FRAME_B
+        return up + down
 
 
 @dataclass(frozen=True)
@@ -239,6 +268,19 @@ def validate(cfg: Config) -> None:
         raise ConfigError("radio_standin: air_rate_bps > 0, ecc 0 or 1, max_window_ms >= 0, max_queue_s > 0")
     if not 0.0 <= r.loss_pct <= 100.0:
         raise ConfigError("radio_standin.loss_pct must be within 0..100")
+    if r.px4_link_mode not in PX4_LINK_MODES or not 10 <= r.px4_link_rate_bytes_s <= 10_000_000:
+        raise ConfigError(f"radio_standin: px4_link_mode one of {PX4_LINK_MODES}, px4_link_rate_bytes_s 10..10000000")
+    if r.timesync_rate_hz < 0 or r.fcu_timeout_s <= 0:
+        raise ConfigError("radio_standin: timesync_rate_hz >= 0 and fcu_timeout_s > 0")
+    load = r.planned_load_bytes_s(cfg.setpoints.rate_hz)
+    if load > RADIO_MAX_LOAD * r.usable_rate_bps / 8.0:
+        raise ConfigError(f"radio_standin: planned traffic {load:.0f} B/s exceeds {RADIO_MAX_LOAD:.0%} of the radio's "
+                          f"usable {r.usable_rate_bps / 8.0:.0f} B/s")
+    for label, streams in (("autopilot_streams_hz", cfg.autopilot_streams_hz),
+                           ("radio_standin.autopilot_streams_hz", r.autopilot_streams_hz)):
+        unknown = sorted(set(streams) - set(MAVLINK_MSG_IDS))
+        if unknown or any(v <= 0 for v in streams.values()):
+            raise ConfigError(f"{label}: unknown streams {unknown} or a rate <= 0 (known: {sorted(MAVLINK_MSG_IDS)})")
     # port blocks of 40 (+ PX4 instance), like PX4's own offboard plan (14540 / 14580), must not overlap
     blocks = [r.mavros_port_base, r.relay_port_base, 14540, 14580]
     if any(abs(p - q) < 40 for i, p in enumerate(blocks) for q in blocks[i + 1:]):

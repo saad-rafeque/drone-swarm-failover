@@ -6,7 +6,7 @@
   const METHODS = [["none", "No avoidance"], ["none+shield", "Brake only"], ["apf", "Classical"], ["rl", "RL"], ["rl+shield", "RL + brake"]];
   const LEVELS = [["low", "Few obstacles"], ["medium", "Medium"], ["high", "Dense"]];
   try {
-    const j = await get("/reports/logs/rl/eval/summary.json", "json");
+    const j = await get("/reports/logs/rl/eval_kaggle_check/summary.json", "json");
     const m = j.meta;
     $("rl-meta").textContent = `${m.episodes} unseen routes per density, ${m.drones} drones, every method on the same routes. ` +
       "Success = no crash and the whole formation re-forms at the target.";
@@ -19,13 +19,13 @@
     $("rl-paired").textContent = "Paired on the same routes (RL + brake vs classical, successes only one of them had): " +
       Object.entries(j.paired).map(([lv, p]) => `${lv}: RL ${p.rl_only}, classical ${p.apf_only}`).join("; ") +
       ". The RL-only column in the file compares RL without the brake.";
-  } catch (e) { $("rl-meta").textContent = "RL evaluation results are not available yet (reports/logs/rl/eval)."; }
+  } catch (e) { $("rl-meta").textContent = "RL evaluation results are not available yet (reports/logs/rl/eval_kaggle_check)."; }
   try { $("longroute").innerHTML = renderMarkdown(await get("/reports/logs/long_route/summary.md"), "/reports/logs/long_route/"); }
   catch (e) { $("longroute").textContent = "Not available yet."; }
-  // real-map comparison: the re-run with the current code (avoider at 10 Hz) first, else the first run
-  try { $("route").innerHTML = renderMarkdown(await get("/reports/logs/rl/route_eval_10hz/summary.md")); }
+  // real-map comparison: the policy in use (Kaggle seed 2) first, else the laptop policy's 10 Hz re-run
+  try { $("route").innerHTML = renderMarkdown(await get("/reports/logs/rl/route_eval_kaggle_check/summary.md")); }
   catch (e) {
-    try { $("route").innerHTML = renderMarkdown(await get("/reports/logs/rl/route_eval/summary.md")); }
+    try { $("route").innerHTML = renderMarkdown(await get("/reports/logs/rl/route_eval_10hz/summary.md")); }
     catch (e2) { $("route").textContent = "Not available yet."; }
   }
   try {

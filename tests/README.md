@@ -1,7 +1,7 @@
 # Tests
 
 ```bash
-python3 -m pytest                                  # 131 passed, 4 skipped without ROS 2 and PyTorch
+python3 -m pytest                                  # 186 passed, 4 skipped without ROS 2 and PyTorch
 PYTHONPATH=src .venv/bin/python -m pytest          # with PyTorch (RL environment): 134 passed, 2 skipped
 python3 -m pytest --cov                            # with coverage of src/swarm_agent and src/swarm_tools
 ```

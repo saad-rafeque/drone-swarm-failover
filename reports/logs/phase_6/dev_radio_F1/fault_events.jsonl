@@ -1,0 +1,2 @@
+{"t": 1790615443.924, "kind": "F1", "action": "cruise_detected"}
+{"t": 1790615490.162, "kind": "F1", "action": "fault", "seed": 1, "delay_after_cruise_s": 46.12, "t_fault": 1790615490.051, "master_before": 1, "target": 1}

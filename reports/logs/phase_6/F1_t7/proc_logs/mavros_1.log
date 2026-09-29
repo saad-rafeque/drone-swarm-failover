@@ -1,0 +1,68 @@
+[INFO] [1790656396.577997546] [uav1.mavros_node]: Starting mavros_node container
+[INFO] [1790656396.578145886] [uav1.mavros_node]: FCU URL: udp://:15540@127.0.0.1:15580
+[INFO] [1790656396.578155931] [uav1.mavros_node]: GCS URL: 
+[INFO] [1790656396.578160823] [uav1.mavros_node]: UAS Prefix: /uas1
+[INFO] [1790656396.578165686] [uav1.mavros_node]: Starting mavros router node
+[INFO] [1790656396.673884968] [uav1.mavros_router]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790656396.683926634] [uav1.mavros_router]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790656396.683945103] [uav1.mavros_router]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790656396.683951904] [uav1.mavros_router]: MAVROS Router started
+[INFO] [1790656396.684117992] [uav1.mavros_node]: Starting mavros uas node
+[INFO] [1790656396.826399418] [uav1.mavros_router]: Requested to add endpoint: type: 0, url: udp://:15540@127.0.0.1:15580
+[INFO] [1790656396.832132307] [uav1.mavros_router]: Endpoint link[1000] created
+[INFO] [1790656396.835611679] [uav1.mavros_router]: link[1000] opened successfully
+[INFO] [1790656396.846225022] [uav1.mavros_router]: Requested to add endpoint: type: 2, url: /uas1
+[INFO] [1790656396.846256734] [uav1.mavros_router]: Endpoint link[1001] created
+[INFO] [1790656396.837132504] [uav1.mavros]: Plugin actuator_control ignored
+[INFO] [1790656396.847890502] [uav1.mavros]: Plugin altitude ignored
+[INFO] [1790656396.837487867] [uav1.mavros]: UAS Executor started, threads: 4
+[INFO] [1790656396.960332002] [uav1.mavros_router]: link[1001] opened successfully
+[INFO] [1790656397.010163656] [uav1.mavros_router]: link[1000] detected remote address 1.1
+[INFO] [1790656397.099607216] [uav1.mavros]: Plugin command created
+[INFO] [1790656397.099667693] [uav1.mavros]: Plugin command initialized
+[INFO] [1790656397.099675453] [uav1.mavros]: Plugin ftp ignored
+[INFO] [1790656397.099680836] [uav1.mavros]: Plugin geofence ignored
+[INFO] [1790656397.195563583] [uav1.mavros]: Plugin global_position created
+[INFO] [1790656397.195628905] [uav1.mavros]: Plugin global_position initialized
+[INFO] [1790656397.195639710] [uav1.mavros]: Plugin home_position ignored
+[INFO] [1790656397.195645518] [uav1.mavros]: Plugin imu ignored
+[INFO] [1790656397.328895933] [uav1.mavros]: Plugin local_position created
+[INFO] [1790656397.328949507] [uav1.mavros]: Plugin local_position initialized
+[INFO] [1790656397.328959989] [uav1.mavros]: Plugin manual_control ignored
+[INFO] [1790656397.328965926] [uav1.mavros]: Plugin nav_controller_output ignored
+[INFO] [1790656397.328971931] [uav1.mavros]: Plugin param ignored
+[INFO] [1790656397.328977611] [uav1.mavros]: Plugin rallypoint ignored
+[INFO] [1790656397.328983168] [uav1.mavros]: Plugin rc_io ignored
+[INFO] [1790656397.328988556] [uav1.mavros]: Plugin setpoint_accel ignored
+[INFO] [1790656397.328993808] [uav1.mavros]: Plugin setpoint_attitude ignored
+[INFO] [1790656397.328999278] [uav1.mavros]: Plugin setpoint_position ignored
+[INFO] [1790656397.329004657] [uav1.mavros]: Plugin setpoint_raw ignored
+[INFO] [1790656397.329010003] [uav1.mavros]: Plugin setpoint_trajectory ignored
+[INFO] [1790656397.625999373] [uav1.mavros]: Plugin setpoint_velocity created
+[INFO] [1790656397.626051274] [uav1.mavros]: Plugin setpoint_velocity initialized
+[INFO] [1790656398.124010112] [uav1.mavros]: Plugin sys_status created
+[INFO] [1790656398.134228801] [uav1.mavros]: Plugin sys_status initialized
+[INFO] [1790656398.367257201] [uav1.mavros.time]: TM: Timesync mode: MAVLINK
+[INFO] [1790656398.417035210] [uav1.mavros]: Plugin sys_time created
+[INFO] [1790656398.417127897] [uav1.mavros]: Plugin sys_time initialized
+[INFO] [1790656398.417146284] [uav1.mavros]: Plugin waypoint ignored
+[INFO] [1790656398.417152634] [uav1.mavros]: Plugin wind_estimation ignored
+[INFO] [1790656398.463457192] [uav1.mavros]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790656398.463494611] [uav1.mavros]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790656398.463521717] [uav1.mavros]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790656398.463528570] [uav1.mavros]: MAVROS UAS via /uas1 started. MY ID 1.191, TARGET ID 1.1
+[INFO] [1790656398.610262843] [uav1.mavros]: CON: Got HEARTBEAT, connected. FCU: PX4 Autopilot
+[INFO] [1790656398.841084899] [uav1.mavros_router]: link[1001] detected remote address 1.191
+[INFO] [1790656399.804845741] [uav1.mavros.sys]: VER: 1.1: Capabilities         0x000000000000e8ff
+[INFO] [1790656399.804913479] [uav1.mavros.sys]: VER: 1.1: Flight software:     011200c0 (fca3df865a000000)
+[INFO] [1790656399.804921915] [uav1.mavros.sys]: VER: 1.1: Middleware software: 011200c0 (fca3df865a000000)
+[INFO] [1790656399.804926866] [uav1.mavros.sys]: VER: 1.1: OS software:         070000ff (17040b9f87cb1791)
+[INFO] [1790656399.804932250] [uav1.mavros.sys]: VER: 1.1: Board hardware:      00000001
+[INFO] [1790656399.804938003] [uav1.mavros.sys]: VER: 1.1: VID/PID:             0000:0000
+[INFO] [1790656399.804942946] [uav1.mavros.sys]: VER: 1.1: UID:                 4954414c44494e4f
+[WARN] [1790656399.809283416] [uav1.mavros.cmd]: CMD: Unexpected command 512, result 0
+[WARN] [1790656411.520053983] [uav1.mavros.sys]: FCU: UNK(8): EVENT 1914663 with args -0-10-13-2-56-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790656413.929058445] [uav1.mavros.cmd]: CMD: Unexpected command 176, result 0
+[INFO] [1790656414.199168353] [uav1.mavros.sys]: FCU: EVENT 9489139 with args -4-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790656416.154926323] [uav1.mavros.sys]: FCU: EVENT 4277609 with args -0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790656420.132444234] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout

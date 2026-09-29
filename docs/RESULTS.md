@@ -18,9 +18,15 @@ Everything here is simulation. Each number points at the file it came from.
 | 1,000 random runs with crashes, radio loss, delays and splits | exactly one leader after convergence in 1,000 of 1,000; median convergence 0.145 s after the last fault (p95 2.12 s, max 2.72 s) | `reports/PHASE_2.md` |
 | Known weak spot | 143 of those 1,000 runs had two drones closer than 5 m; every one contained a random radio split or random link drops (drones that cannot hear each other cannot be pushed apart) | `reports/PHASE_2.md` |
 
-Fault types, 10 drones, 20 runs each (fast simulator). On PX4, 23 of the 55 Phase 4 trials ran on 28 September
-2026 and met every limit: new leader in under 1.7 s, planned handover in under 0.01 s, formation back within
-6.6 s (13.4 s after a healed split), closest pair 6.0 m or more (`reports/PHASE_4.md`):
+Fault types, 10 drones, 20 runs each (fast simulator). On PX4, Phase 4 passed on 28 September 2026 (`reports/PHASE_4.md`).
+All 55 trials (10 per fault plus a clean-shell cross-check round) met every limit:
+- new leader in 1.4–1.7 s;
+- planned handover within 0.01 s;
+- formation back within 6.6 s (13.4 s after a healed split);
+- closest pair 6.03 m or more;
+- goal reached 55 of 55.
+
+The fast-simulator results:
 
 | Fault | New leader agreed (median / worst) | Formation back under 2 m | Closest pair | Goal reached |
 |---|---|---|---|---|
@@ -54,8 +60,13 @@ without a fault, 20 with the leader killed (F1) and 20 with its radio cut (F2): 
 - Formation back under 2 m within 9.47 s in every run (limit 15 s); closest pair 6.44 m or more; every
   mission reached the goal.
 
+- **On PX4** (18 missions with 10 drones, one without a fault and one with the leader killed per condition):
+  - no false leader change;
+  - a new leader in 1.59–2.48 s in all nine conditions, including 300 ms with 30 % loss (2.30 s);
+  - formation back within 6.84 s, closest pair 6.89 m or more, every goal reached.
+
 Evidence: `reports/PHASE_5.md`, `reports/logs/phase_5_fastsim/` (`summary.md`, `summary.json`,
-`radio_sweep.jsonl`), `reports/phase5_radio_sweep.png`. The same sweep on PX4 runs when the owner starts it.
+`radio_sweep.jsonl`), `reports/logs/phase_5/` (PX4 runs, `phase5_px4_table.md`), `reports/phase5_radio_sweep.png`.
 
 ## Formation shapes (fast simulator)
 Four shapes with the same agent code, 10 drones, clean radio, 10 runs each of: no fault, F1 (leader killed),
@@ -81,27 +92,43 @@ but marked experimental. Evidence: `reports/logs/formations/` (`summary.md`, `ru
 Fair comparison: 90 courses never used in training or model selection (30 per density), 10 drones,
 every method on the same courses with the same wind-like drift. Success = no drone hits anything and
 the whole V re-forms at the target. Classical = potential field + stopping-distance brake, tuned on
-training courses; RL = PPO policy after 6 million steps (38 min on the laptop CPU).
+training courses. RL = the policy in use (`models/avoid_policy.npz`): PPO on a Kaggle T4 GPU, seed 2,
+5.84 billion steps in 10.5 hours, best checkpoint on the validation courses.
 
 | Method | Few obstacles | Medium | Dense | Crashes per mission (medium) | Drones left behind (medium) |
 |---|---|---|---|---|---|
 | No avoidance | 3/30 | 0/30 | 0/30 | 6.30 | 0.00 |
 | Brake only | 8/30 | 3/30 | 0/30 | 2.63 | 0.80 |
 | Classical | 15/30 | 7/30 | 3/30 | 0.57 | 1.20 |
-| RL | 13/30 | 7/30 | 1/30 | 1.80 | 0.00 |
-| **RL + brake** | **26/30** | **18/30** | **5/30** | 0.47 | 0.23 |
+| RL | 28/30 | 19/30 | 11/30 | 0.67 | 0.00 |
+| **RL + brake** | **30/30** | **23/30** | **18/30** | 0.23 | 0.10 |
 
-Paired on the same courses, RL + brake against classical: few obstacles 13 courses only RL + brake
-completed vs 2 only classical (exact McNemar p = 0.007); medium 11 vs 0 (p = 0.001); dense 5 vs 3
-(p = 0.73, no clear difference). The classical controller also let drones come as close as
-0.88-2.04 m to each other; RL + brake stayed at 3.0 m or more.
-Evidence: `reports/logs/rl/eval/` (`summary.md`, `summary.json`, `episodes.jsonl`, `comparison.png`),
-tuning `reports/logs/rl/apf_tuning.jsonl`, training `reports/logs/rl/run1/`, `reports/rl_training.png`.
+Paired on the same courses, RL + brake against classical: few obstacles 14 courses only RL + brake
+completed vs 1 only classical (exact McNemar p = 0.001); medium 13 vs 1 (p = 0.002); dense 9 vs 1
+(p = 0.021). RL + brake is now clearly better at every density, dense clutter included. The classical
+controller let drones come as close as 0.88-2.04 m to each other; RL + brake 2.88 m (dense) to 4.47 m.
+Evidence: the laptop re-test `reports/logs/rl/eval_kaggle_check/` (`summary.md`, `summary.json`,
+`episodes.jsonl`, `comparison.png`), tuning `reports/logs/rl/apf_tuning.jsonl`, training
+`reports/logs/rl/kaggle_seed2/`, `reports/rl_training_kaggle_seed2.png`.
 
-What it means: the policy alone is about as good as the classical controller but fails differently
-(it keeps every drone with the formation, but crashes more); with the same brake on top it is
-clearly better at low and medium density. Dense clutter is unsolved by every method. Training was
-still improving when it stopped, which is why longer training (Kaggle) is the next step.
+### Training runs compared (the same 90 courses)
+| Policy | Training | RL + brake: few / medium / dense | RL alone: few / medium / dense |
+|---|---|---|---|
+| Laptop (`models/avoid_policy_run1.npz`) | 6 million steps, 38 min on the laptop CPU | 26 / 18 / 5 | 13 / 7 / 1 |
+| Kaggle seed 1 | 5.50 billion steps, 10.5 h on a T4 GPU | 27 / 18 / 14 | 26 / 15 / 4 |
+| **Kaggle seed 2 (in use)** | 5.84 billion steps, 10.5 h on a T4 GPU | **30 / 23 / 18** | **28 / 19 / 11** |
+
+- The two seeds are independent runs with the same settings; seed 2 is better on every count.
+- The laptop re-test gave exactly Kaggle's RL numbers for seed 2. Kaggle's own classical row is not usable: its
+  upload lacked the tuning file, so it ran untuned (`eval_kaggle_seed*/`, "APF {}").
+- **More hours alone will not help.** The validation score of both runs rose for about 2.5 hours and then only
+  went up and down (seed 1 best 51 of 90 at 2.5 h; seed 2 best 63 of 90 at 6.5 h, 62 already at 2.5 h). A next
+  run needs a changed set-up, for example learning-rate decay or more dense courses.
+- Rules for choosing (`docs/KAGGLE_GUIDE.md`, section 8): seed 2 has at least as many successes at every density,
+  fewer crashes, and 0 hits on the real map. Seed 1 failed the last rule (1 hit).
+
+What it means: the long GPU training made the policy much better, most of all in dense clutter (5 to 18 of 30
+with the brake, 1 to 11 without). Dense clutter is still the hardest case: 12 of 30 dense missions still fail.
 
 ### On the real map, with the full agent code
 F-9 Park to Faisal Mosque, Islamabad (3.2 km; 932 buildings and 26 woods from OpenStreetMap, low
@@ -113,17 +140,16 @@ leader is killed halfway. Drones that hit something over 5 runs / runs with no h
 | No avoidance | 45 / 0 of 5 | 40 / 0 of 5 |
 | Classical (tuned) | 10 / 1 of 5 | 8 / 0 of 5 |
 | Classical (default settings) | 3 / 2 of 5, but many drones left far behind (formation error ~240 m) | 3 / 3 of 5, same caveat |
-| RL | 20 / 0 of 5 | 18 / 0 of 5 |
+| RL | 13 / 0 of 5 | 12 / 0 of 5 |
 | **RL + brake** | **0 / 5 of 5** | **0 / 5 of 5** |
 
-Every mission completed; after the leader was killed a new leader was agreed in 1.55-1.65 s.
-These numbers are from the re-run of 27 September 2026 with the current code, in which the agent
-runs its avoider 10 times a second - the rate at which the policy was trained and the classical
-controller was tuned. Evidence: `reports/logs/rl/route_eval_10hz/`. The first run (26 September,
-avoider every 0.05 s) gave the same result for RL + brake (0 hits in all 10 runs) and for RL (20 and
-18), but fewer hits for the classical controller (tuned: 4 / 3 of 5 and 7 / 1 of 5; default: 2 / 3 of 5
-and 0 / 5 of 5): at twice the update rate the classical controller does better, still not as well
-as RL + brake. Evidence of that run: `reports/logs/rl/route_eval/`.
+Every mission completed; after the leader was killed a new leader was agreed in 1.50-1.65 s. The avoider runs
+10 times a second, the rate the policy was trained at. Evidence: `reports/logs/rl/route_eval_kaggle_check/`.
+Compared with the laptop policy (`reports/logs/rl/route_eval_10hz/`): RL alone hit much less (13 and 12 against
+20 and 18), and RL + brake had 0 hits in both. **One caveat:** with the new policy two drones came to 4.77 m of each
+other once on this route (laptop policy: 5.07 m). It is below the 5 m limit, so check it before
+this policy flies near real drones.
+The first run of 26 September (avoider every 0.05 s, laptop policy) is kept in `reports/logs/rl/route_eval/`.
 
 ## Long routes
 
@@ -180,8 +206,15 @@ The earlier run in the app on 26 September 2026 was stopped on purpose after 76.
   with SiK defaults - 64 kbit/s air rate halved by error correction to 32 kbit/s shared by both directions,
   transmit turns of up to 131 ms, 1 % loss, a 1 s buffer. Its tests (`tests/test_radio_proxy.py`, 6 tests)
   measure the rate (2,000 bytes delivered in 0.45-0.75 s), the shared channel, the turn wait, loss and the
-  full buffer with local sockets. The PX4 test (F1 and F2 with drone 1 behind it, `scripts/phase6_runs.sh`)
-  runs when the owner starts it.
+  full buffer with local sockets.
+- **The PX4 stand-in test** (F1 and F2 with drone 1 behind the stand-in): the first four runs failed because the
+  simulated autopilot flooded the radio, 1.7–3.9 times its capacity.
+  - The radio drone is now set up like a real telemetry port: PX4 Minimal mode at 1,200 B/s, the agent asking
+    for position at 5 Hz, and 1 s allowed without autopilot data.
+  - The 22 acceptance trials then passed, 29 September 2026 (`reports/PHASE_6.md`):
+    - New leader: F1 median 1.51 s, worst 1.60 s; F2 median 1.46 s, worst 1.52 s (limits 3 / 4 s).
+    - Formation back under 2 m within 6.74 s (limit 15 s); closest pair 7.65 m; goal reached 22 of 22.
+    - Radio: 180,937 packets, none dropped for lack of room, 1.15 % lost, mean delay 68–84 ms.
 - **Flight test plan**: `docs/FLIGHT_TEST_PLAN.md` (one real drone with simulated ones; PX4 safety
   parameters checked in the PX4 source; go/no-go checklist; abort criteria; kill-switch procedure).
 

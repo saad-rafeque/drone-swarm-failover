@@ -1,23 +1,52 @@
 # Phase 5 — Radio realism (telemetry-like links)
-Status: NOT COMPLETED — the sweep passed in the fast simulator (the real agent code); the same sweep on PX4
-runs when the owner presses Start on the PX4 tests page of the ground-control app (`scripts/px4_queue.py`)
-and is not done yet.
+Status: PASSED — the sweep passed in the fast simulator (540 runs) and on PX4 (18 missions with 10 drones,
+28 September 2026). No leader changed without a real fault in any condition, and after the leader was killed
+a new leader took over in 1.6–2.5 s on PX4 (limit 3 s).
 
 ## Acceptance criteria
-- [DONE, fast simulator] Sweep the heartbeat link: delay {50, 150, 300} ms x loss {0, 10, 30} %. Nine
-  conditions, each with 20 missions without a fault, 20 with the leader killed (F1) and 20 with the
-  leader's radio cut (F2): 540 runs (`reports/logs/phase_5_fastsim/radio_sweep.jsonl`).
-  PX4: pending, 18 missions (`scripts/phase5_runs.sh`).
-- [DONE, fast simulator] Results table and plot: the table below (`reports/logs/phase_5_fastsim/summary.md`)
-  and `reports/phase5_radio_sweep.png`.
-- [PASS, fast simulator] Worst condition where the Phase 4 criteria still hold: **300 ms at 10 % loss** (new
-  leader median / worst 2.65 / 3.09 s, formation back within 5.71 s) and **150 ms at 30 % loss**
-  (2.59 / 3.27 s, 5.67 s). They fail only at 300 ms with 30 % loss: the median time to a new
-  leader is 3.06 s against 3.0 s (worst 3.80 s, within the 4.0 s limit).
-- [PASS, fast simulator] Zero false failovers at <= 10 % loss: 0 leader changes in 120 missions without a fault
-  (and 0 in the 60 missions at 30 % loss). Closest pair 6.44 m or more in every run.
+- [PASS] Sweep the heartbeat link: delay {50, 150, 300} ms x loss {0, 10, 30} %.
+  - Fast simulator: nine conditions, each with 20 missions without a fault, 20 with the leader killed (F1)
+    and 20 with the leader's radio cut (F2), 540 runs (`reports/logs/phase_5_fastsim/radio_sweep.jsonl`).
+  - PX4 with 10 drones: every condition once without a fault and once with the leader killed, 18 missions
+    (`reports/logs/phase_5/d<delay>_l<loss>_{none,F1}/`).
+- [PASS] Results table and plot: the tables below and `reports/phase5_radio_sweep.png`.
+- [PASS] Worst condition where the Phase 4 criteria still hold.
+  - Fast simulator: **300 ms at 10 % loss** (new leader median / worst 2.65 / 3.09 s, formation back within
+    5.71 s) and **150 ms at 30 % loss** (2.59 / 3.27 s, 5.67 s). Only 300 ms with 30 % loss fails: median
+    3.06 s against 3.0 s (worst 3.80 s, within 4.0 s).
+  - PX4: all nine conditions held, including 300 ms with 30 % loss (new leader 2.30 s, formation back 6.05 s).
+    With one leader kill per condition there is no median, so the fast simulator's result above is the
+    limit to quote.
+- [PASS] Zero false failovers at <= 10 % loss: 0 leader changes without a fault in 120 fast-simulator missions
+  (and 0 in the 60 at 30 % loss), and 0 in the 9 PX4 missions without a fault (including the three at 30 %
+  loss). Never more than one leader at a time on PX4. Closest pair 6.44 m or more in every run.
 
-## Key numbers (fast simulator, 10 drones)
+## PX4 results (10 drones, 28 September 2026)
+From the trial logs by `scripts/phase4_metrics.py` (new leader, formation back, closest pair) and each run's
+`metrics.json` (leader changes, leaders at the same time, goal). A mission without a fault has exactly one
+leader change: the first election on the ground.
+
+| Delay (ms) | Loss (%) | Without a fault: false leader changes | Leader killed: new leader (s) | Formation < 2 m (s) | Closest pair (m), both runs | Goal, both runs |
+|---|---|---|---|---|---|---|
+| 50 | 0 | 0 | 1.59 | 4.69 | 8.18 | 2/2 |
+| 50 | 10 | 0 | 2.35 | 6.54 | 7.86 | 2/2 |
+| 50 | 30 | 0 | 1.95 | 5.50 | 8.13 | 2/2 |
+| 150 | 0 | 0 | 1.78 | 5.23 | 8.14 | 2/2 |
+| 150 | 10 | 0 | 1.93 | 6.07 | 7.55 | 2/2 |
+| 150 | 30 | 0 | 2.48 | 6.84 | 6.89 | 2/2 |
+| 300 | 0 | 0 | 2.10 | 6.15 | 7.64 | 2/2 |
+| 300 | 10 | 0 | 2.19 | 6.16 | 7.71 | 2/2 |
+| 300 | 30 | 0 | 2.30 | 6.05 | 7.56 | 2/2 |
+
+Limits: new leader 3.0 s median / 4.0 s worst, formation back within 15 s, closest pair >= 5 m. The table is
+in `reports/logs/phase_5/phase5_px4_table.md`.
+
+- 13 of the 18 missions ran on the charger, 5 on battery (the owner allows battery; `run_summary.json`,
+  `power_before`). All passed either way.
+- One attempt of `d50_l0_none` stopped when the mission watcher stalled for 60 minutes (a tooling fault, not
+  a flight result). It is kept in `reports/logs/phase_5_incomplete/`, and the mission ran again and passed.
+
+## Fast-simulator results (10 drones)
 | Delay (ms) | Loss (%) | False leader changes (missions affected) | New leader median / worst (s) | Formation < 2 m median / worst (s) | Closest pair (m) | Goal | Phase 4 limits | No false change |
 |---|---|---|---|---|---|---|---|---|
 | 50 | 0 | 0 (0/20) | 1.66 / 1.74 | 4.47 / 4.59 | 8.23 | 60/60 | hold | yes |
@@ -56,14 +85,16 @@ and is not done yet.
   the worst value underneath.
 
 ## Known limitations / honest caveats
-- **Fast simulator only so far.** Point-mass physics; PX4's own timing is not in these numbers. The PX4
-  sweep (one mission without a fault and one F1 mission per condition) runs when the owner starts it; it is much
-  smaller.
+- **The PX4 sweep is small:** one mission without a fault and one leader kill per condition, so it confirms the
+  fast simulator but cannot give a median or worst case per condition. The fast simulator gives those, with
+  point-mass physics instead of PX4's.
+- **Only the heartbeat link is degraded here.** Each drone's own autopilot link stays perfect; a drone whose
+  autopilot link is a telemetry radio is Phase 6.
 - **Independent packet loss.** Real radios lose packets in bursts (interference, range); bursts would stretch
   the time to a new leader more than the same average loss spread evenly.
 - **No jitter** in this sweep; the scaling test (`reports/SCALING.md`) covers 10 % loss with 150 ms delay and
   30 ms jitter.
 
 ## Next phase: what is needed from the user
-Nothing. The PX4 sweep runs whenever the owner presses Start on the PX4 tests page (10 drones, one mission at a
-time; Stop at any time).
+Nothing for Phase 5. Phase 6 runs the leader-kill and radio-cut faults with drone 1 behind a telemetry-radio
+stand-in.

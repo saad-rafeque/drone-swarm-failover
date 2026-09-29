@@ -1,0 +1,24 @@
+ Traceback (most recent call last):
+  File "/home/saad-rafique/Documents/drone swarm/scripts/metrics.py", line 171, in <module>
+    main()
+  File "/home/saad-rafique/Documents/drone swarm/scripts/metrics.py", line 159, in main
+    m = compute(run_dir)
+        ^^^^^^^^^^^^^^^^
+  File "/home/saad-rafique/Documents/drone swarm/scripts/metrics.py", line 82, in compute
+    by_id = load(run_dir)
+            ^^^^^^^^^^^^^
+  File "/home/saad-rafique/Documents/drone swarm/scripts/metrics.py", line 47, in load
+    with open_states(run_dir) as fh:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/saad-rafique/Documents/drone swarm/scripts/metrics.py", line 42, in open_states
+    return gzip.open(run_dir / "states.jsonl.gz", "rt", encoding="utf-8")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/gzip.py", line 61, in open
+    binary_file = GzipFile(filename, gz_mode, compresslevel)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/gzip.py", line 192, in __init__
+    fileobj = self.myfileobj = builtins.open(filename, mode or 'rb')
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/saad-rafique/Documents/drone swarm/reports/logs/phase_6/dev_radio_F2/states.jsonl.gz'
+
+{"result": "ERROR"}

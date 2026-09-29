@@ -49,9 +49,25 @@ def test_default_config_loads_with_section5_values():
     (lambda d: d["formation"].update(shape="circle"), "unsupported formation"),
     (lambda d: d["heartbeat"].update(master_timeout_s=0.3), "two heartbeat periods"),
     (lambda d: d["link_emulator"].update(loss_pct=120.0), "loss_pct"),
+    (lambda d: d["radio_standin"].update(px4_link_rate_bytes_s=4000000), "planned traffic"),
+    (lambda d: d["radio_standin"].update(px4_link_mode="onboard"), "px4_link_mode"),
+    (lambda d: d["radio_standin"].update(fcu_timeout_s=0.0), "fcu_timeout_s"),
+    (lambda d: d["radio_standin"]["autopilot_streams_hz"].update(NOT_A_MESSAGE=1.0), "unknown streams"),
+    (lambda d: d["autopilot_streams_hz"].update(ODOMETRY=0.0), "rate <= 0"),
 ])
 def test_invalid_configs_rejected(mutate, msg):
     d = copy.deepcopy(raw())
     mutate(d)
     with pytest.raises(ConfigError, match=msg):
         build(d)
+
+
+def test_radio_drone_traffic_fits_the_radio():
+    """Phase 6: the telemetry-radio drone's planned traffic (PX4's capped telemetry, MAVROS setpoints at the
+    setpoint rate, time sync) must stay under 80 % of the stand-in radio's usable rate."""
+    cfg = load_config(default_config_path())
+    r = cfg.radio_standin
+    usable = r.usable_rate_bps / 8.0
+    assert usable == 4000.0                                      # SiK AIR_SPEED 64 kbit/s, ECC halves it
+    assert r.planned_load_bytes_s(cfg.setpoints.rate_hz) <= 0.8 * usable
+    assert r.fcu_timeout_s >= 4.0 / r.autopilot_streams_hz["GLOBAL_POSITION_INT"]

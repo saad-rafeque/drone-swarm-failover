@@ -1,0 +1,29 @@
+{
+ "model": {
+  "usable_rate_bps": 32000.0,
+  "max_window_ms": 131.0,
+  "loss_pct": 1.0,
+  "max_queue_s": 1.0
+ },
+ "uptime_s": 339.8,
+ "mavros_to_px4": {
+  "packets_in": 6814,
+  "bytes_in": 427799,
+  "delivered": 6740,
+  "bytes_delivered": 423121,
+  "lost_in_air": 74,
+  "dropped_queue_full": 0,
+  "delay_mean_ms": 69.1,
+  "delay_max_ms": 225.4
+ },
+ "px4_to_mavros": {
+  "packets_in": 5494,
+  "bytes_in": 199979,
+  "delivered": 5429,
+  "bytes_delivered": 197616,
+  "lost_in_air": 64,
+  "dropped_queue_full": 0,
+  "delay_mean_ms": 77.2,
+  "delay_max_ms": 233.0
+ }
+}

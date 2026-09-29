@@ -1,0 +1,259 @@
+[INFO] [1790610429.557319873] [uav1.mavros_node]: Starting mavros_node container
+[INFO] [1790610429.558018038] [uav1.mavros_node]: FCU URL: udp://:15540@127.0.0.1:15580
+[INFO] [1790610429.558043403] [uav1.mavros_node]: GCS URL: 
+[INFO] [1790610429.558048792] [uav1.mavros_node]: UAS Prefix: /uas1
+[INFO] [1790610429.558053194] [uav1.mavros_node]: Starting mavros router node
+[INFO] [1790610429.619074128] [uav1.mavros_router]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790610429.619122613] [uav1.mavros_router]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790610429.619130986] [uav1.mavros_router]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790610429.619137038] [uav1.mavros_router]: MAVROS Router started
+[INFO] [1790610429.619280059] [uav1.mavros_node]: Starting mavros uas node
+[INFO] [1790610429.854522738] [uav1.mavros_router]: Requested to add endpoint: type: 0, url: udp://:15540@127.0.0.1:15580
+[INFO] [1790610429.854560551] [uav1.mavros_router]: Endpoint link[1000] created
+[INFO] [1790610429.854752791] [uav1.mavros_router]: link[1000] opened successfully
+[INFO] [1790610429.854768802] [uav1.mavros_router]: Requested to add endpoint: type: 2, url: /uas1
+[INFO] [1790610429.854780511] [uav1.mavros_router]: Endpoint link[1001] created
+[INFO] [1790610429.859981299] [uav1.mavros_router]: link[1000] detected remote address 1.1
+[INFO] [1790610429.876488748] [uav1.mavros]: Plugin actuator_control ignored
+[INFO] [1790610429.876536508] [uav1.mavros]: Plugin altitude ignored
+[INFO] [1790610429.876539512] [uav1.mavros]: UAS Executor started, threads: 4
+[INFO] [1790610429.943555435] [uav1.mavros_router]: link[1001] opened successfully
+[INFO] [1790610430.143867442] [uav1.mavros]: Plugin command created
+[INFO] [1790610430.143933484] [uav1.mavros]: Plugin command initialized
+[INFO] [1790610430.143943317] [uav1.mavros]: Plugin ftp ignored
+[INFO] [1790610430.143948764] [uav1.mavros]: Plugin geofence ignored
+[INFO] [1790610430.325659661] [uav1.mavros]: Plugin global_position created
+[INFO] [1790610430.325865657] [uav1.mavros]: Plugin global_position initialized
+[INFO] [1790610430.325879816] [uav1.mavros]: Plugin home_position ignored
+[INFO] [1790610430.325885978] [uav1.mavros]: Plugin imu ignored
+[INFO] [1790610430.627941296] [uav1.mavros]: Plugin local_position created
+[INFO] [1790610430.628009949] [uav1.mavros]: Plugin local_position initialized
+[INFO] [1790610430.628020220] [uav1.mavros]: Plugin manual_control ignored
+[INFO] [1790610430.628025692] [uav1.mavros]: Plugin nav_controller_output ignored
+[INFO] [1790610430.628031190] [uav1.mavros]: Plugin param ignored
+[INFO] [1790610430.628036789] [uav1.mavros]: Plugin rallypoint ignored
+[INFO] [1790610430.628041278] [uav1.mavros]: Plugin rc_io ignored
+[INFO] [1790610430.628047022] [uav1.mavros]: Plugin setpoint_accel ignored
+[INFO] [1790610430.628051564] [uav1.mavros]: Plugin setpoint_attitude ignored
+[INFO] [1790610430.628056206] [uav1.mavros]: Plugin setpoint_position ignored
+[INFO] [1790610430.628060890] [uav1.mavros]: Plugin setpoint_raw ignored
+[INFO] [1790610430.628065770] [uav1.mavros]: Plugin setpoint_trajectory ignored
+[INFO] [1790610430.839020611] [uav1.mavros]: Plugin setpoint_velocity created
+[INFO] [1790610430.839073492] [uav1.mavros]: Plugin setpoint_velocity initialized
+[INFO] [1790610431.331644266] [uav1.mavros]: Plugin sys_status created
+[INFO] [1790610431.331719645] [uav1.mavros]: Plugin sys_status initialized
+[INFO] [1790610431.464255834] [uav1.mavros.time]: TM: Timesync mode: MAVLINK
+[INFO] [1790610431.472335948] [uav1.mavros]: Plugin sys_time created
+[INFO] [1790610431.472389451] [uav1.mavros]: Plugin sys_time initialized
+[INFO] [1790610431.472399047] [uav1.mavros]: Plugin waypoint ignored
+[INFO] [1790610431.472404489] [uav1.mavros]: Plugin wind_estimation ignored
+[INFO] [1790610431.543875951] [uav1.mavros]: Built-in SIMD instructions: SSE, SSE2
+[INFO] [1790610431.543916423] [uav1.mavros]: Built-in MAVLink package version: 2026.8.8
+[INFO] [1790610431.543946975] [uav1.mavros]: Known MAVLink dialects: common ardupilotmega ASLUAV AVSSUAS all csAirLink cubepilot development icarous loweheiser marsh paparazzi standard stemstudios storm32 uAvionix ualberta
+[INFO] [1790610431.543954362] [uav1.mavros]: MAVROS UAS via /uas1 started. MY ID 1.191, TARGET ID 1.1
+[INFO] [1790610431.587127100] [uav1.mavros_router]: link[1001] detected remote address 1.191
+[INFO] [1790610431.816320590] [uav1.mavros]: CON: Got HEARTBEAT, connected. FCU: PX4 Autopilot
+[WARN] [1790610433.891512162] [uav1.mavros.sys]: VER: broadcast request timeout, retries left 4
+[WARN] [1790610434.836758943] [uav1.mavros.cmd]: CMD: Unexpected command 512, result 0
+[WARN] [1790610434.859226506] [uav1.mavros.sys]: VER: broadcast request timeout, retries left 3
+[ERROR] [1790610436.821071270] [uav1.mavros.sys]: VER: autopilot version service timeout
+[ERROR] [1790610436.821132299] [uav1.mavros.sys]: VER: command plugin service call failed!
+[WARN] [1790610436.821536616] [uav1.mavros.sys]: VER: unicast request timeout, retries left 2
+[ERROR] [1790610437.831129583] [uav1.mavros.sys]: VER: autopilot version service timeout
+[ERROR] [1790610437.831251347] [uav1.mavros.sys]: VER: command plugin service call failed!
+[WARN] [1790610437.831262924] [uav1.mavros.sys]: VER: unicast request timeout, retries left 1
+[ERROR] [1790610438.839617983] [uav1.mavros.sys]: VER: autopilot version service timeout
+[ERROR] [1790610438.839715303] [uav1.mavros.sys]: VER: command plugin service call failed!
+[WARN] [1790610438.839723179] [uav1.mavros.sys]: VER: unicast request timeout, retries left 0
+[ERROR] [1790610439.883429621] [uav1.mavros.sys]: VER: autopilot version service timeout
+[ERROR] [1790610439.883504077] [uav1.mavros.sys]: VER: command plugin service call failed!
+[WARN] [1790610439.883520038] [uav1.mavros.sys]: VER: your FCU don't support AUTOPILOT_VERSION, switched to default capabilities
+[WARN] [1790610440.822903423] [uav1.mavros.cmd]: CMD: Command 512 -- ack timeout
+[WARN] [1790610442.931197419] [uav1.mavros.cmd.rclcpp]: failed to send response to /uav1/mavros/cmd/command (timeout): client will not receive response, at ./src/rmw_response.cpp:153, at ./src/rcl/service.c:400
+[WARN] [1790610447.937651640] [uav1.mavros.cmd]: CMD: Command 512 -- ack timeout
+[WARN] [1790610448.038205397] [uav1.mavros.cmd.rclcpp]: failed to send response to /uav1/mavros/cmd/command (timeout): client will not receive response, at ./src/rmw_response.cpp:153, at ./src/rcl/service.c:400
+[ERROR] [1790610448.293110269] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610448.293165275] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610449.306731283] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610449.306791213] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610450.315514390] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610450.315563011] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610451.330956552] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610451.331032197] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610452.341812914] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610452.341932897] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610453.052645770] [uav1.mavros.cmd]: CMD: Command 512 -- ack timeout
+[WARN] [1790610453.152787223] [uav1.mavros.cmd.rclcpp]: failed to send response to /uav1/mavros/cmd/command (timeout): client will not receive response, at ./src/rmw_response.cpp:153, at ./src/rcl/service.c:400
+[ERROR] [1790610453.364105718] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610453.364156424] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610454.374361407] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610454.374430923] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610455.037173788] [uav1.mavros.sys]: FCU: EVENT 11464574 with args -0-64-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610455.388981235] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610455.389029760] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610456.407164591] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610456.407243970] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610457.417042368] [uav1.mavros.cmd]: CMD: Unexpected command 176, result 0
+[ERROR] [1790610457.431566297] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610457.433891689] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610458.154087623] [uav1.mavros.cmd]: CMD: Command 511 -- ack timeout
+[WARN] [1790610458.254261211] [uav1.mavros.cmd.rclcpp]: failed to send response to /uav1/mavros/cmd/command (timeout): client will not receive response, at ./src/rmw_response.cpp:153, at ./src/rcl/service.c:400
+[ERROR] [1790610458.446810922] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610458.446876234] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610459.464907805] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610459.464983029] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610460.359942270] [uav1.mavros.cmd.rclcpp]: failed to send response to /uav1/mavros/cmd/command (timeout): client will not receive response, at ./src/rmw_response.cpp:153, at ./src/rcl/service.c:400
+[ERROR] [1790610460.479316735] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610460.479364430] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610461.448679003] [uav1.mavros.sys]: FCU: EVENT 13277401 with args -0-0-6-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610461.494507681] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610461.494568006] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610462.520197965] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610462.520270214] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610463.539108756] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610463.539162071] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610464.554642909] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610464.554709665] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610465.361703114] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610465.578280534] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610465.578356570] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610466.602702284] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610466.602785683] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610467.633684749] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610467.633763047] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610468.662866791] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610468.662940176] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610469.680399746] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610469.680445860] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610470.362792685] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610470.686975724] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610470.687030241] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610471.694626757] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610471.694689317] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610471.847750787] [uav1.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-16-0-128-0-0-0-176-58-127-128-176-58-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[WARN] [1790610471.853863643] [uav1.mavros.sys]: FCU: EVENT 13277401 with args -0-0-6-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610472.716640575] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610472.716717683] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610473.737410372] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610473.743723055] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610474.749149066] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610474.749209016] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610475.363156147] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610475.391330689] [uav1.mavros.sys]: FCU: EVENT 11464574 with args -0-64-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610475.767214554] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610475.767263448] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610476.782997018] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610476.783189382] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610477.542226558] [uav1.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610477.795949515] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610477.796031724] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610478.810217308] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610478.810277085] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610479.827566838] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610479.827653316] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610480.364167343] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610480.840990398] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610480.841064724] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610480.870655641] [uav1.mavros.sys]: FCU: EVENT 11464574 with args -0-64-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610481.869736530] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610481.869794645] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610482.889672899] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610482.889722942] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[INFO] [1790610483.009568424] [uav1.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610483.900627092] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610483.900689299] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610484.909497044] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610484.909567754] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610485.364687217] [uav1.mavros.cmd]: CMD: Command 511 -- ack timeout
+[WARN] [1790610485.464849901] [uav1.mavros.cmd.rclcpp]: failed to send response to /uav1/mavros/cmd/command (timeout): client will not receive response, at ./src/rmw_response.cpp:153, at ./src/rcl/service.c:400
+[WARN] [1790610485.894950224] [uav1.mavros.sys]: FCU: EVENT 13277401 with args -0-0-6-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610485.937793577] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610485.937905447] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610486.950494388] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610486.950620709] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610487.965034099] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610487.965098331] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610488.981170218] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610488.981965863] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610489.999079913] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610489.999156973] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610490.467072693] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[INFO] [1790610490.703660107] [uav1.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610491.027864280] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610491.027916473] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610491.865890308] [uav1.mavros.sys]: FCU: EVENT 11464574 with args -0-64-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610492.038457021] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610492.038533868] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610493.047732941] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610493.047784919] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[INFO] [1790610494.047973683] [uav1.mavros.sys]: FCU: EVENT 377561 with args -8-0-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610494.057397389] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610494.057453908] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610495.091460263] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610495.091527337] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610495.468203125] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610496.111313020] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610496.111375763] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610496.526585985] [uav1.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610497.125469326] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610497.191302320] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610497.342225991] [uav1.mavros.sys]: FCU: EVENT 11464574 with args -0-64-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610498.200580692] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610498.200646809] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610499.218667947] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610499.218726950] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610499.520797077] [uav1.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610500.231327806] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610500.231384373] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610500.468914667] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610501.247722392] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610501.247790891] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610502.272768687] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610502.272843727] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610503.291581333] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610503.291659336] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610503.775588083] [uav1.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-16-0-128-0-0-0-176-58-127-128-176-58-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610504.299383230] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610504.299454149] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610505.311516847] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610505.311658283] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610505.475557689] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610506.324465065] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610506.324544740] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610507.010197382] [uav1.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-16-0-128-0-0-0-176-58-127-128-176-58-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610507.334458193] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610507.334509432] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[INFO] [1790610507.487886910] [uav1.mavros.sys]: FCU: EVENT 9489139 with args -4-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610508.353096000] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610508.353157327] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610509.366996646] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610509.367052123] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610510.031725720] [uav1.mavros.sys]: FCU: EVENT 11464574 with args -0-64-0-0-20-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[INFO] [1790610510.085635554] [uav1.mavros.sys]: FCU: EVENT 185258 with args -0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610510.384467723] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610510.384535726] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610511.392985539] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610511.393032237] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610512.196136793] [uav1.mavros.sys]: FCU: UNK(8): EVENT 11047904 with args -0-0-0-0-0-128-0-0-0-176-122-127-128-176-122-127-128-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-
+[ERROR] [1790610512.419643475] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610512.419697340] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610513.431285921] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610513.431350994] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610514.444915195] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610514.444974103] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610514.500273120] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610515.457720312] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610515.457949904] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610516.472738767] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610516.472803881] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610517.484271714] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610517.484332284] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610518.496739404] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610518.496796376] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610519.509079509] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610519.567672385] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[WARN] [1790610519.509949860] [uav1.mavros.cmd]: CMD: Command 400 -- ack timeout
+[ERROR] [1790610520.579659751] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610520.579709820] [uav1.mavros.sys]: SYS: command plugin service call failed!
+[ERROR] [1790610521.589494271] [uav1.mavros.sys]: SYS: set_message_interval service timeout
+[ERROR] [1790610521.589552548] [uav1.mavros.sys]: SYS: command plugin service call failed!

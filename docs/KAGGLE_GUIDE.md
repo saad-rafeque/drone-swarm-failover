@@ -1,9 +1,12 @@
 # Kaggle training guide: long RL training on a GPU
 
-**Status (27 September 2026): everything is ready, nothing has been run on Kaggle yet.** The kit
-has only been tested on this laptop with tiny settings (a few hundred training steps on the CPU, 16
-courses), so the first real Kaggle run may still show a problem that only appears there (paths, GPU
-memory, time). This file explains, step by step: which files to take, how to start the training on
+**Status (29 September 2026): done once, with two seeds.** Two 10.5-hour runs on a T4 GPU (28-29 September,
+about 143,000 steps per second, 5.5 and 5.8 billion steps). Seed 2's policy passed the checks of section 8 and
+is now `models/avoid_policy.npz`: RL + brake completes 30, 23 and 18 of 30 unseen courses (few, medium, dense),
+against 26, 18 and 5 for the laptop policy. Both runs stopped improving after about 2.5 hours, so a next run
+should change the set-up (section 11) rather than only run longer. One lesson: the uploaded zip must contain
+`reports/logs/rl/apf_tuning.jsonl`, or Kaggle's classical row runs untuned; re-test on the laptop (section 9).
+Results: `docs/RESULTS.md`, "Obstacle avoidance". This file explains, step by step: which files to take, how to start the training on
 Kaggle, what gets trained, what problem it solves, how to change things, where to paste every file
 when training is finished, and what you get at the end. Section 12 has the whole procedure on one page.
 
@@ -101,24 +104,25 @@ and refuses to build if any packed file contains one of your key values. (Fixed 
    `kaggle/train_swarm_rl.ipynb`.
 3. **Attach the code.** In the notebook's right-hand panel: **Input → Add Input** → search for your
    `swarm-rl-code` dataset → **Add**.
-4. **Switch the GPU on.** Right-hand panel → **Session options → Accelerator → GPU P100** (or
-   **GPU T4 x2**; the trainer uses one GPU). Internet can stay off.
-5. **Choose the seed.** In the first code cell: `SEED = 1` (later runs: 2, 3). Leave `HOURS = 10.5`.
+4. **Switch the GPU on.** Right-hand panel → **Session options → Accelerator → GPU T4 x2** (the
+   trainer uses one GPU; on 28 September 2026 Kaggle no longer offered the P100). Internet can stay off.
+5. **Choose the seed.** In the first code cell: `SEED = 1` (later runs: 2, 3). Leave `HOURS = 10.5`
+   and `STEPS = 6e9`.
 6. **Run it as a background job:** **Save Version → Save & Run All (Commit) → Save.** This runs on
    Kaggle's machines from top to bottom even if you close the browser or switch the laptop off.
    (Do not just press "Run all" in the editor: an interactive session stops after 20 minutes
    without activity.)
 7. **Watch it (optional).** Open the notebook's page → the running version → **Logs**. Every few
-   minutes a line like `step 123,456,789 fps 95,000 ret 1.23 success 0.41 crash_free 0.55 ...`
-   appears, and every 30 minutes an `[eval] {...}` line with the scores on the validation courses.
+   minutes a line like `step 74,317,824 fps 142,684 ret 56.012 success 0.31 crash_free 0.31 ...`
+   appears (the numbers are from seed 1 on 28 September 2026), and every 30 minutes an `[eval] {...}` line with the scores on the validation courses.
 
 What the notebook does, and how long it takes:
 
 | Cell | What happens | Time |
 |---|---|---|
 | 1 | prints the GPU name (must say `CUDA True`), unpacks the code | seconds |
-| 2 | builds the courses: 8,000 training, 90 validation (to pick the best policy), 90 test (for the final report only) | ~10 min |
-| 3 | trains on the GPU for `HOURS` = 10.5 h; checkpoint every 20 min; scores the 90 validation courses every 30 min and keeps the best policy | 10.5 h |
+| 2 | builds the courses: 8,000 training, 90 validation (to pick the best policy), 90 test (for the final report only) | ~5 min |
+| 3 | trains on the GPU for `HOURS` = 10.5 h (or until `STEPS` = 6e9 steps, whichever comes first); checkpoint every 20 min; scores the 90 validation courses every 30 min and keeps the best policy | 10.5 h |
 | 4 | final fair test on the CPU with exactly the laptop's method: 90 test courses (`scripts/rl_eval.py`) and the real Islamabad map route (`scripts/rl_eval_route.py`) | ~20–30 min |
 | 5 | packs everything into `/kaggle/working/results.zip` | seconds |
 
@@ -127,6 +131,12 @@ with a comment such as `# Cell 3: training on the GPU`.
 
 Total about 11 hours, inside Kaggle's 12-hour limit. The trainer stops itself when `HOURS` are used
 up and saves everything first, so nothing is lost at the limit.
+
+**Speed measured on a T4 (28 September 2026):** about 140,000 steps per second, some 54 times the
+laptop. At that speed the trainer's own default target of 3e9 steps is reached after about 6 hours,
+so the notebook sets `STEPS = 6e9`: the 10.5-hour limit then ends the session at about 5.3e9 steps.
+Kaggle accepted two GPU runs at the same time (seeds 1 and 2); each uses about 11 of the 30 weekly
+GPU hours.
 
 **Fairness rule (important).** The best policy is chosen on the 90 *validation* courses
 (`val.npz`, seeds 1,000,000–1,000,029). The reported results use the 90 *test* courses
@@ -235,7 +245,7 @@ git add models reports docs && git commit -m "RL: Kaggle seed 1 policy, results"
 | number of parallel missions | cell 3, `'--envs', '1024'` | lower to 512 on "CUDA out of memory" |
 | network size | cell 3, add `'--hidden', '256', '256'` | the app reads any number of layers; bigger is slower |
 | learning rate | cell 3, add `'--lr', '1e-4'` | default 3e-4 |
-| total step cap (all sessions) | cell 3, add `'--steps', '5e9'` | default 3e9 agent steps; the time limit usually stops first |
+| total step target (all sessions) | notebook cell 1, `STEPS` | 6e9; on a T4 the 10.5 h limit comes first (about 5.3e9 steps). Raise it (e.g. 12e9) before continuing a seed, or the next session stops almost at once |
 | how often it checkpoints / scores | `'--checkpoint-min'` (20), `'--eval-min'` (30) | minutes |
 | exploration noise at the start | `'--log-std-init'` (−1.0) | lower = calmer start |
 | reward | `src/swarm_tools/obstacle_sim.py` **and** `src/swarm_tools/torch_sim.py` | the two must stay identical: change both, then run `PYTHONPATH=src .venv/bin/python -m pytest tests/test_torch_sim.py` on the laptop |
@@ -249,7 +259,8 @@ your `swarm-rl-code` dataset on Kaggle → **New Version** → upload the new zi
 
 **Continue a seed that stopped at the time limit** (the log ends with `[budget] ... saved` and
 `status.json` says `"done": false`): in a new version of the notebook, **Add Input** → the previous
-version's output (search your notebook's name), and insert this cell after cell 2:
+version's output (search your notebook's name), raise `STEPS` in cell 1 (for example to 12e9), and
+insert this cell after cell 2:
 
 ```python
 import glob, shutil
@@ -280,8 +291,8 @@ reduce crashes; by how much can only be measured. Seeds 2 and 3 show whether the
 1. kaggle.com → Create → New Dataset → upload the zip → name `swarm-rl-code` → Private → Create.
 2. Create → New Notebook → File → Import Notebook → choose `train_swarm_rl.ipynb`.
 3. Right-hand panel: Input → Add Input → add your `swarm-rl-code` dataset.
-4. Session options → Accelerator → GPU P100 (or T4 x2). Internet can stay off.
-5. Keep `SEED = 1` in the first cell (next time 2, then 3).
+4. Session options → Accelerator → GPU T4 x2. Internet can stay off.
+5. Keep `SEED = 1` in the first cell (next time 2, then 3), `HOURS = 10.5` and `STEPS = 6e9`.
 6. Save Version → **Save & Run All (Commit)** → Save. Kaggle keeps running even if you switch the laptop
    off. It takes about 11 hours.
 

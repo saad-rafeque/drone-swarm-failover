@@ -1,0 +1,169 @@
+[INFO] [launch]: All log files can be found below /home/saad-rafique/.ros/log/2026-09-28-17-57-40-994481-Ubuntu-IdeaPad-282362
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [link_emulator-1]: process started with pid [282365]
+[INFO] [swarm_logger-2]: process started with pid [282366]
+[INFO] [swarm_agent_1-3]: process started with pid [282367]
+[INFO] [swarm_agent_2-4]: process started with pid [282368]
+[INFO] [swarm_agent_3-5]: process started with pid [282369]
+[INFO] [swarm_agent_4-6]: process started with pid [282370]
+[INFO] [swarm_agent_5-7]: process started with pid [282371]
+[INFO] [swarm_agent_6-8]: process started with pid [282372]
+[INFO] [swarm_agent_7-9]: process started with pid [282373]
+[INFO] [swarm_agent_8-10]: process started with pid [282374]
+[INFO] [swarm_agent_9-11]: process started with pid [282375]
+[INFO] [swarm_agent_10-12]: process started with pid [282376]
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [swarm_agent_10-12]: sending signal 'SIGINT' to process[swarm_agent_10-12]
+[INFO] [swarm_agent_9-11]: sending signal 'SIGINT' to process[swarm_agent_9-11]
+[INFO] [swarm_agent_8-10]: sending signal 'SIGINT' to process[swarm_agent_8-10]
+[INFO] [swarm_agent_7-9]: sending signal 'SIGINT' to process[swarm_agent_7-9]
+[INFO] [swarm_agent_6-8]: sending signal 'SIGINT' to process[swarm_agent_6-8]
+[INFO] [swarm_agent_5-7]: sending signal 'SIGINT' to process[swarm_agent_5-7]
+[INFO] [swarm_agent_4-6]: sending signal 'SIGINT' to process[swarm_agent_4-6]
+[INFO] [swarm_agent_3-5]: sending signal 'SIGINT' to process[swarm_agent_3-5]
+[INFO] [swarm_agent_2-4]: sending signal 'SIGINT' to process[swarm_agent_2-4]
+[INFO] [swarm_agent_1-3]: sending signal 'SIGINT' to process[swarm_agent_1-3]
+[INFO] [swarm_logger-2]: sending signal 'SIGINT' to process[swarm_logger-2]
+[INFO] [link_emulator-1]: sending signal 'SIGINT' to process[link_emulator-1]
+[swarm_agent_10-12] Traceback (most recent call last):
+[swarm_agent_10-12]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_10-12]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_10-12]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_10-12]     sys.exit(main())
+[swarm_agent_10-12]              ^^^^^^
+[swarm_agent_10-12]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_10-12]     node.destroy_node()
+[swarm_agent_10-12]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1962, in destroy_node
+[swarm_agent_10-12]     self.destroy_service(self._services[0])
+[swarm_agent_10-12]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1886, in destroy_service
+[swarm_agent_10-12]     service.destroy()
+[swarm_agent_10-12]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/service.py", line 123, in destroy
+[swarm_agent_10-12]     self.__service.destroy_when_not_in_use()
+[swarm_agent_10-12] KeyboardInterrupt
+[swarm_agent_9-11] Traceback (most recent call last):
+[swarm_agent_9-11]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_9-11]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_9-11]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_9-11]     sys.exit(main())
+[swarm_agent_9-11]              ^^^^^^
+[swarm_agent_9-11]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_9-11]     node.destroy_node()
+[swarm_agent_9-11]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1960, in destroy_node
+[swarm_agent_9-11]     self.destroy_client(self._clients[0])
+[swarm_agent_9-11]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1870, in destroy_client
+[swarm_agent_8-10] Traceback (most recent call last):
+[swarm_agent_8-10]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_8-10]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_8-10]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_8-10]     sys.exit(main())
+[swarm_agent_8-10]              ^^^^^^
+[swarm_agent_8-10]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_8-10]     node.destroy_node()
+[swarm_agent_8-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1958, in destroy_node
+[swarm_agent_8-10]     self.destroy_subscription(self._subscriptions[0])
+[swarm_agent_8-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1854, in destroy_subscription
+[swarm_agent_9-11]     client.destroy()
+[swarm_agent_9-11]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/client.py", line 232, in destroy
+[swarm_agent_9-11]     self.__client.destroy_when_not_in_use()
+[swarm_agent_9-11] KeyboardInterrupt
+[swarm_agent_8-10]     subscription.destroy()
+[swarm_agent_8-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/subscription.py", line 101, in destroy
+[swarm_agent_8-10]     self.handle.destroy_when_not_in_use()
+[swarm_agent_8-10] KeyboardInterrupt
+[ERROR] [swarm_agent_1-3]: process has died [pid 282367, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 1 --num-drones 10'].
+[swarm_agent_7-9] Traceback (most recent call last):
+[swarm_agent_7-9]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_7-9]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_7-9]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_7-9]     sys.exit(main())
+[swarm_agent_7-9]              ^^^^^^
+[swarm_agent_7-9]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_7-9]     node.destroy_node()
+[swarm_agent_7-9]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1960, in destroy_node
+[swarm_agent_7-9]     self.destroy_client(self._clients[0])
+[swarm_agent_7-9]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1870, in destroy_client
+[swarm_agent_7-9]     client.destroy()
+[swarm_agent_7-9]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/client.py", line 232, in destroy
+[swarm_agent_7-9]     self.__client.destroy_when_not_in_use()
+[swarm_agent_7-9] KeyboardInterrupt
+[swarm_agent_5-7] Traceback (most recent call last):
+[swarm_agent_5-7]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_5-7]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_5-7]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_5-7]     sys.exit(main())
+[swarm_agent_5-7]              ^^^^^^
+[swarm_agent_5-7]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_5-7]     node.destroy_node()
+[swarm_agent_5-7]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1962, in destroy_node
+[swarm_agent_5-7]     self.destroy_service(self._services[0])
+[swarm_agent_5-7]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1886, in destroy_service
+[swarm_agent_5-7]     service.destroy()
+[swarm_agent_5-7]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/service.py", line 123, in destroy
+[swarm_agent_5-7]     self.__service.destroy_when_not_in_use()
+[swarm_agent_5-7] KeyboardInterrupt
+[ERROR] [swarm_logger-2]: process has died [pid 282366, exit code -2, cmd '/usr/bin/python3 -m swarm_tools.logger_node --num-drones 10 --run-dir /home/saad-rafique/Documents/drone swarm/reports/logs/phase_4_crosscheck/F4_t11'].
+[swarm_agent_6-8] Traceback (most recent call last):
+[swarm_agent_6-8]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_6-8]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_6-8]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_6-8]     sys.exit(main())
+[swarm_agent_6-8]              ^^^^^^
+[swarm_agent_6-8]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_6-8]     node.destroy_node()
+[swarm_agent_6-8]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[swarm_agent_6-8]     self.__node.destroy_when_not_in_use()
+[swarm_agent_6-8] KeyboardInterrupt
+[swarm_agent_4-6] Traceback (most recent call last):
+[swarm_agent_4-6]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_4-6]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_4-6]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_4-6]     sys.exit(main())
+[swarm_agent_4-6]              ^^^^^^
+[swarm_agent_4-6]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_4-6]     node.destroy_node()
+[swarm_agent_4-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[swarm_agent_4-6]     self.__node.destroy_when_not_in_use()
+[swarm_agent_4-6] KeyboardInterrupt
+[swarm_agent_2-4] Traceback (most recent call last):
+[swarm_agent_2-4]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_2-4]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_2-4]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_2-4]     sys.exit(main())
+[swarm_agent_2-4]              ^^^^^^
+[swarm_agent_2-4]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_2-4]     node.destroy_node()
+[swarm_agent_2-4]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[swarm_agent_2-4]     self.__node.destroy_when_not_in_use()
+[swarm_agent_2-4] KeyboardInterrupt
+[swarm_agent_3-5] Traceback (most recent call last):
+[swarm_agent_3-5]   File "<frozen runpy>", line 198, in _run_module_as_main
+[swarm_agent_3-5]   File "<frozen runpy>", line 88, in _run_code
+[swarm_agent_3-5]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 264, in <module>
+[swarm_agent_3-5]     sys.exit(main())
+[swarm_agent_3-5]              ^^^^^^
+[swarm_agent_3-5]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_agent/ros_node.py", line 257, in main
+[swarm_agent_3-5]     node.destroy_node()
+[swarm_agent_3-5]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[swarm_agent_3-5]     self.__node.destroy_when_not_in_use()
+[swarm_agent_3-5] KeyboardInterrupt
+[link_emulator-1] Traceback (most recent call last):
+[link_emulator-1]   File "<frozen runpy>", line 198, in _run_module_as_main
+[link_emulator-1]   File "<frozen runpy>", line 88, in _run_code
+[link_emulator-1]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_tools/link_emulator.py", line 165, in <module>
+[link_emulator-1]     sys.exit(main())
+[link_emulator-1]              ^^^^^^
+[link_emulator-1]   File "/home/saad-rafique/Documents/drone swarm/src/swarm_tools/link_emulator.py", line 158, in main
+[link_emulator-1]     node.destroy_node()
+[link_emulator-1]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[link_emulator-1]     self.__node.destroy_when_not_in_use()
+[link_emulator-1] KeyboardInterrupt
+[ERROR] [swarm_agent_4-6]: process has died [pid 282370, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 4 --num-drones 10'].
+[ERROR] [swarm_agent_5-7]: process has died [pid 282371, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 5 --num-drones 10'].
+[ERROR] [link_emulator-1]: process has died [pid 282365, exit code -2, cmd '/usr/bin/python3 -m swarm_tools.link_emulator --num-drones 10 --run-dir /home/saad-rafique/Documents/drone swarm/reports/logs/phase_4_crosscheck/F4_t11'].
+[ERROR] [swarm_agent_6-8]: process has died [pid 282372, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 6 --num-drones 10'].
+[ERROR] [swarm_agent_10-12]: process has died [pid 282376, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 10 --num-drones 10'].
+[ERROR] [swarm_agent_2-4]: process has died [pid 282368, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 2 --num-drones 10'].
+[ERROR] [swarm_agent_3-5]: process has died [pid 282369, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 3 --num-drones 10'].
+[ERROR] [swarm_agent_9-11]: process has died [pid 282375, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 9 --num-drones 10'].
+[ERROR] [swarm_agent_8-10]: process has died [pid 282374, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 8 --num-drones 10'].
+[ERROR] [swarm_agent_7-9]: process has died [pid 282373, exit code -2, cmd '/usr/bin/python3 -m swarm_agent.ros_node --id 7 --num-drones 10'].

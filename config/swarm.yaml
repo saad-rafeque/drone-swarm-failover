@@ -97,6 +97,21 @@ radio_standin:
   mavros_port_base: 15540  # MAVROS of a stand-in drone binds 15540 + PX4 instance
   relay_port_base: 15580   # the relay listens for that MAVROS on 15580 + PX4 instance
   seed: 1
+  # How a drone on a telemetry radio is set up (the stand-in here; a real drone on a radio later).
+  # First Phase 6 attempt without these (reports/logs/phase_6_radio_saturated/): PX4's simulator link sends
+  # at up to 4,000,000 B/s in "onboard" mode, the radio carries 4,000 B/s, so ~70 % was dropped, the rest
+  # arrived ~1 s late and drone 1 kept losing and retaking the lead.
+  px4_link_mode: minimal   # PX4 MAVLink mode of the radio link (MAV_0_MODE 7 = Minimal on a real TELEM1)
+  px4_link_rate_bytes_s: 1200  # PX4's cap on that link: MAV_0_RATE default for TELEM1 (PX4 module.yaml)
+  timesync_rate_hz: 1.0    # MAVROS time sync over the radio (px4_config.yaml default 10 Hz)
+  fcu_timeout_s: 1.0       # autopilot data older than this: drone dead; 5 missed position messages at 5 Hz
+  autopilot_streams_hz:    # what the agent asks PX4 to send over the radio (mavros/set_message_interval)
+    GLOBAL_POSITION_INT: 5.0   # position for the heartbeat (5 Hz) and the control loop
+    LOCAL_POSITION_NED: 5.0    # height and velocity
+    EXTENDED_SYS_STATE: 1.0    # landed state (Minimal mode: 0.1 Hz)
+    SYS_STATUS: 1.0            # battery (Minimal mode: 0.1 Hz)
+    ATTITUDE: 1.0              # Minimal mode: 10 Hz; not used by the agent
+    STATUSTEXT: 2.0            # autopilot messages (PX4 default 20 Hz)
 
 logging:
   rate_hz: 10.0            # agent_state publication rate (logger/metrics only)
