@@ -7,9 +7,10 @@ figures are estimates, not measurements.
 
 **In short:**
 
-- **One-click setup is possible.** The app and the fast simulator can be one command within half a day of work.
-  The full PX4 + ROS 2 system can be one command with a container (Docker), or one click in the browser with
-  GitHub Codespaces, in about 2–3 days.
+- **One-click setup is possible.** Level 1 is done: `./setup.sh` installs everything the app, the fast
+  simulator and the tests need, in about 3 minutes, and a GitHub check tests it on every push. The full PX4 +
+  ROS 2 system can be one command with a container (Docker), or one click in the browser with GitHub
+  Codespaces, in about 2–3 days.
 - **Before going public:** choose a licence, scan the whole history for secrets, add a responsible-use note.
 - **Swarm logic:** stop a drone with a patchy link from grabbing the lead back, and keep drones apart when they
   cannot hear each other.
@@ -26,23 +27,25 @@ the PX4 build takes about 15 GB of disk, and one download (GeographicLib from So
 and had to be done by hand.
 
 Not everyone needs all of it. Most visitors only want to see the swarm fly in the app, which needs none of the
-heavy parts. So the setup should come in three levels:
+heavy parts. So the setup comes in three levels; **level 1 is built** (29 September 2026), levels 2 and 3 are
+planned:
 
 | # | What the person gets | How they start it | What they need | Their waiting time | Work to build it |
 |---|---|---|---|---|---|
-| 1 | **Quick start:** the ground-control app (2-D map, 3-D view, faults, results), the fast simulator with the real agent code, the RL policy, all tests | `./setup.sh`, then the app opens in the browser | Linux or macOS with Python 3.12 (Windows through WSL); no `sudo` | about 2–5 minutes | about half a day |
+| 1 | **Quick start (done):** the ground-control app (2-D map, 3-D view, faults, results), the fast simulator with the real agent code, the RL policy, all tests | `./setup.sh`, then the app opens in the browser | Linux or macOS with Python 3.12 (Windows through WSL); no `sudo` | about 3 minutes (measured on a fresh copy) | done |
 | 2 | **Full install script:** everything, including 10 PX4 drones with MAVROS | `bash scripts/install_all.sh` | Ubuntu 24.04, 15 GB free disk, 8 GB RAM, the `sudo` password once | about 1–1.5 hours (downloads and the PX4 build) | about 1–2 days, tested on a clean Ubuntu 24.04 virtual machine |
 | 3 | **Container:** the same as level 2, identical on every machine | `docker compose up`, or the "Open in Codespaces" button on GitHub (nothing installed at all) | Docker, or a GitHub account (Codespaces has a monthly free allowance; 10 PX4 drones need a 4-core machine) | about 10–20 minutes to download a ready image | about 2–3 days |
 
 **What each level would do:**
-- **Level 1, `setup.sh`:**
-  1. Check Python 3.12.
-  2. Create `.venv` and install a pinned `requirements.txt`: numpy 1.26.4, scipy 1.11.4, matplotlib 3.6.3,
-     PyYAML 6.0.1, psutil 5.9.8, pytest.
-  3. Run the fast tests (about a minute).
-  4. Ask for map keys; skipping is fine.
-  5. Start the app on port 8080 and open the browser.
-  PyTorch is not needed here: the policy runs on plain numpy.
+- **Level 1, `setup.sh` (built):**
+  1. Checks Python 3.12.
+  2. Creates `.venv` and installs `requirements.txt` (numpy, scipy, matplotlib, PyYAML, psutil, pytest; the
+     tested versions are written in the file).
+  3. Runs the tests.
+  4. Creates an empty `config/map_keys.local.yaml` for the user's own keys.
+  5. Starts the app on port 8080 and opens the browser.
+  PyTorch is not needed here: the policy runs on plain numpy. Tested on a fresh copy on 29 September 2026: about
+  3 minutes, all tests passed, every page of the app loaded.
 - **Level 2, `install_all.sh`:**
   1. Check Ubuntu 24.04, free disk (at least 15 GB) and memory.
   2. Install ROS 2 Jazzy, MAVROS and the GeographicLib data. Keep a second download source, because
@@ -60,9 +63,10 @@ heavy parts. So the setup should come in three levels:
   - Build the image once and publish it on GitHub's container registry, so users download it instead of building
     it for an hour.
 
-**Also add an automatic check (GitHub Actions)** that, on every push, clones the repository fresh, runs level 1
-and the test suite, and builds the container. Without this, setup scripts break quietly as packages change.
-Phase 6 did this check once by hand (`reports/logs/phase_6/fresh_clone_check.txt`).
+**The automatic check (GitHub Actions) is added** for level 1: `.github/workflows/quick-start.yml` runs
+`./setup.sh` on a fresh copy after every push to `main` and every pull request, and checks that the app starts.
+When the container exists, add its build to the same check. Without such a check, setup scripts break quietly
+as packages change.
 
 **What cannot be made automatic:**
 - **Map keys** (Mapbox, Cesium ion) belong to a person's own free account and must never be shipped. The 2-D map
@@ -73,7 +77,7 @@ Phase 6 did this check once by hand (`reports/logs/phase_6/fresh_clone_check.txt
 - **Computer limits:** 10 PX4 drones used about 1.1 GB of RAM and 77 % of this laptop's CPU. Weaker machines
   should start with 3 drones.
 
-**Recommendation:** build level 1 first, because most visitors only want to see it work. Then build level 3,
+**Recommendation:** level 1 is done. Build level 3 next,
 because a container is the only way to make the full PX4 system truly one step on any computer. Keep level 2 for
 people who want a native install, for example on a drone's companion computer.
 
@@ -183,7 +187,7 @@ control (PX4 does this well).
 | # | Item | Why | Effort (estimate) | Who |
 |---|---|---|---|---|
 | 1 | Choose a licence; scan the history for secrets | nothing can be shared safely without these | 1 hour | owner decides, then a short task |
-| 2 | Level 1 one-click setup + automatic check | anyone can try the project in minutes | about half a day | development |
+| 2 | Level 1 one-click setup + automatic check | anyone can try the project in minutes | **done** (29 September 2026) | — |
 | 3 | Hold-down rule against leader flapping | the one known weak point of the election | about 1 day + re-runs (about 8 h of PX4 trials) | owner approves the spec change |
 | 4 | Height layers when drones cannot hear each other | the main separation risk before real flights | 1–2 days + re-runs | development |
 | 5 | Container and Codespaces (level 3) | the full PX4 system in one step on any computer | 2–3 days | development |

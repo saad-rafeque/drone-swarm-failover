@@ -100,22 +100,29 @@ Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). The reasons behind each d
 
 ## Getting started
 
-Requirements: Ubuntu 24.04 with Python 3.12. The PX4 flights also need ROS 2 Jazzy, MAVROS and PX4
-v1.18.0-rc1; the full installation is in [docs/RUNBOOK.md](docs/RUNBOOK.md), section 1.
+**Quick start, one command** (Linux with Python 3.12; no `sudo`, no ROS 2, no PX4):
 
 ```bash
 git clone https://github.com/saad-rafeque/drone-swarm-failover.git
 cd drone-swarm-failover
-sudo apt install python3-numpy python3-scipy python3-matplotlib python3-yaml python3-psutil python3-pytest python3-pytest-cov
-python3 -m pytest          # the unit and integration tests; tests that need ROS 2 or PyTorch are skipped
-python3 scripts/gcs.py     # the ground-control app; then open http://localhost:8080
+./setup.sh
 ```
+
+`setup.sh` installs the Python packages of `requirements.txt` into `.venv` in the project folder, runs the tests
+(those that need ROS 2 or PyTorch are skipped), creates an empty map-key file, then starts the ground-control app
+and opens http://localhost:8080. It takes about 3 minutes and is safe to run again; `--no-tests` and `--no-start`
+skip those steps. A GitHub check runs the same setup on a fresh copy after every push
+(`.github/workflows/quick-start.yml`).
+
+The PX4 flights also need ROS 2 Jazzy, MAVROS and PX4 v1.18.0-rc1 on Ubuntu 24.04: the full installation is in
+[docs/RUNBOOK.md](docs/RUNBOOK.md), section 1. A one-step container for that is planned
+([docs/FUTURE_WORK.md](docs/FUTURE_WORK.md)).
 
 The ground-control app has five pages: **Mission** (2-D map, mission setup, fault buttons), **3D view**
 (3-D drones over terrain and buildings, chase, orbit and top cameras), **Results**, **PX4 flights**
-(replay of the logged PX4 runs) and **Docs**. Satellite imagery and the 3-D view need your own Mapbox
-and Cesium ion tokens: copy `config/map_keys.example.yaml` to `config/map_keys.local.yaml` and paste
-them there. That file is ignored by git, so the keys never leave your computer.
+(replay of the logged PX4 runs) and **Docs**. The 2-D map works without keys (OpenStreetMap). Satellite imagery and the 3-D view need your own Mapbox
+and Cesium ion tokens: paste them into `config/map_keys.local.yaml` (`setup.sh` creates it from
+`config/map_keys.example.yaml`). That file is ignored by git, so the keys never leave your computer.
 
 One-click start on the development laptop: run `bash scripts/install_launcher.sh` once, then
 double-click **Swarm Control** in the project folder or on the desktop (or run
