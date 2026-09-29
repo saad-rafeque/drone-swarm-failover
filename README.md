@@ -111,8 +111,9 @@ cd drone-swarm-failover
 `setup.sh` installs the Python packages of `requirements.txt` into `.venv` in the project folder, runs the tests
 (those that need ROS 2 or PyTorch are skipped), creates an empty map-key file, then starts the ground-control app
 and opens http://localhost:8080. It takes about 3 minutes and is safe to run again; `--no-tests` and `--no-start`
-skip those steps. A GitHub check runs the same setup on a fresh copy after every push
-(`.github/workflows/quick-start.yml`).
+skip those steps. A GitHub check that runs the same setup on a fresh copy after every push is ready in
+`ci/github-quick-start.yml`; it is paused until GitHub Actions can run for this account (the file says how to
+switch it on).
 
 The PX4 flights also need ROS 2 Jazzy, MAVROS and PX4 v1.18.0-rc1 on Ubuntu 24.04: the full installation is in
 [docs/RUNBOOK.md](docs/RUNBOOK.md), section 1. A one-step container for that is planned

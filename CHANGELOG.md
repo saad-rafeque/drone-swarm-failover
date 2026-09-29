@@ -9,7 +9,10 @@ this repository's history.
 ### Quick start in one command; future work
 - `./setup.sh`: installs the Python packages (`requirements.txt`) into `.venv` without `sudo`, runs the tests,
   creates an empty map-key file and starts the app. Tested on a fresh copy: about 3 minutes, all tests passed.
-- `.github/workflows/quick-start.yml`: GitHub runs the same setup on a fresh copy after every push and pull request.
+- A GitHub check that runs the same setup on a fresh copy after every push and pull request. GitHub did not start
+  it ("recent account payments have failed"), so every push gave a "startup failure"; it is paused in
+  `ci/github-quick-start.yml` until the account's billing is fixed or the repository is public. The same steps pass
+  on a fresh copy with an empty home folder, so without PX4 or ROS 2 (checked on the laptop).
 - `docs/FUTURE_WORK.md` (and `.pdf`): recommendations with effort estimates: one-click setup in three levels,
   a checklist before going public, swarm-logic fixes, the next RL run, the road to real drones.
 
