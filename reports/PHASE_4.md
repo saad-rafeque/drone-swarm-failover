@@ -63,7 +63,7 @@ before it):
 
 ## How the trials ran (28 September 2026)
 - **One trial at a time:** the PX4 test queue (`scripts/px4_queue.py`, the "PX4 tests" page of the
-  ground-control app) ran them, started and stopped by the owner. Its log is `reports/logs/px4_queue/runner.log`.
+  ground-control app, removed on 29 September 2026 once all trials had finished) ran them, started and stopped by the owner. Its log is `reports/logs/px4_queue/runner.log`.
 - **Power:** 40 trials ran on the charger. 15 ran on battery, which the owner allows: F1–F5 round 10, F1–F3
   round 7, F3–F5 rounds 6 and 7, and the F1 and F2 cross-checks (`run_summary.json`, `power_before`). They
   passed like the others; for example F1_t7 and F1_t10 took 1.58 and 1.47 s. The first attempt on

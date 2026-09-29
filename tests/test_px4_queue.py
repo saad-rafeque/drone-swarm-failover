@@ -15,7 +15,6 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import px4_queue as q  # noqa: E402
 
-from swarm_tools.gcs.server import queue_control, queue_status  # noqa: E402
 
 
 @pytest.fixture
@@ -89,34 +88,6 @@ def test_runner_exits_when_stopped_and_battery_is_the_owners_choice(repo, monkey
     assert q.power_ok()[0] is False                         # battery not allowed: wait for the charger
     q.set_control(allow_battery=True)
     assert q.power_ok() == (True, "")                       # the owner allowed battery: run anyway
-
-
-def test_app_endpoints(tmp_path):
-    assert not queue_control("explode", tmp_path)["ok"]
-    assert queue_control("stop_after", tmp_path)["ok"]
-    assert json.loads((tmp_path / "control.json").read_text())["mode"] == "stop_after"
-    assert queue_control("battery", tmp_path, value=False)["ok"]
-    st = queue_status(tmp_path)
-    assert st["mode"] == "stop_after" and st["allow_battery"] is False and st["runner_alive"] is False
-    started = []
-    assert queue_control("start", tmp_path, start=lambda: started.append(1) or "Started")["msg"] == "Started"
-    assert started == [1]
-    (tmp_path / "status.json").write_text(json.dumps({"state": "running", "pid": 1, "updated": "2000-01-01T00:00:00"}))
-    assert queue_status(tmp_path)["runner_alive"] is False                  # stale status: not alive
-
-
-def test_the_app_can_load_the_queue_script():
-    """The Start button loads scripts/px4_queue.py inside the app (this is what failed on 28 September 2026)."""
-    import sys as _sys
-    from swarm_tools.gcs import server
-    saved = _sys.modules.pop("px4_queue", None)
-    try:
-        mod = server._queue_module()
-        assert len(mod.queue()) == 95 and callable(mod.start_runner)
-    finally:
-        _sys.modules.pop("px4_queue", None)
-        if saved is not None:
-            _sys.modules["px4_queue"] = saved
 
 
 def test_leftover_radio_relays_are_stopped_and_nothing_else():

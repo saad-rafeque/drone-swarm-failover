@@ -1,0 +1,142 @@
+{
+  "n": 10,
+  "ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_dir": "/home/saad-rafique/Documents/drone swarm/reports/logs/phase_6/F2_t4",
+  "fault": "F2",
+  "loss_pct": null,
+  "latency_ms": null,
+  "jitter_ms": null,
+  "profile": {
+    "name": "standin",
+    "standin": [
+      1
+    ],
+    "real": []
+  },
+  "available_mb_before": 4857,
+  "power_before": {
+    "ac_online": true,
+    "battery_pct": 53,
+    "battery_status": "Charging",
+    "profile": "balanced",
+    "cpu_mhz": 3854
+  },
+  "t_sim_ready_s": 13.8,
+  "result": "COMPLETED",
+  "mission_wall_s": 309.6,
+  "killed": [],
+  "peak_rss_vmhwm_mb": {
+    "px4": 96.6,
+    "mavros": 1009.0
+  },
+  "power_after": {
+    "ac_online": true,
+    "battery_pct": 57,
+    "battery_status": "Charging",
+    "profile": "balanced",
+    "cpu_mhz": 4100
+  },
+  "resources_flight": {
+    "cpu_system_pct": {
+      "mean": 65.2,
+      "max": 69.7,
+      "min": 62.0
+    },
+    "cpu_px4_pct_core": {
+      "mean": 73.6,
+      "max": 80.0,
+      "min": 67.8
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 54.8,
+      "max": 64.9,
+      "min": 44.9
+    },
+    "cpu_agents_pct_core": {
+      "mean": 95.5,
+      "max": 104.7,
+      "min": 86.9
+    },
+    "cpu_tools_pct_core": {
+      "mean": 28.0,
+      "max": 31.7,
+      "min": 24.3
+    },
+    "rss_agents_mb": {
+      "mean": 1022.3,
+      "max": 1022.4,
+      "min": 1021.7
+    },
+    "mem_available_mb": {
+      "mean": 3684.6,
+      "max": 3717,
+      "min": 3632
+    },
+    "load1": {
+      "mean": 12.5,
+      "max": 20.2,
+      "min": 6.9
+    }
+  },
+  "resources_mission": {
+    "cpu_system_pct": {
+      "mean": 97.2,
+      "max": 100.0,
+      "min": 73.8
+    },
+    "cpu_px4_pct_core": {
+      "mean": 66.2,
+      "max": 71.0,
+      "min": 60.6
+    },
+    "cpu_mavros_pct_core": {
+      "mean": 155.1,
+      "max": 302.7,
+      "min": 56.6
+    },
+    "cpu_agents_pct_core": {
+      "mean": 136.6,
+      "max": 253.2,
+      "min": 0.0
+    },
+    "cpu_tools_pct_core": {
+      "mean": 27.7,
+      "max": 38.0,
+      "min": 6.6
+    },
+    "rss_agents_mb": {
+      "mean": 642.9,
+      "max": 1021.1,
+      "min": 0.0
+    },
+    "mem_available_mb": {
+      "mean": 3905.7,
+      "max": 4367,
+      "min": 3637
+    },
+    "load1": {
+      "mean": 13.8,
+      "max": 15.9,
+      "min": 10.7
+    }
+  },
+  "fault_detail": {
+    "kind": "F2",
+    "seed": 4,
+    "delay_after_cruise_s": 58.33,
+    "t_fault": 1790654837.665,
+    "master_before": 1,
+    "target": 1
+  }
+}

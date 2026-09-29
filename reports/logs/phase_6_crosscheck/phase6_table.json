@@ -1,0 +1,58 @@
+{
+  "per_fault": {
+    "F1": {
+      "trials": 1,
+      "handover_median_s": 1.597,
+      "handover_worst_s": 1.597,
+      "handover_measured": 1,
+      "recovery_median_s": 6.15,
+      "recovery_worst_s": 6.15,
+      "recovery_limit_s": 15.0,
+      "recovered_within_limit": 1,
+      "min_sep_m": 8.19,
+      "goal_reached": 1
+    },
+    "F2": {
+      "trials": 1,
+      "handover_median_s": 1.463,
+      "handover_worst_s": 1.463,
+      "handover_measured": 1,
+      "recovery_median_s": 6.15,
+      "recovery_worst_s": 6.15,
+      "recovery_limit_s": 15.0,
+      "recovered_within_limit": 1,
+      "min_sep_m": 7.9,
+      "goal_reached": 1
+    }
+  },
+  "trials": [
+    {
+      "trial": "F1_t11",
+      "dir": "reports/logs/phase_6_crosscheck/F1_t11",
+      "fault": "F1",
+      "t_fault_s": 118.45,
+      "master_before": 1,
+      "target": 1,
+      "min_sep_m": 8.19,
+      "goal_reached": true,
+      "handover_s": 1.597,
+      "new_master": 2,
+      "recovery_s": 6.15,
+      "max_rms_after_m": 7.484
+    },
+    {
+      "trial": "F2_t11",
+      "dir": "reports/logs/phase_6_crosscheck/F2_t11",
+      "fault": "F2",
+      "t_fault_s": 115.95,
+      "master_before": 1,
+      "target": 1,
+      "min_sep_m": 7.9,
+      "goal_reached": true,
+      "handover_s": 1.463,
+      "new_master": 2,
+      "recovery_s": 6.15,
+      "max_rms_after_m": 7.649
+    }
+  ]
+}

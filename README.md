@@ -27,6 +27,7 @@ All numbers come from logged simulation runs; each row names the report that hol
 | Real city map | 3.2 km across Islamabad among 932 OpenStreetMap buildings: no drone hit anything in 10 of 10 runs, including 5 in which the leader is killed halfway | [docs/RESULTS.md](docs/RESULTS.md) |
 | Long routes | 12 km Islamabad to Rawalpindi with 2 charging stops: all 10 drones landed, no hits. Islamabad to Lahore (272.55 km, 65 stops): flown to the end, all 10 drones landed, no hits | [docs/RESULTS.md](docs/RESULTS.md) |
 | Radio realism (Phase 5, passed: fast simulator and PX4) | no false leader change in 180 fast-simulator and 9 PX4 missions with up to 300 ms delay and 30 % loss; on PX4 a new leader took over in 1.6–2.5 s in all 9 conditions; the Phase 4 limits hold in 8 of 9 conditions in the fast simulator | [reports/PHASE_5.md](reports/PHASE_5.md) |
+| Telemetry-radio stand-in (Phase 6, passed: 22 PX4 trials) | with drone 1 behind a simulated 64 kbit/s telemetry radio, a new leader took over in 1.39–1.60 s after it was killed or its radio was cut; formation back within 6.74 s; closest pair 7.65 m; goal reached 22/22; nothing dropped for lack of room on the radio | [reports/PHASE_6.md](reports/PHASE_6.md) |
 
 ## Project status (28 September 2026)
 
@@ -43,7 +44,7 @@ All numbers come from logged simulation runs; each row names the report that hol
 | Ground-control app: 2-D map, 3-D view, fault injection, results, documents | Working | [docs/RUNBOOK.md](docs/RUNBOOK.md) |
 | Phase 4: fault trials on PX4 | Passed: 50 trials and a clean-shell cross-check round, every limit met in every trial | [reports/PHASE_4.md](reports/PHASE_4.md) |
 | Phase 5: radio realism sweep | Passed: fast simulator (540 runs) and PX4 (18 missions) | [reports/PHASE_5.md](reports/PHASE_5.md) |
-| Phase 6: mixed-reality readiness and flight test plan | Software parts done (drone profiles, telemetry-radio stand-in, flight test plan). The first PX4 stand-in runs failed because of a wrong radio-link set-up; it is fixed and two check flights passed; the 22 acceptance trials run when the owner presses Start | [reports/PHASE_6.md](reports/PHASE_6.md) |
+| Phase 6: mixed-reality readiness and flight test plan | Passed: drone profiles, telemetry-radio stand-in, flight test plan; with drone 1 behind the radio stand-in, 22 of 22 PX4 trials met every F1 and F2 limit | [reports/PHASE_6.md](reports/PHASE_6.md) |
 | Formation shapes: line abreast, column, echelon | Added and compared; experimental, because only the V stays 5 m apart after faults | [docs/RESULTS.md](docs/RESULTS.md) |
 | Long RL training on a Kaggle GPU | Kit ready and checked; not run | [docs/KAGGLE_GUIDE.md](docs/KAGGLE_GUIDE.md) |
 | Real drones | Never flown | — |
@@ -168,12 +169,9 @@ Leaflet and CesiumJS 1.145 in the browser. Development machine: Intel i3-1115G4 
 
 ## Roadmap
 
-1. Finish the PX4 tests (72 trials, about 7 hours): press Start on the PX4 tests page of the app whenever it
-   suits, and Stop at any time; finished trials are kept.
-2. Long RL training on a Kaggle GPU with several seeds.
-3. Keep drones apart when they cannot hear each other; give followers a way out of dead ends at buildings;
+1. Keep drones apart when they cannot hear each other; give followers a way out of dead ends at buildings;
    slot-change rules that make the line, column and echelon as safe as the V.
-4. Real drones: a companion computer on every Pixhawk 6C, a radio bridge for the heartbeats, a stable PX4
+2. Real drones: a companion computer on every Pixhawk 6C, a radio bridge for the heartbeats, a stable PX4
    release, bench tests, then the first flight by [docs/FLIGHT_TEST_PLAN.md](docs/FLIGHT_TEST_PLAN.md), after
    legal permission.
 

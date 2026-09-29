@@ -1,6 +1,6 @@
 # Phase 6 — Mixed-reality readiness (still software only)
-Status: NOT COMPLETED — the software parts are done and checked. The PX4 stand-in test (the swarm must still
-pass Phase 4 F1 and F2 with drone 1 behind a telemetry-radio stand-in) is ready to run in the PX4 test queue.
+Status: PASSED — with drone 1 behind a telemetry-radio stand-in, the swarm passed every Phase 4 F1 and F2
+limit in 22 of 22 PX4 trials (29 September 2026).
 
 > **In short.** The first stand-in runs on 28 September failed: 3 of 4 missions did not reach the goal. The
 > test set-up was wrong. The simulated autopilot sent drone 1's telemetry at the rate of a fast onboard
@@ -10,7 +10,11 @@ pass Phase 4 F1 and F2 with drone 1 behind a telemetry-radio stand-in) is ready 
 > The radio drone is now set up like a real Pixhawk telemetry port, and its agent asks only for what fits.
 > Two check flights then passed: one with the leader killed, one with its radio cut. In both, the goal was
 > reached, there was exactly one real leader change, and never two leaders at once. Radio delay averaged
-> 75 ms instead of 1 s, and nothing was dropped for lack of room. The 22 acceptance trials are next.
+> 75 ms instead of 1 s, and nothing was dropped for lack of room.
+>
+> **The 22 acceptance trials then all passed** (10 F1 + 10 F2, then one of each from a clean shell): a new
+> leader in 1.39–1.60 s (limit 3 s median, 4 s worst), the formation back under 2 m in at most 6.74 s
+> (limit 15 s), the closest pair 7.65 m (limit 5 m), and the goal reached 22 of 22 times.
 
 ## Acceptance criteria
 - [DONE] `config/profiles/`: `sim.yaml` (every drone simulated) and `mixed.yaml` (drone 1 real through a serial
@@ -22,11 +26,16 @@ pass Phase 4 F1 and F2 with drone 1 behind a telemetry-radio stand-in) is ready 
   MAVROS that limits bandwidth and adds delay and loss like a telemetry radio (SiK defaults, sources below).
   Evidence: `tests/test_radio_proxy.py` (6 tests with local sockets: rate, shared channel, transmit-turn wait,
   loss, full buffer, the stand-in URL).
-- [PENDING] The stand-in test passes the Phase 4 F1 and F2 criteria: 10 trials each at N = 10 with
-  `config/profiles/standin.yaml`, then a clean-shell cross-check round (`reports/logs/phase_6/`,
-  `phase_6_crosscheck/`), run by the PX4 test queue.
-  - First attempt: 1 of 4 reached the goal, with the wrong link set-up (below).
-  - After the fix: 2 of 2 development checks passed.
+- [PASS] The stand-in test passes the Phase 4 F1 and F2 criteria: 10 trials each at N = 10 with
+  `config/profiles/standin.yaml`, then a clean-shell cross-check round, run by the PX4 test queue on
+  29 September 2026, 08:14–10:30. Evidence: `reports/logs/phase_6/phase6_table.md` and
+  `reports/logs/phase_6_crosscheck/phase6_table.md` (from `scripts/phase4_metrics.py`), the table below, and
+  `reports/logs/px4_queue/runner.log`.
+  - F1 (leader killed): new leader median 1.51 s, worst 1.60 s (limits 3.0 / 4.0 s).
+  - F2 (leader's link cut): new leader median 1.46 s, worst 1.52 s.
+  - Formation back under 2 m: medians 5.88 s (F1) and 5.72 s (F2), worst 6.74 s (limit 15 s).
+  - Closest pair 7.65 m (limit 5 m). Goal reached 11/11 per fault (limit 9 of 10).
+  - Earlier: the first attempt, with the wrong link set-up, reached the goal 1 of 4 times (below).
 - [DONE] `FLIGHT_TEST_PLAN.md`: `docs/FLIGHT_TEST_PLAN.md` - one real drone and N simulated ones, the PX4
   geofence, RC override on the real drone (stick movement returns control), the kill-switch procedure, a
   go/no-go checklist, abort criteria, a test sequence that builds up one step per flight.
@@ -46,6 +55,25 @@ pass Phase 4 F1 and F2 with drone 1 behind a telemetry-radio stand-in) is ready 
 | Transmit-turn wait | up to 131 ms when the channel is idle | SiK MAX_WINDOW default 131 |
 | Loss in the air / buffer | 1 % / 1 s | design choices (`config/swarm.yaml`, `radio_standin`) |
 | Measured by the tests | 2,000 bytes in 0.45-0.75 s; a 0.2 s buffer keeps 6-10 of 30 packets | `tests/test_radio_proxy.py` |
+
+## Acceptance trials (29 September 2026)
+Drone 1 starts as leader and flies behind the radio stand-in in every trial; the fault always hits drone 1.
+
+| Fault | Trials | New leader median / worst (s) | Formation < 2 m median / worst (s) | Closest pair (m) | Goal |
+|---|---|---|---|---|---|
+| F1 leader killed | 10 + 1 clean shell | 1.51 / 1.60 | 5.88 / 6.74 | 7.65 | 11/11 |
+| F2 leader's link cut | 10 + 1 clean shell | 1.46 / 1.52 | 5.72 / 6.30 | 7.70 | 11/11 |
+
+Per-trial rows: `reports/logs/phase_6/phase6_table.md`. Medians and worst values above cover all 11 trials
+per fault (the clean-shell pair: F1 1.60 s and 6.15 s, F2 1.46 s and 6.15 s).
+
+- **Leader changes:** exactly two in every trial, both expected: drone 1 at take-off, then drone 2 after the
+  fault. Drone 1 never took the lead back.
+- **Two leaders at once:** in 3 of the 11 F2 trials (F2_t6, F2_t7, F2_t10), for 0.04–0.08 s at the handover.
+  The cut-off drone 1 (term 1) had not yet stepped down when drone 2 claimed with term 2; the higher term
+  wins, as the specification's rule says. Never in F1.
+- **Radio, all 22 trials** (`proc_logs/radio_standin_1.json` in each trial): 180,937 packets, 0 dropped for
+  lack of room, 2,083 lost in the air (1.15 %, model 1 %), mean delay 68–84 ms, worst 333 ms.
 
 ## First attempt, the cause, and the fix (28 September 2026)
 **What happened.** The queue ran four stand-in missions at 20:47–21:33 (`reports/logs/phase_6_radio_saturated/`).
@@ -158,5 +186,5 @@ Notes on the check flights:
 - The flight test plan has not been used; its numbers marked *proposal* are starting values.
 
 ## Next phase: what is needed from the user
-Press Start on the PX4 tests page with the charger in: the 22 stand-in trials take about 2.5 hours. Real
-flights need the owner's review of `docs/FLIGHT_TEST_PLAN.md`, hardware and legal permission.
+The software phase is complete. Real flights need the owner's review of `docs/FLIGHT_TEST_PLAN.md`, the
+hardware, and legal permission to fly. The election's flapping weak point (above) is the owner's decision.

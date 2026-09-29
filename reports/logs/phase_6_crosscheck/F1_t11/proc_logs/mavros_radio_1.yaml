@@ -1,0 +1,3 @@
+/**/time:
+  ros__parameters:
+    timesync_rate: 1.0

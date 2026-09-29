@@ -137,34 +137,3 @@ body.docpage { display: block; min-height: 100%; }
 .doclist a { display: block; padding: 6px 8px; border-radius: 6px; text-decoration: none; color: var(--ink-2); }
 .doclist a:hover { background: var(--panel-2); color: var(--ink); }
 .doclist a[aria-current="true"] { background: rgba(74, 146, 234, 0.2); color: #fff; }
-
-/* PX4 tests page (tests.html): queue state, progress and one square per trial */
-.qstate { display: flex; gap: 12px; align-items: center; }
-.qicon { font: 600 22px/1 var(--mono); width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%;
-  border: 1px solid var(--line); background: var(--panel-2); color: var(--ink-2); flex: none; }
-.qicon[data-state="running"] { color: var(--master); border-color: var(--master); }
-.qicon[data-state="paused"], .qicon[data-state="waiting"] { color: var(--warn); border-color: var(--warn); }
-.qicon[data-state="finished"] { color: var(--ok); border-color: var(--ok); }
-.qstate strong { font: 600 20px/1.1 var(--display); letter-spacing: 0.02em; }
-.qprogress { display: grid; gap: 10px; }
-.qbar-label { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--ink-2); flex-wrap: wrap; }
-.qbar-track { height: 8px; border-radius: 4px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
-.qbar-fill { height: 100%; background: var(--ok); border-radius: 4px 0 0 4px; }
-.qgroup { display: grid; gap: 4px; }
-.qcells { display: flex; flex-wrap: wrap; gap: 3px; }
-.qsq { width: 18px; height: 18px; border-radius: 4px; display: inline-grid; place-items: center; font: 500 11px/1 var(--mono);
-  border: 1px solid var(--line); background: transparent; color: var(--ink-3); }
-.qsq.done { background: rgba(63, 191, 134, 0.22); border-color: var(--ok); color: var(--ok); }
-.qsq.timeout { background: rgba(224, 163, 58, 0.2); border-color: var(--warn); color: var(--warn); }
-.qsq.running { border-color: var(--master); color: var(--master); background: rgba(74, 146, 234, 0.18); }
-.qsq.retry { border-color: var(--warn); color: var(--warn); border-style: dashed; }
-.qsq.given_up { background: rgba(239, 106, 95, 0.2); border-color: var(--alert); color: var(--alert); }
-.qlegend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-2); }
-.qlegend li { display: flex; align-items: center; gap: 6px; }
-button:disabled { opacity: 0.45; cursor: not-allowed; }
-.tablewrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tablewrap th, .tablewrap td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; }
-.tablewrap th { color: var(--ink-2); font-weight: 500; position: sticky; top: 0; background: var(--panel); }
-.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.qswitch { display: flex; gap: 8px; align-items: center; font-size: 14px; }
-.qicon[data-state="stopped"] { color: var(--ink-2); }
