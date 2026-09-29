@@ -199,4 +199,16 @@ repository. Map data © OpenStreetMap contributors (ODbL). Satellite imagery © 
 World Imagery. 3-D terrain, buildings and photorealistic tiles through Cesium ion. Every result comes
 from logged runs in `reports/`.
 
-This is a private repository. No licence has been chosen yet, so all rights are reserved by the owner.
+## Responsible use
+
+This project is for civil research and education, for example search and rescue, inspection and swarm-safety
+studies. It has been tested in simulation only. Real flights need the checks in
+[docs/FLIGHT_TEST_PLAN.md](docs/FLIGHT_TEST_PLAN.md) and legal permission from the aviation authority. Do not use
+it to harm people or property, or as part of a weapon.
+
+## Licence
+
+Apache License 2.0: see [LICENSE](LICENSE) and [NOTICE](NOTICE). You may use, change and share the code, also
+commercially, if you keep the licence and the copyright notice and state what you changed. Third-party data keep
+their own terms: OpenStreetMap data (ODbL, credit required), Mapbox and Cesium ion imagery (their terms of
+service).

@@ -1,0 +1,8 @@
+Swarm Failover
+Copyright 2026 saad-rafeque (https://github.com/saad-rafeque)
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Not included in this repository, used as published by their projects: PX4 Autopilot, MAVROS, ROS 2.
+Map data in data/osm/ and in the results: © OpenStreetMap contributors, available under the Open Database
+License (ODbL): https://www.openstreetmap.org/copyright

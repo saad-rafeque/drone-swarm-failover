@@ -11,7 +11,8 @@ figures are estimates, not measurements.
   simulator and the tests need, in about 3 minutes, and a GitHub check tests it on every push. The full PX4 +
   ROS 2 system can be one command with a container (Docker), or one click in the browser with GitHub
   Codespaces, in about 2–3 days.
-- **Before going public:** choose a licence, scan the whole history for secrets, add a responsible-use note.
+- **Before going public:** the licence (Apache-2.0), the secrets scan and a responsible-use note are done. The old
+  history still has the owner's personal e-mail and the assistant's name; publish a clean copy (section 2).
 - **Swarm logic:** stop a drone with a patchy link from grabbing the lead back, and keep drones apart when they
   cannot hear each other.
 - **RL:** the next run should change the training set-up, not just run longer.
@@ -83,24 +84,29 @@ people who want a native install, for example on a drone's companion computer.
 
 ## 2. Before making the repository public
 
-- **Licence.** Without one, nobody may legally reuse the code, even if it is public.
-  - **Apache-2.0** is permissive and includes a patent grant. **MIT** is the shortest permissive licence. With
-    **GPL-3.0**, copies that are shared must stay open.
-  - For a research project that others should build on, Apache-2.0 or MIT is the usual choice.
-  - PX4, MAVROS and ROS 2 are not part of this repository, so their licences do not change this choice.
-  - The OpenStreetMap files in `data/osm/` fall under the ODbL; the README already gives the required credit.
-- **Secrets.** `config/map_keys.local.yaml` has never been committed. Still, scan the whole history before
-  publishing, for example with `gitleaks`, because a key committed once stays in the history after it is removed.
-- **Personal details.** 394 tracked files, mostly raw logs, contain the laptop's home folder path with the user
-  name. Commits already use the GitHub no-reply e-mail address. Keeping the paths is harmless; removing them means
-  rewriting the logs.
+- **Licence: done** (29 September 2026). Apache-2.0 (`LICENSE`, `NOTICE`): permissive, with a patent grant,
+  the licence ROS 2 uses. PX4, MAVROS and ROS 2 are not part of this repository. The OpenStreetMap files in
+  `data/osm/` fall under the ODbL; the README and `NOTICE` give the required credit.
+- **Secrets scan: done** (29 September 2026). Every file in every version of the history (4,566 files, 408 MB,
+  including the insides of compressed and zip files, and the text of all 25 PDF versions) was searched for map
+  tokens, Kaggle, GitHub, cloud and AI keys, private keys, passwords and e-mail addresses.
+  - **No key, token or password was found**, now or in the past. `config/map_keys.local.yaml` was never committed.
+  - The only hits are harmless: code that reads the keys from the private file, fake test values, and public shop
+    phone numbers and e-mails that are part of the OpenStreetMap data.
+- **Still in the old history (not secret, but personal):**
+  - the owner's personal e-mail address as the author of the first 51 commits (later commits use GitHub's
+    no-reply address);
+  - the AI assistant's name: its instructions file and settings folder, 25 commit messages with co-author lines,
+    and 6 old versions of the handover PDF. The current files are clean.
+  - **Recommended fix:** when going public, publish a **fresh public repository with one starting commit** made
+    from the current files, and keep this private repository, with its full history, as the archive. The other
+    way, rewriting this repository's history, changes every commit ID and the tags and needs a force-push.
+- **Personal details in files.** 394 tracked files, mostly raw logs, and some PDF versions contain the laptop's
+  home folder path with the user name. That is harmless; removing it would mean rewriting the logs.
 - **Size.** The history is about 206 MB, mostly raw trial logs. That is fine for GitHub, but cloning is slower.
   Option: move the raw logs to a GitHub Release download and keep the summaries in the repository.
-- **Responsible-use note.** Add a short section to the README:
-  - The project is for civil research (search and rescue, inspection, education).
-  - It is simulation-tested only.
-  - Real flights need the flight test plan and legal permission.
-  - It must not be used for weapons or harm.
+- **Responsible-use note: done** (a section in the README): civil research and education, simulation-tested
+  only, real flights only with the flight test plan and legal permission, not for harm or weapons.
 - **Nice to have:** a `CONTRIBUTING.md`, issue templates, and a badge showing that the automatic check passes.
 
 ## 3. Swarm logic: recommended improvements
@@ -186,7 +192,7 @@ control (PX4 does this well).
 
 | # | Item | Why | Effort (estimate) | Who |
 |---|---|---|---|---|
-| 1 | Choose a licence; scan the history for secrets | nothing can be shared safely without these | 1 hour | owner decides, then a short task |
+| 1 | Licence, secrets scan, responsible-use note | nothing can be shared safely without these | **done** (29 September 2026); for going public, a clean copy without the old history | owner decides when |
 | 2 | Level 1 one-click setup + automatic check | anyone can try the project in minutes | **done** (29 September 2026) | — |
 | 3 | Hold-down rule against leader flapping | the one known weak point of the election | about 1 day + re-runs (about 8 h of PX4 trials) | owner approves the spec change |
 | 4 | Height layers when drones cannot hear each other | the main separation risk before real flights | 1–2 days + re-runs | development |
