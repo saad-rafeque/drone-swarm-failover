@@ -5,7 +5,9 @@ All commands run from the repository root. The path of this repository contains 
 working folders go to `/tmp/swarm_sim/` (`config/swarm.yaml` -> `sim.work_dir`).
 
 ## 1. Install from scratch (Ubuntu 24.04)
-Steps that need `sudo` must be run by the owner of the machine.
+**Only the app, the fast simulator and the tests?** Run `./setup.sh` in the project folder: it installs the
+Python packages into `.venv` (no `sudo`), runs the tests and starts the app, in about 3 minutes. The steps below
+are for the PX4 flights. Steps that need `sudo` must be run by the owner of the machine.
 
 1. ROS 2 Jazzy (desktop or base) from packages.ros.org, then `sudo apt install ros-jazzy-mavros`
    (installed here: ros-jazzy-mavros and ros-jazzy-mavros-msgs 2.15.1).

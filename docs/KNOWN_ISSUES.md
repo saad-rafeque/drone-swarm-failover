@@ -1,5 +1,7 @@
 # Known issues, open work and roadmap
 
+Recommendations for what to do next, with effort estimates, are in `docs/FUTURE_WORK.md`.
+
 ## Not done (from the original plan in `docs/SPECIFICATION.md`)
 
 | Item | State | What it takes |

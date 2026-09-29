@@ -6,6 +6,13 @@ this repository's history.
 
 ## 29 September 2026
 
+### Quick start in one command; future work
+- `./setup.sh`: installs the Python packages (`requirements.txt`) into `.venv` without `sudo`, runs the tests,
+  creates an empty map-key file and starts the app. Tested on a fresh copy: about 3 minutes, all tests passed.
+- `.github/workflows/quick-start.yml`: GitHub runs the same setup on a fresh copy after every push and pull request.
+- `docs/FUTURE_WORK.md` (and `.pdf`): recommendations with effort estimates: one-click setup in three levels,
+  a checklist before going public, swarm-logic fixes, the next RL run, the road to real drones.
+
 ### Software phase complete: Phase 6 passed; the Kaggle policy in use
 - **Phase 6 passed on PX4.** With drone 1 behind the telemetry-radio stand-in, 22 of 22 trials met every F1 and
   F2 limit: a new leader in 1.39–1.60 s, the formation back within 6.74 s, closest pair 7.65 m, goal 22 of 22;
