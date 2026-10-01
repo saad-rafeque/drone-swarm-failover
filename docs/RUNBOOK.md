@@ -27,7 +27,7 @@ are for the PX4 flights. Steps that need `sudo` must be run by the owner of the 
    `.venv/bin/pip install gymnasium stable-baselines3` (about 0.9 GB).
 6. Optional map keys: copy `config/map_keys.example.yaml` to `config/map_keys.local.yaml` and paste
    your Mapbox and Cesium ion tokens (never commit that file).
-7. Desktop icon: `bash scripts/install_launcher.sh`.
+7. One-click launcher: `bash scripts/install_launcher.sh` (builds the **Swarm Control** program in the project folder).
 
 Check the environment: `scripts/env_audit.sh`. Before any PX4 run: `free -m` should show more than
 800 MB available; kill leftovers with `pkill -x px4; pkill -x mavros_node`.
@@ -36,9 +36,9 @@ Check the environment: `scripts/env_audit.sh`. Before any PX4 run: `free -m` sho
 
 | Task | Command |
 |---|---|
-| Open the ground-control app | double-click **Swarm Control** in the project folder or on the desktop (or **start_swarm_control.sh**: right-click → Run as a Program), or `python3 scripts/gcs.py` and open http://localhost:8080 |
+| Open the ground-control app | double-click **Swarm Control** in the project folder (or **start_swarm_control.sh**: right-click → Run as a Program), or `python3 scripts/gcs.py` and open http://localhost:8080 |
 | Stop it (when started by a launcher) | `scripts/stop_swarm.sh` |
-| Install the launchers (once per machine, and again after moving the folder) | `bash scripts/install_launcher.sh`: desktop and menu icon, and the **Swarm Control** program in the folder (needs `gcc`; the program is not in git, so a fresh copy of the repository needs this once) |
+| Install the launcher (once per machine) | `bash scripts/install_launcher.sh`: builds the **Swarm Control** program in the folder (needs `gcc`; the program is not in git, so a fresh copy of the repository needs this once). It adds no desktop or app-menu icon, and removes the ones older versions added |
 | Run all tests | `python3 -m pytest` (131 pass, 4 skip without ROS/PyTorch); with PyTorch: `PYTHONPATH=src .venv/bin/python -m pytest` (134 pass, 2 skip) |
 | Save changes to GitHub (private repository `saad-rafeque/drone-swarm-failover`) | `git status`, then `git add <files>`, `git commit -m "<message>"` and `git push` (the laptop's deploy key is used automatically; see `docs/KNOWN_ISSUES.md`, Housekeeping) |
 
@@ -131,7 +131,7 @@ instances); MAVROS runs in namespace `/uav<id>`. Serial connection URLs are refu
 | 3D view dark or blurred for a few seconds after opening | the terrain tiles are still loading; wait, the camera glides in on its own |
 | 3D view slow, laptop fan loud | switch off Photorealistic and Sun shadows; close the 3D tab during long simulations |
 | Double-clicking `start_swarm_control.sh` opens a text editor | right-click → Run as a Program, or use the **Swarm Control** program next to it |
-| The desktop or menu icon does nothing after the folder was moved | the icon stores the folder's path: run `bash scripts/install_launcher.sh` again (the **Swarm Control** program inside the folder finds its own place and keeps working) |
+| An old desktop or app-menu icon does nothing after the folder was moved | the icon stored the old path: run `bash scripts/install_launcher.sh` again, which removes it (the **Swarm Control** program inside the folder finds its own place and keeps working) |
 | Satellite map is Esri, not Mapbox | no Mapbox token in `config/map_keys.local.yaml`, or the server was still starting (reload) |
 | RL options greyed out in the app | `models/avoid_policy.npz` is missing |
 | The app is slow with obstacles | expected: about 15x real time with 10 drones and the RL avoider; open sky is ~150x |

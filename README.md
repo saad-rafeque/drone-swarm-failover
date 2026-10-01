@@ -126,7 +126,7 @@ and Cesium ion tokens: paste them into `config/map_keys.local.yaml` (`setup.sh` 
 `config/map_keys.example.yaml`). That file is ignored by git, so the keys never leave your computer.
 
 One-click start on the development laptop: run `bash scripts/install_launcher.sh` once, then
-double-click **Swarm Control** in the project folder or on the desktop (or run
+double-click **Swarm Control** in the project folder (or run
 `./start_swarm_control.sh`). Stop the app with `scripts/stop_swarm.sh`.
 
 PX4 flights, fault trials, RL training and every other experiment: [docs/RUNBOOK.md](docs/RUNBOOK.md).

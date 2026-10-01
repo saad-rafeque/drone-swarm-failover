@@ -23,7 +23,7 @@ figures are estimates, not measurements.
 
 **Can it be done? Yes, in layers.** Today a new person has to follow 7 manual steps in `docs/RUNBOOK.md`,
 section 1. They install ROS 2 Jazzy and MAVROS, fetch the GeographicLib data, clone and build PX4, install the
-Python packages, set up the RL environment, add map keys and install the desktop icon. Some of that needs `sudo`,
+Python packages, set up the RL environment, add map keys and build the one-click launcher. Some of that needs `sudo`,
 the PX4 build takes about 15 GB of disk, and one download (GeographicLib from SourceForge) failed on this laptop
 and had to be done by hand.
 
@@ -53,7 +53,7 @@ planned:
      SourceForge failed once.
   3. Clone PX4 at `v1.18.0-rc1` and build `px4_sitl_sih` with 2 jobs (`scripts/build_px4.sh`).
   4. Do everything level 1 does, plus the optional RL training environment.
-  5. Install the desktop icon.
+  5. Build the one-click launcher (`scripts/install_launcher.sh`).
   6. Finish with `scripts/env_audit.sh` and a one-drone take-off and landing, the Phase 0 test.
   The script must be safe to run twice and must say clearly which step failed.
 - **Level 3, container:**
