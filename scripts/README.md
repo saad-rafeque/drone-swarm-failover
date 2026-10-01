@@ -11,7 +11,7 @@ when they import the project packages. The exact command lines and run times are
 |---|---|
 | `gcs.py` | Start the ground-control web app on http://localhost:8080. |
 | `start_swarm.sh`, `stop_swarm.sh` | Start the app in the background and open the browser; stop it again. |
-| `install_launcher.sh`, `launcher.c` | Install the desktop and menu icon and build the **Swarm Control** program in the project folder. |
+| `install_launcher.sh`, `launcher.c` | Build the **Swarm Control** program in the project folder (no desktop or app-menu icon). |
 | `run_route.py` | Fly one ground-control mission without the browser and save its events, progress, formation error and closest pair as JSON. |
 
 ## PX4 simulation (Phases 0 to 6)

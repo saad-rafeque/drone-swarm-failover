@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One click: start the swarm ground-control app (fast simulator, maps, 3-D view, results, docs) and open it.
-# Used by the "Swarm Control" desktop icon (scripts/install_launcher.sh). Safe to run twice.
+# Used by the "Swarm Control" program in the project folder (scripts/install_launcher.sh). Safe to run twice.
 set -u
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 URL="http://localhost:8080"

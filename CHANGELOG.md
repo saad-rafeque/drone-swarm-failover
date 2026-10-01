@@ -4,6 +4,13 @@ The history of the project by milestone, newest first. The tags `phase-0` to `ph
 gates of the plan in `docs/SPECIFICATION.md`; `v1.0-handover` marks the first complete handover. Commit IDs refer to
 this repository's history.
 
+## 1 October 2026
+
+### Launcher in the project folder only
+- `scripts/install_launcher.sh` now only builds the **Swarm Control** program in the project folder. It no longer
+  adds a desktop or app-menu icon, and it removes the ones that older versions added. Without `gcc` it now stops
+  with a clear message instead of skipping the build silently.
+
 ## 29 September 2026
 
 ### Quick start in one command; future work

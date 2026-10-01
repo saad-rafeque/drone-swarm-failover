@@ -146,7 +146,7 @@ downloads, long-route planning) runs in a background thread with progress on the
   evidence in `reports/logs/long_route/` comes from it.
 - **One-click start:** `scripts/start_swarm.sh` starts `scripts/gcs.py` in the background if it is not
   already running and opens the browser. The **Swarm Control** program in the project folder
-  (`scripts/launcher.c`), `start_swarm_control.sh` and the desktop icon all call it.
+  (`scripts/launcher.c`) and `start_swarm_control.sh` both call it.
 
 ## 11. Where to change things
 
