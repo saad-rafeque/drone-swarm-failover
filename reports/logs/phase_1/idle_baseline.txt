@@ -7,7 +7,7 @@ top CPU consumers over the 10 s window (% of one core; psutil cpu_percent since 
   gnome-shell                    11.6
   irq/134-ELAN06FA:00             7.6
   chrome                          1.6
-  assistant-cli                   1.2
-  assistant-desktop               1.0
+  (other desktop process)         1.2
+  (other desktop process)         1.0
   kworker/2:1-i915-unordered      0.8
   kworker/u17:2+i915_flip         0.5
