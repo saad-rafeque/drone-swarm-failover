@@ -26,7 +26,7 @@ measured problem, the evidence is named.
 | 19 | **Policy weights exported to numpy; no ML library on the drone.** | The onboard agent stays light and dependency-free; the exported policy matches the trained one to 3e-8. |
 | 20 | **Long routes: strip download, chunked planning, charging stops at open spots, landing in place on low battery.** | A single map query or planning grid over hundreds of kilometres is impossible; a quadcopter needs battery swaps about every 4 km; flying home from 100 km away is not realistic. |
 | 21 | **Positions put back on the ground far from home (tangent-plane correction).** | Without it a drone 270 km away is drawn about 240 m off. |
-| 22 | **Map keys in a git-ignored local file, never typed in by the assistant.** | Keys are the owner's credentials. |
+| 22 | **Map keys live only in a git-ignored local file.** | Keys are personal credentials: they never enter the repository, the logs or any shared tool. |
 | 23 | **Everything tunable in `config/swarm.yaml`; strict config loading.** | One source of truth; a missing or unknown key is an error, not a silent default. |
 | 24 | **Simulation only.** | No serial ports, no real flight controller, no firmware flashing until the owner decides (`docs/SPECIFICATION.md` rule 7). |
 | 25 | **The GPU trainer picks its best policy on separate validation courses, never on the test courses.** | Choosing among ~20 checkpoints by their test score would inflate the reported result. The laptop trainer already used separate courses; the GPU kit did not until the final check (27 September 2026). |

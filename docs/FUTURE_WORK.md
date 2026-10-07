@@ -101,7 +101,7 @@ The repository is public since 7 October 2026 (release `v1.0.0`).
   `data/osm/` fall under the ODbL; the README and `NOTICE` give the required credit.
 - **Secrets scan: done.** Before publishing (29 September 2026), every file in every version of the history,
   including the insides of compressed and zip files and the text of the PDFs, was searched for map tokens, Kaggle,
-  GitHub, cloud and AI keys, private keys, passwords and e-mail addresses. The published repository was searched again
+  GitHub, cloud and other API keys, private keys, passwords and e-mail addresses. The published repository was searched again
   on 7 October 2026: every file on `main` and every commit.
   - **No key, token or password was found**, now or in the past. `config/map_keys.local.yaml` was never committed.
   - The only hits are harmless: code that reads the keys from the private file, fake test values, and public shop
