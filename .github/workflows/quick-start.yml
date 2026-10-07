@@ -1,0 +1,46 @@
+# Checks on every push and pull request that a fresh copy installs with ./setup.sh, passes the tests, that the
+# ground-control app starts, and that the C++ policy module builds and agrees with the Python code.
+# ROS 2 and PX4 are not installed here; their tests are skipped.
+name: Quick start
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  setup-and-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: One-command setup and tests
+        run: ./setup.sh --no-start
+      - name: The app starts and serves the swarm state
+        run: |
+          SWARM_NO_BROWSER=1 bash scripts/start_swarm.sh
+          curl -sf http://localhost:8080/api/state | head -c 200; echo
+          bash scripts/stop_swarm.sh
+      - name: The C++ weight file matches the trained policy
+        run: .venv/bin/python cpp/avoid_policy/export_policy.py --check
+
+  cpp-avoid-policy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          cmake -S cpp/avoid_policy -B build/avoid_policy
+          cmake --build build/avoid_policy
+      - name: Test against the Python reference
+        run: ctest --test-dir build/avoid_policy --output-on-failure
+      - name: Benchmark on this runner
+        run: build/avoid_policy/bench_avoid_policy cpp/avoid_policy/avoid_policy.bin
