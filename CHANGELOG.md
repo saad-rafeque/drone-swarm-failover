@@ -15,6 +15,9 @@ this repository's history.
   only, no heap memory in the control loop. On 100 seeded reference inputs it matches the Python code: observation
   identical, action within 4e-16 (GCC 13.3 and Clang 18.1 on x86-64). It is a library, not yet a ROS 2 node
   (`cpp/avoid_policy/README.md`).
+- `docs/FUTURE_WORK.md` rewritten for the public state: the check is on, the publishing steps are recorded as done,
+  and the C++ ROS 2 node is added to the road to real drones. `docs/FUTURE_WORK.pdf` and `docs/HANDOVER.pdf` rebuilt.
+- The five merged working branches are removed; their commits are all on `main`.
 
 ## 1 October 2026
 
