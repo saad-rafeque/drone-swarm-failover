@@ -1,5 +1,7 @@
 # Swarm Failover
 
+[![Quick start](https://github.com/saad-rafeque/drone-swarm-failover/actions/workflows/quick-start.yml/badge.svg)](https://github.com/saad-rafeque/drone-swarm-failover/actions/workflows/quick-start.yml)
+
 **A drone swarm that keeps flying its mission when its leader fails, built and verified entirely in
 simulation.** Ten PX4 quadrotors fly a V formation from home to a goal. When the leader crashes, loses
 its radio or runs low on battery, the next drone takes over in about two seconds and the mission
@@ -24,12 +26,13 @@ All numbers come from logged simulation runs; each row names the report that hol
 | PX4 failover (Phase 4, passed: 55 trials) | new leader 1.4–1.7 s after the leader is killed or loses its radio (limits: 3 s median, 4 s worst); planned handover within 0.01 s (limit 1 s); formation back within 6.6 s (13.4 s after a radio split heals); closest pair at least 6.03 m; goal reached 55/55 | [reports/PHASE_4.md](reports/PHASE_4.md) |
 | Swarm size | 1 to 100 drones in the fast simulator; after the leader is killed, a new leader is agreed in 1.60–1.75 s (median) at every size from 2 to 100; heartbeat of 45 bytes for 10 drones and 56 bytes for 100 | [reports/SCALING.md](reports/SCALING.md) |
 | Obstacle avoidance | on 90 unseen courses the learned policy (10.5 h of GPU training) with a brake completes 30/30 sparse, 23/30 medium and 18/30 dense courses, against 15/30, 7/30 and 3/30 for the tuned classical controller | [docs/RESULTS.md](docs/RESULTS.md) |
+| C++ inference | a C++17 port of the policy's inference gives the same result as the Python code on 100 reference inputs (largest difference 3e-15); standard library only, no heap memory in the control loop | [cpp/avoid_policy/README.md](cpp/avoid_policy/README.md) |
 | Real city map | 3.2 km across Islamabad among 932 OpenStreetMap buildings: no drone hit anything in 10 of 10 runs, including 5 in which the leader is killed halfway | [docs/RESULTS.md](docs/RESULTS.md) |
 | Long routes | 12 km Islamabad to Rawalpindi with 2 charging stops: all 10 drones landed, no hits. Islamabad to Lahore (272.55 km, 65 stops): flown to the end, all 10 drones landed, no hits | [docs/RESULTS.md](docs/RESULTS.md) |
 | Radio realism (Phase 5, passed: fast simulator and PX4) | no false leader change in 180 fast-simulator and 9 PX4 missions with up to 300 ms delay and 30 % loss; on PX4 a new leader took over in 1.6–2.5 s in all 9 conditions; the Phase 4 limits hold in 8 of 9 conditions in the fast simulator | [reports/PHASE_5.md](reports/PHASE_5.md) |
 | Telemetry-radio stand-in (Phase 6, passed: 22 PX4 trials) | with drone 1 behind a simulated 64 kbit/s telemetry radio, a new leader took over in 1.39–1.60 s after it was killed or its radio was cut; formation back within 6.74 s; closest pair 7.65 m; goal reached 22/22; nothing dropped for lack of room on the radio | [reports/PHASE_6.md](reports/PHASE_6.md) |
 
-## Project status (29 September 2026)
+## Project status (7 October 2026)
 
 **The software phase is complete:** Phases 0 to 6 of `docs/SPECIFICATION.md` passed, the last on 29 September 2026.
 Real-drone work needs the owner's review of [docs/FLIGHT_TEST_PLAN.md](docs/FLIGHT_TEST_PLAN.md), hardware and legal
@@ -51,6 +54,7 @@ permission to fly.
 | Phase 6: mixed-reality readiness and flight test plan | Passed: drone profiles, telemetry-radio stand-in, flight test plan; with drone 1 behind the radio stand-in, 22 of 22 PX4 trials met every F1 and F2 limit | [reports/PHASE_6.md](reports/PHASE_6.md) |
 | Formation shapes: line abreast, column, echelon | Added and compared; experimental, because only the V stays 5 m apart after faults | [docs/RESULTS.md](docs/RESULTS.md) |
 | Long RL training on a Kaggle GPU | Done: two 10.5-hour runs; the better policy (seed 2) is in use | [docs/RESULTS.md](docs/RESULTS.md) |
+| C++ inference for the avoidance policy | Added on 7 October 2026: library, test against the Python code, benchmark; not yet inside a ROS 2 node | [cpp/avoid_policy/README.md](cpp/avoid_policy/README.md) |
 | Real drones | Never flown | — |
 
 The full history is in [CHANGELOG.md](CHANGELOG.md).
@@ -111,9 +115,8 @@ cd drone-swarm-failover
 `setup.sh` installs the Python packages of `requirements.txt` into `.venv` in the project folder, runs the tests
 (those that need ROS 2 or PyTorch are skipped), creates an empty map-key file, then starts the ground-control app
 and opens http://localhost:8080. It takes about 3 minutes and is safe to run again; `--no-tests` and `--no-start`
-skip those steps. A GitHub check that runs the same setup on a fresh copy after every push is ready in
-`ci/github-quick-start.yml`; it is paused until GitHub Actions can run for this account (the file says how to
-switch it on).
+skip those steps. A GitHub check (`.github/workflows/quick-start.yml`) runs the same setup on a fresh
+copy after every push, and builds and tests the C++ policy module.
 
 The PX4 flights also need ROS 2 Jazzy, MAVROS and PX4 v1.18.0-rc1 on Ubuntu 24.04: the full installation is in
 [docs/RUNBOOK.md](docs/RUNBOOK.md), section 1. A one-step container for that is planned
@@ -145,6 +148,7 @@ drone-swarm-failover/
 ├── scripts/                entry points: flights, fault trials, evaluations, training, plots, documents
 ├── tests/                  pytest suite
 ├── models/                 trained obstacle-avoidance policy (numpy weights)
+├── cpp/avoid_policy/       C++17 inference for that policy, checked against the Python code
 ├── data/                   cached OpenStreetMap map data (ODbL)
 ├── kaggle/                 notebook for long RL training on a Kaggle GPU
 ├── docs/                   specification, architecture, runbook, results, decisions, known issues, guides, PDFs
@@ -178,7 +182,7 @@ Ubuntu 24.04.5, ROS 2 Jazzy, PX4 v1.18.0-rc1 (`fca3df865a`, target `px4_sitl_sih
 Python 3.12.3, numpy 1.26.4, scipy 1.11.4. Reinforcement learning: PyTorch 2.14.0 (CPU),
 Stable-Baselines3 2.9.0, Gymnasium 1.3.0. Ground-control app: Python standard-library HTTP server,
 Leaflet and CesiumJS 1.145 in the browser. Development machine: Intel i3-1115G4 (2 cores, 4 threads),
-8 GB RAM, no GPU.
+8 GB RAM, no GPU. C++ policy module: C++17 and CMake 3.16 or newer, checked with GCC 13.3 and Clang 18.1.
 
 ## Roadmap
 
