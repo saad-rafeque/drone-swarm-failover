@@ -1,18 +1,20 @@
 # Future work and recommendations
 
-**Status (29 September 2026): the software phase is complete.** Phases 0 to 6 of `docs/SPECIFICATION.md`
-passed (tags `phase-0` to `phase-6`), the Kaggle-trained obstacle-avoidance policy is in use, and everything is on
-`main`. This note lists what can come next, what I recommend, and roughly how much work each item is. Effort
-figures are estimates, not measurements.
+**Status (7 October 2026): the software phase is complete and the repository is public.** Phases 0 to 6 of
+`docs/SPECIFICATION.md` passed (tags `phase-0` to `phase-6`), the Kaggle-trained obstacle-avoidance policy is in use,
+the first public release is tagged `v1.0.0`, and a GitHub check runs on every push. This note lists what can come
+next, what I recommend, and roughly how much work each item is. Effort figures are estimates, not measurements.
 
 **In short:**
 
 - **One-click setup is possible.** Level 1 is done: `./setup.sh` installs everything the app, the fast
-  simulator and the tests need, in about 3 minutes. A GitHub check for it is ready but paused (section 1). The full PX4 +
+  simulator and the tests need, in about 3 minutes, and a GitHub check runs it on every push (section 1). The full PX4 +
   ROS 2 system can be one command with a container (Docker), or one click in the browser with GitHub
   Codespaces, in about 2–3 days.
-- **Before going public:** the licence (Apache-2.0), the secrets scan and a responsible-use note are done. The old
-  history still has the owner's personal e-mail and the assistant's name; publish a clean copy (section 2).
+- **Public since 7 October 2026.** The licence (Apache-2.0), the secrets scan and the responsible-use note were
+  done first (section 2).
+- **Onboard code in C++:** the policy's inference is ported to C++17 and checked against the Python code. The next
+  step is a ROS 2 node around it (section 5).
 - **Swarm logic:** stop a drone with a patchy link from grabbing the lead back, and keep drones apart when they
   cannot hear each other.
 - **RL:** the next run should change the training set-up, not just run longer.
@@ -64,14 +66,18 @@ planned:
   - Build the image once and publish it on GitHub's container registry, so users download it instead of building
     it for an hour.
 
-**The automatic check (GitHub Actions) is written but paused.** `ci/github-quick-start.yml` runs `./setup.sh` on
-a fresh copy after every push to `main` and every pull request, and checks that the app starts. GitHub refused to
-start it ("recent account payments have failed or your spending limit needs to be increased"), so it is kept out of
-`.github/workflows/` until the account's billing is fixed or the repository is public (Actions is free for public
-repositories). The file's first lines say how to switch it on. The same steps pass on a fresh copy without PX4 or
-ROS 2.
-When the container exists, add its build to the same check. Without such a check, setup scripts break quietly
-as packages change.
+**The automatic check (GitHub Actions) is on.** `.github/workflows/quick-start.yml` runs after every push to
+`main` and every pull request. On a fresh copy, without PX4 or ROS 2, it:
+
+1. runs `./setup.sh` (install and tests);
+2. starts the app and checks that it serves the swarm state;
+3. checks that the C++ weight file matches the trained policy;
+4. builds the C++ policy module and tests it against the Python reference.
+
+The README shows the result as a badge. The check was written on 29 September 2026 but stayed switched off while
+the repository was private, because GitHub would not start it for this account; Actions is free for public
+repositories. When the container exists, add its build to the same check. Without such a check, setup scripts
+break quietly as packages change.
 
 **What cannot be made automatic:**
 - **Map keys** (Mapbox, Cesium ion) belong to a person's own free account and must never be shipped. The 2-D map
@@ -86,32 +92,32 @@ as packages change.
 because a container is the only way to make the full PX4 system truly one step on any computer. Keep level 2 for
 people who want a native install, for example on a drone's companion computer.
 
-## 2. Before making the repository public
+## 2. The public repository: what was done, what is left
+
+The repository is public since 7 October 2026 (release `v1.0.0`).
 
 - **Licence: done** (29 September 2026). Apache-2.0 (`LICENSE`, `NOTICE`): permissive, with a patent grant,
   the licence ROS 2 uses. PX4, MAVROS and ROS 2 are not part of this repository. The OpenStreetMap files in
   `data/osm/` fall under the ODbL; the README and `NOTICE` give the required credit.
-- **Secrets scan: done** (29 September 2026). Every file in every version of the history (4,566 files, 408 MB,
-  including the insides of compressed and zip files, and the text of all 25 PDF versions) was searched for map
-  tokens, Kaggle, GitHub, cloud and AI keys, private keys, passwords and e-mail addresses.
+- **Secrets scan: done.** Before publishing (29 September 2026), every file in every version of the history,
+  including the insides of compressed and zip files and the text of the PDFs, was searched for map tokens, Kaggle,
+  GitHub, cloud and AI keys, private keys, passwords and e-mail addresses. The published repository was searched again
+  on 7 October 2026: every file on `main` and every commit.
   - **No key, token or password was found**, now or in the past. `config/map_keys.local.yaml` was never committed.
   - The only hits are harmless: code that reads the keys from the private file, fake test values, and public shop
     phone numbers and e-mails that are part of the OpenStreetMap data.
-- **Still in the old history (not secret, but personal):**
-  - the owner's personal e-mail address as the author of the first 51 commits (later commits use GitHub's
-    no-reply address);
-  - the AI assistant's name: its instructions file and settings folder, 25 commit messages with co-author lines,
-    and 6 old versions of the handover PDF. The current files are clean.
-  - **Recommended fix:** when going public, publish a **fresh public repository with one starting commit** made
-    from the current files, and keep this private repository, with its full history, as the archive. The other
-    way, rewriting this repository's history, changes every commit ID and the tags and needs a force-push.
-- **Personal details in files.** 394 tracked files, mostly raw logs, and some PDF versions contain the laptop's
-  home folder path with the user name. That is harmless; removing it would mean rewriting the logs.
-- **Size.** The history is about 206 MB, mostly raw trial logs. That is fine for GitHub, but cloning is slower.
+- **Commit authors.** Every commit in the published history carries GitHub's no-reply address, not a personal
+  e-mail address (checked on 7 October 2026).
+- **Personal details in files.** About 390 tracked files, mostly raw logs, contain the laptop's home folder path
+  with the user name. That is harmless; removing it would mean rewriting the logs.
+- **Size.** A copy without the history is about 350 MB, mostly raw trial logs. That is fine for GitHub, but
+  cloning is slow.
   Option: move the raw logs to a GitHub Release download and keep the summaries in the repository.
 - **Responsible-use note: done** (a section in the README): civil research and education, simulation-tested
   only, real flights only with the flight test plan and legal permission, not for harm or weapons.
-- **Nice to have:** a `CONTRIBUTING.md`, issue templates, and a badge showing that the automatic check passes.
+- **Automatic check and badge: done** (7 October 2026, section 1).
+- **Still to do:** a `CONTRIBUTING.md` and issue templates, so that outside reports and changes arrive in a usable
+  form.
 
 ## 3. Swarm logic: recommended improvements
 
@@ -170,15 +176,22 @@ control (PX4 does this well).
    - a telemetry radio;
    - a radio or Wi-Fi mesh for the heartbeats between drones;
    - an RC receiver with a kill switch.
-2. **A stable PX4 release.** PX4 is pinned to a release candidate, `v1.18.0-rc1`. Move to the stable release and
+2. **Onboard code in C++.** `cpp/avoid_policy/` holds the avoidance policy's inference in C++17 (observation,
+   network, velocity correction), checked against the Python code on 100 reference inputs. Still to do:
+   - wrap it in a ROS 2 `rclcpp` node with the same topics as the Python agent, and fly both side by side in PX4
+     SIH until their velocity setpoints agree;
+   - port the stopping-distance brake, which every result in `docs/RESULTS.md` uses;
+   - time one step on the companion computer itself (`bench_avoid_policy`).
+   About 2–3 days plus the comparison runs.
+3. **A stable PX4 release.** PX4 is pinned to a release candidate, `v1.18.0-rc1`. Move to the stable release and
    repeat Phases 0–4 in simulation.
-3. **A digital twin.** Measure the real drone (weight, battery, motors, a PX4 flight log) and put the numbers into
+4. **A digital twin.** Measure the real drone (weight, battery, motors, a PX4 flight log) and put the numbers into
    the simulators, then repeat the tests.
-4. **Bench test with the propellers off,** then one real drone with nine simulated ones. The set-up is
+5. **Bench test with the propellers off,** then one real drone with nine simulated ones. The set-up is
    `config/profiles/mixed.yaml`: only the connection address changes. Every step follows
    `docs/FLIGHT_TEST_PLAN.md`: geofence, RC override, kill switch, go/no-go checklist.
-5. **Three real drones** in an open field with safety pilots; only then more.
-6. **Legal permission first.** Check the current drone rules of the civil aviation authority (in Pakistan, the
+6. **Three real drones** in an open field with safety pilots; only then more.
+7. **Legal permission first.** Check the current drone rules of the civil aviation authority (in Pakistan, the
    PCAA) and any local permission needed before buying or flying.
 
 ## 6. Keeping the project healthy
@@ -187,8 +200,8 @@ control (PX4 does this well).
   - ROS 2 Jazzy and Ubuntu 24.04 are long-term releases, supported until about 2029.
   - Pin the Python packages in `requirements.txt` (section 1) so results can be repeated.
   - Stay on PX4 `v1.18.0-rc1` until the stable release has been tested.
-- **Evidence habit:** keep the rule that every claim comes with a log, and re-run the fresh-clone check before
-  every release.
+- **Evidence habit:** keep the rule that every claim comes with a log. The GitHub check repeats the fresh-copy
+  test on every push; look at its result before every release.
 - **Backups:** GitHub holds the code, history and tags. The Kaggle notebooks (`rafiique/swarm-rl-train-seed1`,
   `-seed2`) hold their training output. The chosen policy and both result sets are already in the repository.
 
@@ -196,10 +209,11 @@ control (PX4 does this well).
 
 | # | Item | Why | Effort (estimate) | Who |
 |---|---|---|---|---|
-| 1 | Licence, secrets scan, responsible-use note | nothing can be shared safely without these | **done** (29 September 2026); for going public, a clean copy without the old history | owner decides when |
-| 2 | Level 1 one-click setup + automatic check | anyone can try the project in minutes | **done** (29 September 2026); the check waits for GitHub billing | owner: fix billing, then switch the check on |
+| 1 | Licence, secrets scan, responsible-use note, public release | nothing can be shared safely without these | **done**: public since 7 October 2026 (`v1.0.0`) | - |
+| 2 | Level 1 one-click setup + automatic check | anyone can try the project in minutes | **done**: the check runs on every push since 7 October 2026 | - |
 | 3 | Hold-down rule against leader flapping | the one known weak point of the election | about 1 day + re-runs (about 8 h of PX4 trials) | owner approves the spec change |
 | 4 | Height layers when drones cannot hear each other | the main separation risk before real flights | 1–2 days + re-runs | development |
 | 5 | Container and Codespaces (level 3) | the full PX4 system in one step on any computer | 2–3 days | development |
 | 6 | Next RL run with a changed set-up, 3 seeds | better in dense clutter; results others can trust | 1 day of set-up + about 15 GPU hours | owner approves the quota |
-| 7 | Real drones: hardware, stable PX4, bench test, flight plan | the goal of the project | weeks; needs hardware and permission | owner |
+| 7 | ROS 2 C++ node around `cpp/avoid_policy`, with the brake | onboard code without Python in the control loop | 2–3 days + comparison runs in PX4 SIH | development |
+| 8 | Real drones: hardware, stable PX4, bench test, flight plan | the goal of the project | weeks; needs hardware and permission | owner |
