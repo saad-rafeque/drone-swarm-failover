@@ -4,6 +4,18 @@ The history of the project by milestone, newest first. The tags `phase-0` to `ph
 gates of the plan in `docs/SPECIFICATION.md`; `v1.0-handover` marks the first complete handover. Commit IDs refer to
 this repository's history.
 
+## 7 October 2026
+
+### Public repository, GitHub check on, C++ policy inference
+- The repository is public. Tag `v1.0.0` marks this first public release.
+- The GitHub check runs again (`.github/workflows/quick-start.yml`, moved back from `ci/`): Actions is free for
+  public repositories. It now also checks that `cpp/avoid_policy/avoid_policy.bin` matches the trained policy, and
+  builds and tests the C++ module. First run: passed.
+- `cpp/avoid_policy/`: a C++17 port of the policy's inference (observation, network, correction), standard library
+  only, no heap memory in the control loop. On 100 seeded reference inputs it matches the Python code: observation
+  identical, action within 4e-16 (GCC 13.3 and Clang 18.1 on x86-64). It is a library, not yet a ROS 2 node
+  (`cpp/avoid_policy/README.md`).
+
 ## 1 October 2026
 
 ### Launcher in the project folder only
