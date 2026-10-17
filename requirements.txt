@@ -4,7 +4,7 @@
 # Tested on 29 September 2026 on a fresh copy with Python 3.12.3: numpy 1.26.4, scipy 1.17.1, matplotlib 3.11.2,
 # PyYAML 6.0.3, psutil 7.2.2, pytest 9.1.1 (the Ubuntu 24.04 packages in docs/RUNBOOK.md also work).
 numpy>=1.26,<2
-scipy>=1.11
+scipy>=1.18.1
 matplotlib>=3.6
 PyYAML>=6.0
 psutil>=5.9
